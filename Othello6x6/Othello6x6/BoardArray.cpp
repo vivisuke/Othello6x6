@@ -99,6 +99,7 @@ int BoardArray::put_BLACK(int x, int y) {
 			put_sub_BLACK(ix, ARY_WIDTH-1) + put_sub_BLACK(ix, ARY_WIDTH) + put_sub_BLACK(ix, ARY_WIDTH+1);
 	if( n != 0 ) {
 		m_bd[ix] = BLACK;
+		m_stack.push_back((uchar)ix);
 		m_stack.push_back((uchar)n);
 	}
 	return n;
@@ -111,7 +112,22 @@ int BoardArray::put_WHITE(int x, int y) {
 			put_sub_WHITE(ix, ARY_WIDTH-1) + put_sub_WHITE(ix, ARY_WIDTH) + put_sub_WHITE(ix, ARY_WIDTH+1);
 	if( n != 0 ) {
 		m_bd[ix] = WHITE;
+		m_stack.push_back((uchar)ix);
 		m_stack.push_back((uchar)n);
 	}
 	return n;
+}
+void BoardArray::un_put_BLACK() {
+	int n = m_stack.back();	m_stack.pop_back();
+	m_bd[m_stack.back()] = EMPTY;	m_stack.pop_back();
+	for(int i = 0; i != n; ++i) {
+		m_bd[m_stack.back()] = WHITE;	m_stack.pop_back();
+	}
+}
+void BoardArray::un_put_WHITE() {
+	int n = m_stack.back();	m_stack.pop_back();
+	m_bd[m_stack.back()] = EMPTY;	m_stack.pop_back();
+	for(int i = 0; i != n; ++i) {
+		m_bd[m_stack.back()] = BLACK;	m_stack.pop_back();
+	}
 }

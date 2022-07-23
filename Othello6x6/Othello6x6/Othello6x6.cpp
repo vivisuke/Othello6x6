@@ -30,6 +30,10 @@ int main()
     ba.print();
 	ba.put_WHITE(3, 5);
     ba.print();
+    ba.un_put_WHITE();
+    ba.print();
+    ba.un_put_BLACK();
+    ba.print();
 
     std::cout << "\nOK.\n";
 }

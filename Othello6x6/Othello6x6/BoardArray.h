@@ -42,6 +42,8 @@ public:
 	int		put_sub_BLACK(int ix, int dir);
 	int		put_WHITE(int x, int y);
 	int		put_sub_WHITE(int ix, int dir);
+	void	un_put_BLACK();
+	void	un_put_WHITE();
 protected:
 
 private:
