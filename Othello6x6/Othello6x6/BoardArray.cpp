@@ -92,7 +92,9 @@ int BoardArray::put_sub_WHITE(int ix, int dir) {	//	返した石数を返す
 	return n;
 }
 int BoardArray::put_BLACK(int x, int y) {
-	int ix = xyToIndex(x, y);
+	return put_BLACK(xyToIndex(x, y));
+}
+int BoardArray::put_BLACK(int ix) {
 	if( m_bd[ix] != EMPTY ) return 0;
 	int n = put_sub_BLACK(ix, -ARY_WIDTH-1) + put_sub_BLACK(ix, -ARY_WIDTH) + put_sub_BLACK(ix, -ARY_WIDTH+1) + 
 			put_sub_BLACK(ix, -1) + put_sub_BLACK(ix, +1) + 
@@ -105,7 +107,9 @@ int BoardArray::put_BLACK(int x, int y) {
 	return n;
 }
 int BoardArray::put_WHITE(int x, int y) {
-	int ix = xyToIndex(x, y);
+	return put_WHITE(xyToIndex(x, y));
+}
+int BoardArray::put_WHITE(int ix) {
 	if( m_bd[ix] != EMPTY ) return 0;
 	int n = put_sub_WHITE(ix, -ARY_WIDTH-1) + put_sub_WHITE(ix, -ARY_WIDTH) + put_sub_WHITE(ix, -ARY_WIDTH+1) + 
 			put_sub_WHITE(ix, -1) + put_sub_WHITE(ix, +1) + 

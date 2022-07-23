@@ -1,13 +1,18 @@
 ﻿#include <iostream>
+#include <chrono>
 #include <assert.h>
 #include "BoardArray.h"
 
 using namespace std;
 
+long long	g_count;		//	末端ノード数
+void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
+
 int main()
 {
     BoardArray ba;
     ba.print();
+#if 0
 	//
 	//int ix = xyToIndex(3, 2);
 	//ba.can_put_sub_BLACK(ix, ARY_WIDTH);
@@ -34,6 +39,39 @@ int main()
     ba.print();
     ba.un_put_BLACK();
     ba.print();
+#endif
+    //
+    g_count = 0;
+	const int depth = 10;
+	cout << "depth = " << depth << "\n";
+	auto start = std::chrono::system_clock::now();      // 計測スタート時刻
+    exp_game_tree(ba, depth);
+    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+    auto dur = end - start;        // 要した時間を計算
+    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+    cout << "count = " << g_count << "\n";
+    cout << "dur = " << msec << "sec.\n";
 
     std::cout << "\nOK.\n";
+}
+//	ゲーム木探索、depth for 残り深さ
+void exp_game_tree(BoardArray& bd, int depth, bool black_turn) {
+	if( depth == 0 ) {		//	末端局面
+		//bd.print();
+		++g_count;
+		return;
+	}
+	for(int ix = xyToIndex(1, 1); ix <= xyToIndex(N_HORZ, N_VERT); ++ix) {
+		if( black_turn ) {
+			if( bd.put_BLACK(ix) ) {
+				exp_game_tree(bd, depth-1, !black_turn);
+				bd.un_put_BLACK();
+			}
+		} else {
+			if( bd.put_WHITE(ix) ) {
+				exp_game_tree(bd, depth-1, !black_turn);
+				bd.un_put_WHITE();
+			}
+		}
+	}
 }

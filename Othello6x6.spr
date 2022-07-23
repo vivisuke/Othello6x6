@@ -6,7 +6,7 @@
 0004 ◎ C 07/24 07/24 0.001│ToDo│BoardArray::put_BLACK(x, y) 実装
 0005 ◎ C 07/24 07/24 0.001│ToDo│BoardArray::put_WHITE(x, y) 実装
 0006 ◎ C 07/24 07/24 0.001│ToDo│BoardArray::un_put_BLACK(x, y), un_put_WHITE(x, y) 実装
-0007 ● C 07/24            │ToDo│
+0007 ◎ C 07/24 07/24 0.001│ToDo│10手先までの局面を全部生成し、末端局面数を求めてみる
 0008 ● C 07/24            │ToDo│
 0009 ● C 07/24            │ToDo│
 0010 ● C 07/24            │ToDo│
