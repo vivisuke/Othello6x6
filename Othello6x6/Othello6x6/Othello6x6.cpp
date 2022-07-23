@@ -25,6 +25,9 @@ int main()
 		cout << "\n";
 	}
 	cout << "\n";
+	//
+	ba.put_BLACK(5, 4);
+    ba.print();
 
     std::cout << "\nOK.\n";
 }

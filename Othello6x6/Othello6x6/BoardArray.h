@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <vector>
+
 typedef unsigned char uchar;
 
 enum {
@@ -36,8 +38,11 @@ public:
 	bool	can_put_sub_BLACK(int ix, int dir);
 	bool	can_put_WHITE(int x, int y);
 	bool	can_put_sub_WHITE(int ix, int dir);
+	int		put_BLACK(int x, int y);
+	int		put_sub_BLACK(int ix, int dir);
 protected:
 
 private:
 	uchar	m_bd[ARY_SIZE];
+	std::vector<uchar>		m_stack;	//	put(), un_put() 用スタック
 };

@@ -41,6 +41,7 @@ void BoardArray::print() {
 		}
 		cout << "\n";
 	}
+	cout << "\n";
 }
 bool BoardArray::can_put_sub_BLACK(int ix, int dir) {
 	if( m_bd[ix+=dir] != WHITE ) return false;
@@ -65,4 +66,28 @@ bool BoardArray::can_put_WHITE(int x, int y) {
 	return	can_put_sub_WHITE(ix, -ARY_WIDTH-1) || can_put_sub_WHITE(ix, -ARY_WIDTH) || can_put_sub_WHITE(ix, -ARY_WIDTH+1) || 
 			can_put_sub_WHITE(ix, -1) || can_put_sub_WHITE(ix, +1) || 
 			can_put_sub_WHITE(ix, ARY_WIDTH-1) || can_put_sub_WHITE(ix, ARY_WIDTH) || can_put_sub_WHITE(ix, ARY_WIDTH+1);
+}
+int BoardArray::put_sub_BLACK(int ix, int dir) {	//	返した石数を返す
+	if( m_bd[ix+=dir] != WHITE ) return 0;
+	int ix0 = ix;
+	int n = 1;
+	while( m_bd[ix+=dir] == WHITE ) { ++n; }
+	if( m_bd[ix] != BLACK ) return 0;
+	do {
+		m_bd[ix-=dir] = BLACK;
+		m_stack.push_back((uchar)ix);
+	} while( ix != ix0 );
+	return n;
+}
+int BoardArray::put_BLACK(int x, int y) {
+	int ix = xyToIndex(x, y);
+	if( m_bd[ix] != EMPTY ) return 0;
+	int n = put_sub_BLACK(ix, -ARY_WIDTH-1) + put_sub_BLACK(ix, -ARY_WIDTH) + put_sub_BLACK(ix, -ARY_WIDTH+1) + 
+			put_sub_BLACK(ix, -1) + put_sub_BLACK(ix, +1) + 
+			put_sub_BLACK(ix, ARY_WIDTH-1) + put_sub_BLACK(ix, ARY_WIDTH) + put_sub_BLACK(ix, ARY_WIDTH+1);
+	if( n != 0 ) {
+		m_bd[ix] = BLACK;
+		m_stack.push_back((uchar)n);
+	}
+	return n;
 }
