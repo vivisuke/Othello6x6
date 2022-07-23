@@ -127,7 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoardArray.cpp" />
     <ClCompile Include="Othello6x6.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BoardArray.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
