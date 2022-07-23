@@ -11,28 +11,33 @@
 
 typedef unsigned char uchar;
 
-class BoardArray {
-public:
-	enum {
-		N_HORZ = 6,
-		N_VERT = 6,
-		ARY_WIDTH = N_HORZ + 1,
-		ARY_SIZE = ARY_WIDTH*(N_VERT+2) + 1,
+enum {
+	N_HORZ = 6,
+	N_VERT = 6,
+	ARY_WIDTH = N_HORZ + 1,
+	ARY_SIZE = ARY_WIDTH*(N_VERT+2) + 1,
 
-		EMPTY = 0,
-		BLACK,
-		WHITE,
-		WALL,			//	番人
-	};
+	EMPTY = 0,
+	BLACK,
+	WHITE,
+	WALL,			//	番人
+};
+inline int xyToIndex(int x, int y) {		//	x: [1, N_HORZ], y: [1, N_VERT]
+	return y * ARY_WIDTH + x;
+}
+
+class BoardArray {
 public:
 	BoardArray();
 public:
 	void	init();
 	void	print();
-	int		xyToIndex(int x, int y) {		//	x: [1, N_HORZ], y: [1, N_VERT]
-		return y * ARY_WIDTH + x;
-	}
-	bool	can_put(int x, int y);
+	bool	can_put_BLACK(int x, int y);
+	bool	can_put_sub_BLACK(int ix, int dir);
+	bool	can_put_WHITE(int x, int y);
+	bool	can_put_sub_WHITE(int ix, int dir);
+protected:
+
 private:
 	uchar	m_bd[ARY_SIZE];
 };

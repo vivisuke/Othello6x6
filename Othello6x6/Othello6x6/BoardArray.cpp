@@ -42,5 +42,27 @@ void BoardArray::print() {
 		cout << "\n";
 	}
 }
-bool can_put(int x, int y) {
+bool BoardArray::can_put_sub_BLACK(int ix, int dir) {
+	if( m_bd[ix+=dir] != WHITE ) return false;
+	while( m_bd[ix+=dir] == WHITE ) {}
+	return m_bd[ix] == BLACK;
+}
+bool BoardArray::can_put_sub_WHITE(int ix, int dir) {
+	if( m_bd[ix+=dir] != BLACK ) return false;
+	while( m_bd[ix+=dir] == BLACK ) {}
+	return m_bd[ix] == WHITE;
+}
+bool BoardArray::can_put_BLACK(int x, int y) {
+	int ix = xyToIndex(x, y);
+	if( m_bd[ix] != EMPTY ) return false;
+	return	can_put_sub_BLACK(ix, -ARY_WIDTH-1) || can_put_sub_BLACK(ix, -ARY_WIDTH) || can_put_sub_BLACK(ix, -ARY_WIDTH+1) || 
+			can_put_sub_BLACK(ix, -1) || can_put_sub_BLACK(ix, +1) || 
+			can_put_sub_BLACK(ix, ARY_WIDTH-1) || can_put_sub_BLACK(ix, ARY_WIDTH) || can_put_sub_BLACK(ix, ARY_WIDTH+1);
+}
+bool BoardArray::can_put_WHITE(int x, int y) {
+	int ix = xyToIndex(x, y);
+	if( m_bd[ix] != EMPTY ) return false;
+	return	can_put_sub_WHITE(ix, -ARY_WIDTH-1) || can_put_sub_WHITE(ix, -ARY_WIDTH) || can_put_sub_WHITE(ix, -ARY_WIDTH+1) || 
+			can_put_sub_WHITE(ix, -1) || can_put_sub_WHITE(ix, +1) || 
+			can_put_sub_WHITE(ix, ARY_WIDTH-1) || can_put_sub_WHITE(ix, ARY_WIDTH) || can_put_sub_WHITE(ix, ARY_WIDTH+1);
 }
