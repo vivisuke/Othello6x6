@@ -28,6 +28,8 @@ int main()
 	//
 	ba.put_BLACK(5, 4);
     ba.print();
+	ba.put_WHITE(3, 5);
+    ba.print();
 
     std::cout << "\nOK.\n";
 }

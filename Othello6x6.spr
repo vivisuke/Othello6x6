@@ -4,7 +4,7 @@
 0002 ◎ C 07/23 07/23 0.001│ToDo│BoardArray クラス追加
 0003 ◎ C 07/24 07/24 0.001│ToDo│BoardArray::can_put_BLACK(x, y) 実装
 0004 ◎ C 07/24 07/24 0.001│ToDo│BoardArray::put_BLACK(x, y) 実装
-0005 ● C 07/24            │ToDo│
+0005 ◎ C 07/24 07/24 0.001│ToDo│BoardArray::put_WHITE(x, y) 実装
 0006 ● C 07/24            │ToDo│
 0007 ● C 07/24            │ToDo│
 0008 ● C 07/24            │ToDo│

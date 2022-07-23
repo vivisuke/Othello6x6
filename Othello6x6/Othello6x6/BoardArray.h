@@ -40,6 +40,8 @@ public:
 	bool	can_put_sub_WHITE(int ix, int dir);
 	int		put_BLACK(int x, int y);
 	int		put_sub_BLACK(int ix, int dir);
+	int		put_WHITE(int x, int y);
+	int		put_sub_WHITE(int ix, int dir);
 protected:
 
 private:
