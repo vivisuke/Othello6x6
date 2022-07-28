@@ -10,23 +10,8 @@
 #pragma once
 
 #include <vector>
+#include "Othello6x6.h"
 
-typedef unsigned char uchar;
-
-enum {
-	N_HORZ = 6,
-	N_VERT = 6,
-	ARY_WIDTH = N_HORZ + 1,
-	ARY_SIZE = ARY_WIDTH*(N_VERT+2) + 1,
-
-	EMPTY = 0,
-	BLACK,
-	WHITE,
-	WALL,			//	番人
-};
-inline int xyToIndex(int x, int y) {		//	x: [1, N_HORZ], y: [1, N_VERT]
-	return y * ARY_WIDTH + x;
-}
 
 class BoardArray {
 public:
@@ -34,9 +19,13 @@ public:
 public:
 	void	init();
 	void	print();
+	int		toIndex(int x, int y, int dir) { return toIndex(xyToIndex(x, y), dir); }
+	int		toIndex(int ix, int dir);
 	bool	can_put_BLACK(int x, int y);
+	bool	can_put_BLACK(int ix);
 	bool	can_put_sub_BLACK(int ix, int dir);
 	bool	can_put_WHITE(int x, int y);
+	bool	can_put_WHITE(int ix);
 	bool	can_put_sub_WHITE(int ix, int dir);
 	int		put_BLACK(int ix);
 	int		put_WHITE(int ix);

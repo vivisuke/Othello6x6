@@ -27,7 +27,7 @@ void BoardArray::init() {
 	m_bd[xyToIndex(4, 3)] = BLACK;
 }
 
-const char *dig_str[] = {"１", "２", "３", "４", "５", "６"};
+static const char *dig_str[] = {"１", "２", "３", "４", "５", "６"};
 void BoardArray::print() {
 	cout << "＼ａｂｃｄｅｆ\n";
 	for(int y = 1; y != N_VERT+1; ++y) {
@@ -43,6 +43,14 @@ void BoardArray::print() {
 	}
 	cout << "\n";
 }
+int BoardArray::toIndex(int ix, int dir) {
+	int v = 0;
+	while( m_bd[ix] != WALL ) {
+		v = v * 3 + m_bd[ix];
+		ix += dir;
+	}
+	return v;
+}
 bool BoardArray::can_put_sub_BLACK(int ix, int dir) {
 	if( m_bd[ix+=dir] != WHITE ) return false;
 	while( m_bd[ix+=dir] == WHITE ) {}
@@ -54,14 +62,18 @@ bool BoardArray::can_put_sub_WHITE(int ix, int dir) {
 	return m_bd[ix] == WHITE;
 }
 bool BoardArray::can_put_BLACK(int x, int y) {
-	int ix = xyToIndex(x, y);
+	return can_put_BLACK(xyToIndex(x, y));
+}
+bool BoardArray::can_put_BLACK(int ix) {
 	if( m_bd[ix] != EMPTY ) return false;
 	return	can_put_sub_BLACK(ix, -ARY_WIDTH-1) || can_put_sub_BLACK(ix, -ARY_WIDTH) || can_put_sub_BLACK(ix, -ARY_WIDTH+1) || 
 			can_put_sub_BLACK(ix, -1) || can_put_sub_BLACK(ix, +1) || 
 			can_put_sub_BLACK(ix, ARY_WIDTH-1) || can_put_sub_BLACK(ix, ARY_WIDTH) || can_put_sub_BLACK(ix, ARY_WIDTH+1);
 }
 bool BoardArray::can_put_WHITE(int x, int y) {
-	int ix = xyToIndex(x, y);
+	return can_put_WHITE(xyToIndex(x, y));
+}
+bool BoardArray::can_put_WHITE(int ix) {
 	if( m_bd[ix] != EMPTY ) return false;
 	return	can_put_sub_WHITE(ix, -ARY_WIDTH-1) || can_put_sub_WHITE(ix, -ARY_WIDTH) || can_put_sub_WHITE(ix, -ARY_WIDTH+1) || 
 			can_put_sub_WHITE(ix, -1) || can_put_sub_WHITE(ix, +1) || 
