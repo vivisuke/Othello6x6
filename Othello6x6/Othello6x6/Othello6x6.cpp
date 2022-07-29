@@ -11,6 +11,9 @@ void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探
 
 int main()
 {
+    BoardIndex bi;
+    bi.print();
+    buildIndexTable();
 #if 0
     BoardArray ba;
     ba.print();
@@ -59,8 +62,6 @@ int main()
     cout << "dur = " << msec << "sec.\n";
 #endif
     //
-    BoardIndex bi;
-    bi.print();
 
     std::cout << "\nOK.\n";
 }

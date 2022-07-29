@@ -12,12 +12,19 @@
 #include <vector>
 #include "Othello6x6.h"
 
-#define		N_IX_HORZ		N_VERT		//	水平方向
-#define		N_IX_VERT		N_HORZ		//	垂直方向
-#define		N_IX_UL_BR		7			//	＼方向
-#define		N_IX_BL_UR		7			//	／方向
+#define		N_IX_HORZ		N_VERT				//	水平方向
+#define		N_IX_VERT		N_HORZ				//	垂直方向
+#define		N_IX_UL_BR		7					//	＼方向
+#define		N_IX_BL_UR		7					//	／方向
+#define		IX_TABLE_SIZE	(3*3*3*3*3*3)		//	3^6
 
 /*
+
+インデックス：
+	パターン配列の若い番地から 3^0, 3^1, 3^2, ... 3^5 とする
+
+
+
 m_ix_ul_br：
 
     ix = 0
@@ -46,6 +53,8 @@ m_ix_bl_ur：
 
 ushort patToIndex(const std::vector<uchar> &lst);
 void indexToPat(ushort index, std::vector<uchar> &lst, int len = 6);
+void indexToPat(ushort index, uchar *ptr, int len = 6);
+void buildIndexTable();
 
 class BoardIndex {
 public:
