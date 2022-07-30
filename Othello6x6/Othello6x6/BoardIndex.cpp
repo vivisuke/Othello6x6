@@ -100,10 +100,10 @@ int put_black(std::vector<uchar> &pat, int i) {
 uchar g_pat[] = {0, 0, 0, 0, 0, 0};
 //uchar g_pat[] = {WALL, 0, 0, 0, 0, 0, 0, WALL};
 int g_exp3[] = {1, 3, 3*3, 3*3*3, 3*3*3*3, 3*3*3*3*3};
-//	index で指定されるパターンの i 番目位置（i:[0, 5]）に黒を打った後のパターンインデックスを返す
+//	index で指定されるパターンの i 番目位置（i:[0, 5]）に黒石を打った後のパターンインデックスを返す
 //	引数（out）：	n1：マイナス方向に返る石数、n2：プラス方向に返る石数を返す
-//	return: 返した石数を返す
-ushort put_black(ushort index, int i, int& n1, int& n2) {
+//	return: 石を打ったあとのパターンインデックス
+ushort put_black(ushort index, int i, uchar& n1, uchar& n2) {
 	int diff = 0;
 	n1 = n2 = 0;		//	返した石数
 	indexToPat(index, &g_pat[0]);
@@ -129,25 +129,91 @@ ushort put_black(ushort index, int i, int& n1, int& n2) {
 		}
 	}
 	if( diff == 0 ) return 0;
-	return index - diff + g_exp3[i];
+	return index - diff + g_exp3[i]*BLACK;
 }
+ushort put_white(ushort index, int i, uchar& n1, uchar& n2) {
+	int diff = 0;
+	n1 = n2 = 0;		//	返した石数
+	indexToPat(index, &g_pat[0]);
+	if( g_pat[i] != EMPTY ) return 0;
+	int k = i - 1;
+	if( k >= 0 && g_pat[k] == BLACK ) {
+		while( --k >= 0 && g_pat[k] == BLACK ) {}
+		if( k >= 0 && g_pat[k] == WHITE ) {
+			n1 = i - k - 1;
+			do {
+				diff += g_exp3[++k];
+			} while( k != i - 1);
+		}
+	}
+	k = i + 1;
+	if( k != N_HORZ && g_pat[k] == BLACK ) {
+		while( ++k != N_HORZ && g_pat[k] == BLACK ) {}
+		if( k != N_HORZ && g_pat[k] == WHITE ) {
+			n2 = k - i - 1;
+			do {
+				diff += g_exp3[--k];
+			} while( k != i + 1);
+		}
+	}
+	if( diff == 0 ) return 0;
+	return index + diff + g_exp3[i]*WHITE;
+}
+//--------------------------------------------------------------------------------
+struct SIndexTableItem {
+public:
+	SIndexTableItem(ushort dst_ix = 0, uchar n1 = 0, uchar n2 = 0)
+		: m_dst_ix(dst_ix)
+		, m_n1(n1)
+		, m_n2(n2)
+	{
+	}
+public:
+	ushort		m_dst_ix;		//	遷移先インデックス
+	uchar		m_n1;			//	x or y マイナス方向に返る石数
+	uchar		m_n2;			//	x or y プラス方向に返る石数
+};
+
+//vector<SIndexTableItem[6]> g_indexTableBlack;
+//vector<SIndexTableItem[6]> g_indexTableWhite;
+SIndexTableItem g_indexTableBlack[IX_TABLE_SIZE*N_HORZ];
+SIndexTableItem g_indexTableWhite[IX_TABLE_SIZE*N_HORZ];
+
 void buildIndexTable() {
-	vector<uchar> pat(N_HORZ+2, WALL);		//	+2 for 番人
+	//g_indexTableBlack.resize(IX_TABLE_SIZE);
+	//g_indexTableWhite.resize(IX_TABLE_SIZE);
+	//vector<uchar> pat(N_HORZ+2, WALL);		//	+2 for 番人
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {
+#if	1
+		for(int i = 0; i != N_HORZ; ++i) {
+			uchar n1, n2;
+			auto ix2 = put_black(ix, i, n1, n2);
+			g_indexTableBlack[ix*N_HORZ + i] = SIndexTableItem(ix2, n1, n2);
+			ix2 = put_white(ix, i, n1, n2);
+			g_indexTableWhite[ix*N_HORZ + i] = SIndexTableItem(ix2, n1, n2);
+		}
+#else
 		cout << ix << ":\t";
 		indexToPat(ix, &pat[1]);
 		for(int i = 1; i != pat.size()-1; ++i) cout << (int)pat[i];
 		cout << "\t";
 		for(int i = 0; i != N_HORZ; ++i) cout << (can_put_black(pat, i) ? "B" : ".");
 		cout << "\t";
-		for(int i = 0; i != N_HORZ; ++i) cout << (can_put_white(pat, i) ? "W" : ".");
-		cout << "\t";
 		for(int i = 0; i != N_HORZ; ++i) {
 			int n1, n2;
 			auto ix2 = put_black(ix, i, n1, n2);
 			cout << ix2 << " ";
 		}
+		cout << "\t";
+		for(int i = 0; i != N_HORZ; ++i) cout << (can_put_white(pat, i) ? "W" : ".");
+		cout << "\t";
+		for(int i = 0; i != N_HORZ; ++i) {
+			int n1, n2;
+			auto ix2 = put_white(ix, i, n1, n2);
+			cout << ix2 << " ";
+		}
 		cout << "\n";
+#endif
 	}
 }
 //--------------------------------------------------------------------------------

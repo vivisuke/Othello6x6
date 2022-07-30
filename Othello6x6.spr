@@ -8,10 +8,10 @@
 0006 ◎ C 07/24 07/24 0.001│ToDo│BoardArray::un_put_BLACK(x, y), un_put_WHITE(x, y) 実装
 0007 ◎ C 07/24 07/24 0.001│ToDo│10手先までの局面を全部生成し、末端局面数を求めてみる
 0008 ◎ C 07/24 07/24 0.001│ToDo│盤面位置・方向を引数にとり、パターンをインデックス化する関数実装
-0009 ● C 07/24            │ToDo│インデックス→打つ場所ごとの遷移先インデックステーブル作成
+0009 ◎ C 07/24 07/30 0.001│ToDo│インデックス→打つ場所ごとの遷移先インデックステーブル作成
 0010 ◎ C 07/28 07/28 0.001│ToDo│BoardIndex クラス追加
 0011 ◎ C 07/30 07/30 0.001│ToDo│ushort put_black(ushort index, int i, int& n1, int& n2)
-0012 ● C 07/30            │ToDo│
+0012 ● C 07/30            │ToDo│ushort put_white(ushort index, int i, int& n1, int& n2)
 0013 ● C 07/30            │ToDo│
 0014 ● C 07/30            │ToDo│
 0015 ● C 07/30            │ToDo│
