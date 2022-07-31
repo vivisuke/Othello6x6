@@ -2,6 +2,7 @@
 #include <chrono>
 #include <assert.h>
 #include "BoardArray.h"
+#include "BoardBitboard.h"
 #include "BoardIndex.h"
 
 using namespace std;
@@ -11,9 +12,13 @@ void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探
 
 int main()
 {
+#if 0
     BoardIndex bi;
     bi.print();
     buildIndexTable();
+#endif
+    BoardBitboard bb;
+    bb.print();
 #if 0
     BoardArray ba;
     ba.print();

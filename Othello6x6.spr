@@ -12,6 +12,6 @@
 0010 ◎ C 07/28 07/28 0.001│ToDo│BoardIndex クラス追加
 0011 ◎ C 07/30 07/30 0.001│ToDo│ushort put_black(ushort index, int i, int& n1, int& n2)
 0012 ● C 07/30            │ToDo│ushort put_white(ushort index, int i, int& n1, int& n2)
-0013 ● C 07/30            │ToDo│
-0014 ● C 07/30            │ToDo│
-0015 ● C 07/30            │ToDo│
+0013 ◎ C 08/01 08/01 0.001│ToDo│BoardBitboard クラス追加
+0014 ● C 08/01            │ToDo│
+0015 ● C 08/01            │ToDo│
