@@ -9,9 +9,14 @@ using namespace std;
 
 long long	g_count;		//	末端ノード数
 void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
+void exp_game_tree(Bitboard black, Bitboard white, int depth);		//	ゲーム木探索、depth for 残り深さ
 
 int main()
 {
+	//int d = 1;
+	//cout << (0x10 << d) << "\n";
+	//d = -1;
+	//cout << (0x10 << d) << "\n";
 #if 0
     BoardIndex bi;
     bi.print();
@@ -19,6 +24,24 @@ int main()
 #endif
     BoardBitboard bb;
     bb.print();
+#if 0
+    for(int y = 0; y != N_VERT; ++y) {
+    	for(int x = 0; x != N_HORZ; ++x) {
+			auto rev = bb.get_revbits(xyToBit(x, y));
+			if( rev != 0 ) cout << "B";
+			else cout << ".";
+    	}
+    	cout << "\n";
+    }
+   	cout << "\n";
+#endif
+	auto start = std::chrono::system_clock::now();      // 計測スタート時刻
+   	exp_game_tree(bb.m_black, bb.m_white, 10);
+    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+    auto dur = end - start;        // 要した時間を計算
+    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+   	cout << "g_count = " << g_count << "\n";
+    cout << "dur = " << msec << "sec.\n";
 #if 0
     BoardArray ba;
     ba.print();
@@ -69,6 +92,26 @@ int main()
     //
 
     std::cout << "\nOK.\n";
+}
+//	ゲーム木探索、depth for 残り深さ
+void exp_game_tree(Bitboard black, Bitboard white, int depth) {
+	if( depth == 0 ) {		//	末端局面
+		//print(black, white);
+		++g_count;
+		return;
+	}
+	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
+	//	８近傍が白の場所のみ取り出す
+	spc &= (white<<DIR_UL) | (white<<DIR_U) | (white<<DIR_UR) | (white<<DIR_L) | 
+			(white>>DIR_UL) | (white>>DIR_U) | (white>>DIR_UR) | (white>>DIR_L);
+	while( spc != 0 ) {
+		Bitboard b = -(_int64)spc & spc;		//	最右ビットを取り出す
+		auto rev = get_revbits(black, white, b);
+		if( rev != 0 ) {
+			exp_game_tree(white ^ rev, black | rev | b, depth - 1);
+		}
+		spc ^= b;		//	最右ビット消去
+	}
 }
 //	ゲーム木探索、depth for 残り深さ
 void exp_game_tree(BoardArray& bd, int depth, bool black_turn) {

@@ -13,5 +13,10 @@
 0011 ◎ C 07/30 07/30 0.001│ToDo│ushort put_black(ushort index, int i, int& n1, int& n2)
 0012 ● C 07/30            │ToDo│ushort put_white(ushort index, int i, int& n1, int& n2)
 0013 ◎ C 08/01 08/01 0.001│ToDo│BoardBitboard クラス追加
-0014 ● C 08/01            │ToDo│
+0014 ◎ C 08/01 08/01 0.001│ToDo│BoardBitboard::get_revbits(Bitboard bit)
+0015 ◎ C 08/01 08/01 0.001│ToDo│Bitboard：10手先までの局面を全部生成し、末端局面数を求めてみる
+0015 ● C 08/01            │ToDo│
+0015 ● C 08/01            │ToDo│
+0015 ● C 08/01            │ToDo│
+0015 ● C 08/01            │ToDo│
 0015 ● C 08/01            │ToDo│
