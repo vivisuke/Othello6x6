@@ -17,6 +17,7 @@
 #define		C4_BIT		(0x08<<(8*2))
 #define		D3_BIT		(0x04<<(8*3))
 #define		D4_BIT		(0x04<<(8*2))
+#define		E4_BIT		(0x02<<(8*2))
 
 #define		DIR_UL		9
 #define		DIR_U		8
@@ -43,7 +44,8 @@ public:
 	void	init();
 	void	print() const;
 	Bitboard	get_revbits(Bitboard bit) const;	//	bit 位置に黒を打った場合に、返る白石ビットを返す
-	Bitboard	get_revbits_dir(Bitboard bit, int dir) const;		//	
+	//Bitboard	get_revbits_dir(Bitboard bit, int dir) const;		//	
+	void	put_black(Bitboard bit);
 public:
 	Bitboard	m_black;
 	Bitboard	m_white;

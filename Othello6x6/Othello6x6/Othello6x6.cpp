@@ -9,7 +9,7 @@ using namespace std;
 
 long long	g_count;		//	末端ノード数
 void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
-void exp_game_tree(Bitboard black, Bitboard white, int depth);		//	ゲーム木探索、depth for 残り深さ
+void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
 
 int main()
 {
@@ -23,6 +23,7 @@ int main()
     buildIndexTable();
 #endif
     BoardBitboard bb;
+    bb.put_black(E4_BIT);
     bb.print();
 #if 0
     for(int y = 0; y != N_VERT; ++y) {
@@ -36,12 +37,12 @@ int main()
    	cout << "\n";
 #endif
 	auto start = std::chrono::system_clock::now();      // 計測スタート時刻
-   	exp_game_tree(bb.m_black, bb.m_white, 10);
+   	exp_game_tree(bb.m_white, bb.m_black, 10);
     auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
     auto dur = end - start;        // 要した時間を計算
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
    	cout << "g_count = " << g_count << "\n";
-    cout << "dur = " << msec << "sec.\n";
+    cout << "dur = " << msec << "msec.\n";
 #if 0
     BoardArray ba;
     ba.print();
@@ -87,19 +88,20 @@ int main()
     auto dur = end - start;        // 要した時間を計算
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
     cout << "count = " << g_count << "\n";
-    cout << "dur = " << msec << "sec.\n";
+    cout << "dur = " << msec << "msec.\n";
 #endif
     //
 
     std::cout << "\nOK.\n";
 }
 //	ゲーム木探索、depth for 残り深さ
-void exp_game_tree(Bitboard black, Bitboard white, int depth) {
+void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed) {
 	if( depth == 0 ) {		//	末端局面
 		//print(black, white);
 		++g_count;
 		return;
 	}
+	bool put = false;		//	着手箇所あり
 	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
 	//	８近傍が白の場所のみ取り出す
 	spc &= (white<<DIR_UL) | (white<<DIR_U) | (white<<DIR_UR) | (white<<DIR_L) | 
@@ -108,9 +110,17 @@ void exp_game_tree(Bitboard black, Bitboard white, int depth) {
 		Bitboard b = -(_int64)spc & spc;		//	最右ビットを取り出す
 		auto rev = get_revbits(black, white, b);
 		if( rev != 0 ) {
+			put = true;
 			exp_game_tree(white ^ rev, black | rev | b, depth - 1);
 		}
 		spc ^= b;		//	最右ビット消去
+	}
+	if( !put ) {		//	パスの場合
+		if( !passed ) {		//	１手前がパスでない
+			exp_game_tree(white, black, depth, true);
+		} else {			//	１手前がパス → 双方パスで終局
+			//print(black, white);
+		}
 	}
 }
 //	ゲーム木探索、depth for 残り深さ

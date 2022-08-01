@@ -85,3 +85,11 @@ Bitboard BoardBitboard::get_revbits_dir(Bitboard bit, int dir) const {
 	return 0;
 }
 #endif
+
+void BoardBitboard::put_black(Bitboard bit) {
+	auto rev = get_revbits(bit);
+	if( rev != 0 ) {
+		m_black |= rev | bit;
+		m_white ^= rev;
+	}
+}
