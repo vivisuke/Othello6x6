@@ -16,7 +16,7 @@
 0014 ◎ C 08/01 08/01 0.001│ToDo│BoardBitboard::get_revbits(Bitboard bit)
 0015 ◎ C 08/01 08/01 0.001│ToDo│Bitboard：10手先までの局面を全部生成し、末端局面数を求めてみる
 0016 ◎ C 08/01 08/01 0.001│問題│局面数カウント：パスの場合に対応していない
-0017 ● C 08/01            │ToDo│
-0018 ● C 08/01            │ToDo│
-0019 ● C 08/01            │ToDo│
-0020 ● C 08/01            │ToDo│
+0017 ● C 08/02            │ToDo│BoardBitboard::get_revbits(Bitboard bit)：非ループ版実装＆計測
+0018 ◎ C 08/13 08/14 0.001│ToDo│ランダムに着手を選び、指定空き数まで進めることを可能に
+0019 ● C 08/13            │ToDo│
+0020 ● C 08/13            │ToDo│

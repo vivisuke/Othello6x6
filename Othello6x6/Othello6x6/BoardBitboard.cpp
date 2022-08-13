@@ -44,6 +44,13 @@ Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit) {
 }
 Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir) {
 	Bitboard b = 0;
+#if	0
+	if( dir > 0 ) {
+		if( (white & (bit <<= dir)) == 0 ) return 0;	//	白でない
+		if( (white & (bit <<= dir)) == 0 ) {	//	白でない
+			if( (black & 
+		}
+#else
 	if( dir > 0 ) {
 		if( (white & (bit <<= dir)) == 0 ) return 0;	//	白でない
 		do {
@@ -57,6 +64,7 @@ Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir) 
 		} while( (white & (bit >>= dir)) != 0 );		//	白が続く間ループ
 	}
 	if( (black & bit) != 0 ) return b;
+#endif
 	return 0;
 }
 //	bit 位置に黒を打った場合に、返る白石ビットを返す
