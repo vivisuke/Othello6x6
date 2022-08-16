@@ -8,6 +8,8 @@
 //----------------------------------------------------------------------
 
 #include <iostream>
+#include <bit>
+#include <cstdint>
 #include "BoardBitboard.h"
 
 using namespace std;
@@ -20,6 +22,9 @@ void BoardBitboard::init() {
 }
 static const char *dig_str[] = {"１", "２", "３", "４", "５", "６"};
 void print(Bitboard black, Bitboard white) {
+	auto bc = popcount(black);
+	auto wc = popcount(white);
+	cout << "Ｘ：" << bc << " ○：" << wc << " ・：" << (N_HORZ*N_VERT - bc - wc) << "\n";
 	cout << "＼ａｂｃｄｅｆ\n";
 	for(int y = 0; y != N_VERT; ++y) {
 		cout << dig_str[y];
@@ -100,4 +105,15 @@ void BoardBitboard::put_black(Bitboard bit) {
 		m_black |= rev | bit;
 		m_white ^= rev;
 	}
+}
+int popcount(Bitboard bits) {
+	bits = (bits & 0x555555555555) + ((bits >> 1) & 0x555555555555);    //  2bitごとに計算
+    bits = (bits & 0x333333333333) + ((bits >> 2) & 0x333333333333);    //  4bitごとに計算
+    bits = (bits & 0x0f0f0f0f0f0f) + ((bits >> 4) & 0x0f0f0f0f0f0f);    //  8bitごとに計算
+    bits = (bits & 0x00ff00ff00ff) + ((bits >> 8) & 0x00ff00ff00ff);    //  16bitごとに計算
+    bits = (bits & 0xffff0000ffff) + ((bits >> 16) & 0xffff0000ffff);    //  32bitごとに計算
+    bits = (bits & 0x0000ffffffff) + ((bits >> 32) & 0x0000ffffffff);    //  64bitごとに計算
+    return (int)bits;
+	//auto i = static_cast<std::uint64_t>(bb);
+	//return std::popcount(i);
 }

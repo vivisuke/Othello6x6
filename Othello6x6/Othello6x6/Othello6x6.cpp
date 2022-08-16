@@ -54,7 +54,8 @@ int main()
 	    cout << "dur = " << msec << "msec.\n";
    	}
    	if( true ) {
-	   	put_randomly(bb.m_white, bb.m_black, 15);	//	15 for 16個空き
+	   	//put_randomly(bb.m_white, bb.m_black, 15);	//	15 for 16個空き
+	   	put_randomly(bb.m_white, bb.m_black, 21);	//	21 for 10個空き
    	}
 #if 0
     BoardArray ba;
