@@ -37,6 +37,7 @@ void print(Bitboard black, Bitboard white);
 Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit);	//	bit 位置に黒を打った場合に、返る白石ビットを返す
 Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir);		//	
 int popcount(Bitboard);
+Bitboard negaAlpha(Bitboard black, Bitboard white, int &ev);		//	終盤完全読み
 
 class BoardBitboard {
 public:

@@ -11,11 +11,16 @@ using namespace std;
 
 long long	g_count;		//	末端ノード数
 std::random_device g_rnd;     // 非決定的な乱数生成器を生成
-std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
+//std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
+std::mt19937 g_mt(1);     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
 
+void init(Bitboard &black, Bitboard &white) {
+	black = C4_BIT | D3_BIT;
+	white = C3_BIT | D4_BIT;
+}
 void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
 void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
-void put_randomly(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
+void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
 
 int main()
 {
@@ -29,9 +34,6 @@ int main()
     buildIndexTable();
 #endif
     //if( false ) {
-	    BoardBitboard bb;
-	    bb.put_black(E4_BIT);
-	    bb.print();
     //}
 #if 0
     for(int y = 0; y != N_VERT; ++y) {
@@ -45,6 +47,9 @@ int main()
    	cout << "\n";
 #endif
    	if( false ) {		//	10手先の局面数カウント
+	    BoardBitboard bb;
+	    bb.put_black(E4_BIT);
+	    bb.print();
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
 	   	exp_game_tree(bb.m_white, bb.m_black, 10);
 	    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
@@ -54,8 +59,17 @@ int main()
 	    cout << "dur = " << msec << "msec.\n";
    	}
    	if( true ) {
-	   	//put_randomly(bb.m_white, bb.m_black, 15);	//	15 for 16個空き
-	   	put_randomly(bb.m_white, bb.m_black, 21);	//	21 for 10個空き
+   		Bitboard black, white;
+   		init(black, white);
+	   	//put_randomly(white, black, 16);	//	16 for 16個空き
+	   	//put_randomly(white, black, 22);	//	22 for 10個空き
+	   	//put_randomly(white, black, 29);	//	29 for 3個空き
+	   	put_randomly(white, black, 30);	//	30 for 2個空き
+	   	print(black, white);
+	   	int ev = 0;
+	   	auto pos = negaAlpha(black, white, ev);
+	   	cout << "ev = " << ev << "\n";
+	   	cout << "pos = " << pos << "\n";
    	}
 #if 0
     BoardArray ba;
@@ -176,9 +190,9 @@ void exp_game_tree(BoardArray& bd, int depth, bool black_turn) {
 	}
 }
 //	ランダムに手を進める、depth for 残り深さ
-void put_randomly(Bitboard black, Bitboard white, int depth, bool passed) {
+void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed) {
 	if( depth == 0 ) {		//	末端局面
-		print(black, white);
+		//print(black, white);
 		return;
 	}
 	bool put = false;		//	着手箇所あり
@@ -200,12 +214,14 @@ void put_randomly(Bitboard black, Bitboard white, int depth, bool passed) {
 		if( !passed ) {		//	１手前がパスでない
 			put_randomly(white, black, depth, true);
 		} else {			//	１手前がパス → 双方パスで終局
-			print(black, white);
+			//print(black, white);
 		}
 	} else {
 		int ix = (g_mt() % (lst.size()/2)) * 2;
 		auto b = lst[ix];
 		auto rev = lst[ix + 1];
-		put_randomly(white ^ rev, black | rev | b, depth - 1);
+		black |= b | rev;
+		white ^= rev;
+		put_randomly(white, black, depth - 1);
 	}
 }
