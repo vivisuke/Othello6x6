@@ -24,6 +24,16 @@ void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false
 
 int main()
 {
+	assert( xyToBit(N_HORZ-1, N_VERT-1) == 1 );
+	assert( xyToBit(0, N_VERT-1) == 0x20 );
+	assert( xyToBit(0, 0) == ((Bitboard)0x20<<40) );
+	assert( xyToBit(2, 3) == C4_BIT );
+	assert( bitToX(1) == N_HORZ - 1 );				//	f6
+	assert( bitToY(1) == N_VERT - 1 );
+	assert( bitToX(((Bitboard)0x20<<40)) == 0 );	//	a1
+	assert( bitToY(((Bitboard)0x20<<40)) == 0 );
+	assert( bitToX(C4_BIT) == 2 );
+	assert( bitToY(C4_BIT) == 3 );
 	//int d = 1;
 	//cout << (0x10 << d) << "\n";
 	//d = -1;
@@ -63,13 +73,14 @@ int main()
    		init(black, white);
 	   	//put_randomly(white, black, 16);	//	16 for 16個空き
 	   	//put_randomly(white, black, 22);	//	22 for 10個空き
-	   	//put_randomly(white, black, 29);	//	29 for 3個空き
-	   	put_randomly(white, black, 30);	//	30 for 2個空き
+	   	//put_randomly(white, black, 24);	//	24 for 8個空き
+	   	put_randomly(white, black, 29);	//	29 for 3個空き
+	   	//put_randomly(white, black, 30);	//	30 for 2個空き
 	   	print(black, white);
 	   	int ev = 0;
 	   	auto pos = negaAlpha(black, white, ev);
 	   	cout << "ev = " << ev << "\n";
-	   	cout << "pos = " << pos << "\n";
+	   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n";
    	}
 #if 0
     BoardArray ba;

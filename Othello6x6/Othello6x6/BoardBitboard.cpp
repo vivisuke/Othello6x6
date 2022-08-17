@@ -10,6 +10,7 @@
 #include <iostream>
 #include <bit>
 #include <cstdint>
+#include <assert.h>
 #include "BoardBitboard.h"
 
 using namespace std;
@@ -174,4 +175,23 @@ Bitboard negaAlpha(Bitboard black, Bitboard white, int &alpha) {
 		spc ^= b;		//	最右ビット消去
 	}
 	return mxpos;
+}
+int bitToX(Bitboard b) {		//	x: [0, N_HORZ), y: [0, N_VERT)
+	if( b != 0 ) {
+		while( (b & 255) == 0 )
+			b >>= 8;
+		int mask = 1;
+		for(int x = N_HORZ; --x >= 0; mask<<=1) {
+			if( (b & mask) != 0 ) return x;
+		}
+	}
+	assert(0);
+	return -1;
+}
+int bitToY(Bitboard b) {		//	x: [0, N_HORZ), y: [0, N_VERT)
+	for(int y = N_HORZ; --y >= 0; b>>=8) {
+		if( (b & 255) != 0 ) return y;
+	}
+	assert(0);
+	return -1;
 }

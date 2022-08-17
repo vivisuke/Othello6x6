@@ -21,7 +21,7 @@
 0019 ◎ C 08/16 08/18 0.001│ToDo│終局まで完全読み：NegaAlpha(b, w)
 0020 ◎ C 08/17 08/17 0.001│ToDo│int popcount(Bitboard) 実装
 0021 ◎ C 08/18 08/18 0.001│ToDo│put_randomly(&black, &white)：引数盤面を修正
-0022 ● C 08/18            │ToDo│
+0022 ◎ C 08/18 08/18 0.001│ToDo│bitToXY(Bitboard b) 実装
 0023 ● C 08/18            │ToDo│
 0024 ● C 08/18            │ToDo│
 0025 ● C 08/18            │ToDo│

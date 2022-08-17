@@ -11,6 +11,19 @@
 
 #include "Othello6x6.h"
 
+/*
+	Bitboard:
+
+	＼ ａ ｂ ｃ ｄ ｅ ｆ →X
+	１ 20 10 08 04 02 01	<< 40
+	２ 20 10 08 04 02 01	<< 32
+	３ 20 10 08 04 02 01	<< 24
+	４ 20 10 08 04 02 01	<< 16
+	５ 20 10 08 04 02 01	<< 8
+	６ 20 10 08 04 02 01	
+	↓Y
+*/
+
 #define		BB_MASK		0x3f3f3f3f3f3f
 
 #define		C3_BIT		(0x08<<(8*3))
@@ -31,8 +44,13 @@
 typedef unsigned _int64	Bitboard;
 
 inline Bitboard xyToBit(int x, int y) {		//	x: [0, N_HORZ), y: [0, N_VERT)
+	int nx = (N_HORZ-1-x);
+	int ny = (N_VERT-1-y);
+	int n = ny*8 + nx;
 	return (Bitboard)1<< ((N_VERT-1-y)*8 + (N_HORZ-1-x));
 }
+int bitToX(Bitboard b);		//	x: [0, N_HORZ), y: [0, N_VERT)
+int bitToY(Bitboard b);		//	x: [0, N_HORZ), y: [0, N_VERT)
 void print(Bitboard black, Bitboard white);
 Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit);	//	bit 位置に黒を打った場合に、返る白石ビットを返す
 Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir);		//	
