@@ -56,6 +56,7 @@ Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit);	//	bit 位�
 Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir);		//	
 int popcount(Bitboard);
 Bitboard negaAlpha(Bitboard black, Bitboard white, int &ev);		//	終盤完全読み
+void put_black(Bitboard &black, Bitboard &white, Bitboard bit);
 
 class BoardBitboard {
 public:

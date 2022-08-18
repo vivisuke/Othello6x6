@@ -11,8 +11,8 @@ using namespace std;
 
 long long	g_count;		//	末端ノード数
 std::random_device g_rnd;     // 非決定的な乱数生成器を生成
-//std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
-std::mt19937 g_mt(1);     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
+std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
+//std::mt19937 g_mt(1);     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
 
 void init(Bitboard &black, Bitboard &white) {
 	black = C4_BIT | D3_BIT;
@@ -21,6 +21,7 @@ void init(Bitboard &black, Bitboard &white) {
 void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
 void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
 void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
+void perfect_game(Bitboard black, Bitboard white);		//	最善手で終局まで進める
 
 int main()
 {
@@ -68,7 +69,7 @@ int main()
 	   	cout << "g_count = " << g_count << "\n";
 	    cout << "dur = " << msec << "msec.\n";
    	}
-   	if( true ) {
+   	if( false ) {
    		Bitboard black, white;
    		init(black, white);
 	   	//put_randomly(white, black, 16);	//	16 for 16個空き
@@ -81,6 +82,27 @@ int main()
 	   	auto pos = negaAlpha(black, white, ev);
 	   	cout << "ev = " << ev << "\n";
 	   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n";
+   	}
+   	if( false ) {
+   		Bitboard black, white;
+   		init(black, white);
+	   	//put_randomly(white, black, 12);	//	12 for 20個空き
+	   	//put_randomly(white, black, 16);	//	16 for 16個空き
+	   	put_randomly(white, black, 24);	//	24 for 8個空き
+	   	print(black, white);
+	   	int ev = 0;
+	   	auto pos = negaAlpha(black, white, ev);
+	   	cout << "ev = " << ev << "\n";
+	   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n";
+   	}
+   	if( true ) {
+   		Bitboard black, white;
+   		init(black, white);
+	   	put_randomly(black, white, 16);		//	16個空き
+	   	//put_randomly(black, white, 22);	//	10個空き
+	   	//put_randomly(black, white, 24);	//	24 for 8個空き
+	   	//put_randomly(black, white, 28);	//	28 for 4個空き
+	   	perfect_game(black, white);
    	}
 #if 0
     BoardArray ba;
@@ -234,5 +256,28 @@ void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed) {
 		black |= b | rev;
 		white ^= rev;
 		put_randomly(white, black, depth - 1);
+	}
+}
+void perfect_game(Bitboard black, Bitboard white) {
+	bool passed = false;
+	for(bool rev = false; ; rev = !rev) {
+		if( !rev )
+			print(black, white);
+		else
+			print(white, black);
+	   	if( popcount(black) + popcount(white) == N_HORZ*N_VERT ) break;
+	   	int ev = 0;
+	   	auto pos = negaAlpha(black, white, ev);
+	   	if( pos == 0 ) {
+	   		if( passed ) break;
+	   		passed = true;
+	   		cout << "pass\n\n";
+	   	} else {
+	   		passed = false;
+		   	cout << "ev = " << ev << "\n";
+		   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n\n";
+	   	}
+	   	put_black(black, white, pos);
+	   	std::swap(black, white);
 	}
 }

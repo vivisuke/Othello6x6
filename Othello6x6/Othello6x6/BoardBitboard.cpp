@@ -100,12 +100,15 @@ Bitboard BoardBitboard::get_revbits_dir(Bitboard bit, int dir) const {
 }
 #endif
 
-void BoardBitboard::put_black(Bitboard bit) {
-	auto rev = get_revbits(bit);
+void put_black(Bitboard &black, Bitboard &white, Bitboard bit) {
+	auto rev = get_revbits(black, white, bit);
 	if( rev != 0 ) {
-		m_black |= rev | bit;
-		m_white ^= rev;
+		black |= rev | bit;
+		white ^= rev;
 	}
+}
+void BoardBitboard::put_black(Bitboard bit) {
+	::put_black(m_black, m_white, bit);
 }
 int popcount(Bitboard bits) {
 	bits = (bits & 0x555555555555) + ((bits >> 1) & 0x555555555555);    //  2bitごとに計算
@@ -121,7 +124,7 @@ int popcount(Bitboard bits) {
 int negaAlpha(Bitboard black, Bitboard white, int alpha, int beta, bool passed = false) {
 	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
 	if( spc == 0 ) {	//	空欄無しの場合
-		print(black, white);
+		//print(black, white);
 		return popcount(black) - popcount(white);
 	}
 	bool put = false;		//	着手箇所あり
@@ -143,7 +146,8 @@ int negaAlpha(Bitboard black, Bitboard white, int alpha, int beta, bool passed =
 		if( !passed ) {		//	１手前がパスでない
 			return -negaAlpha(white, black, -beta, -alpha, true);
 		} else {			//	１手前がパス → 双方パスで終局
-			print(black, white);
+			//print(black, white);
+			//	undone: 空欄は勝者のものとしてカウント
 			return popcount(black) - popcount(white);
 		}
 	} else
