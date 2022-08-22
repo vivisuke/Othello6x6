@@ -21,7 +21,7 @@ void init(Bitboard &black, Bitboard &white) {
 void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
 void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
 void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
-int perfect_game(Bitboard black, Bitboard white);		//	最善手で終局まで進める
+int perfect_game(Bitboard black, Bitboard white, bool=false);		//	最善手で終局まで進める
 
 int main()
 {
@@ -113,6 +113,12 @@ int main()
 		   	int ev = perfect_game(black, white);
 		   	cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
    		}
+   	}
+   	if( true ) {
+   		Bitboard black = 0x042910080c3e;
+   		Bitboard white = 0x32140f173000;
+	   	int ev = perfect_game(black, white, true);
+	   	cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
    	}
 #if 0
     BoardArray ba;
@@ -268,11 +274,11 @@ void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed) {
 		put_randomly(white, black, depth - 1);
 	}
 }
-int perfect_game(Bitboard black, Bitboard white) {
+int perfect_game(Bitboard black, Bitboard white, bool verbose) {
 	bool passed = false;
    	int ev;
 	for(bool rev = false; ; rev = !rev) {
-		if( false ) {
+		if( verbose ) {
 			if( !rev )
 				print(black, white);
 			else
@@ -284,11 +290,14 @@ int perfect_game(Bitboard black, Bitboard white) {
 	   	if( pos == 0 ) {
 	   		if( passed ) break;
 	   		passed = true;
-	   		//cout << "pass\n\n";
+	   		if( verbose )
+		   		cout << "pass\n\n";
 	   	} else {
 	   		passed = false;
-		   	//cout << "ev = " << ev << "\n";
-		   	//cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n\n";
+	   		if( verbose ) {
+			   	cout << "ev = " << ev << "\n";
+			   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n\n";
+	   		}
 	   	}
 	   	put_black(black, white, pos);
 	   	std::swap(black, white);
