@@ -21,7 +21,7 @@ void init(Bitboard &black, Bitboard &white) {
 void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
 void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
 void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
-void perfect_game(Bitboard black, Bitboard white);		//	最善手で終局まで進める
+int perfect_game(Bitboard black, Bitboard white);		//	最善手で終局まで進める
 
 int main()
 {
@@ -95,14 +95,24 @@ int main()
 	   	cout << "ev = " << ev << "\n";
 	   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n";
    	}
-   	if( true ) {
+   	if( false ) {
    		Bitboard black, white;
    		init(black, white);
-	   	put_randomly(black, white, 16);		//	16個空き
+	   	//put_randomly(black, white, 16);		//	16個空き
 	   	//put_randomly(black, white, 22);	//	10個空き
-	   	//put_randomly(black, white, 24);	//	24 for 8個空き
+	   	put_randomly(black, white, 24);	//	24 for 8個空き
+	   	cout << bb_to_string(black) << " " << bb_to_string(white) << "\n";
 	   	//put_randomly(black, white, 28);	//	28 for 4個空き
 	   	perfect_game(black, white);
+   	}
+   	if( true ) {
+   		Bitboard black, white;
+   		for(int i = 0; i != 100; ++i) {
+	   		init(black, white);
+		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	int ev = perfect_game(black, white);
+		   	cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
+   		}
    	}
 #if 0
     BoardArray ba;
@@ -258,26 +268,30 @@ void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed) {
 		put_randomly(white, black, depth - 1);
 	}
 }
-void perfect_game(Bitboard black, Bitboard white) {
+int perfect_game(Bitboard black, Bitboard white) {
 	bool passed = false;
+   	int ev;
 	for(bool rev = false; ; rev = !rev) {
-		if( !rev )
-			print(black, white);
-		else
-			print(white, black);
+		if( false ) {
+			if( !rev )
+				print(black, white);
+			else
+				print(white, black);
+		}
 	   	if( popcount(black) + popcount(white) == N_HORZ*N_VERT ) break;
-	   	int ev = 0;
+	   	ev = 0;
 	   	auto pos = negaAlpha(black, white, ev);
 	   	if( pos == 0 ) {
 	   		if( passed ) break;
 	   		passed = true;
-	   		cout << "pass\n\n";
+	   		//cout << "pass\n\n";
 	   	} else {
 	   		passed = false;
-		   	cout << "ev = " << ev << "\n";
-		   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n\n";
+		   	//cout << "ev = " << ev << "\n";
+		   	//cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n\n";
 	   	}
 	   	put_black(black, white, pos);
 	   	std::swap(black, white);
 	}
+	return ev;
 }

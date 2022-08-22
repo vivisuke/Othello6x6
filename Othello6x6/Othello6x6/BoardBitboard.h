@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <string>
 #include "Othello6x6.h"
 
 /*
@@ -57,6 +58,9 @@ Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir);
 int popcount(Bitboard);
 Bitboard negaAlpha(Bitboard black, Bitboard white, int &ev);		//	終盤完全読み
 void put_black(Bitboard &black, Bitboard &white, Bitboard bit);
+int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir, int len=8);
+std::string bb_to_string(Bitboard bb);
+
 
 class BoardBitboard {
 public:

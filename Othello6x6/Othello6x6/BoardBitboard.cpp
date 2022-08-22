@@ -199,3 +199,26 @@ int bitToY(Bitboard b) {		//	x: [0, N_HORZ), y: [0, N_VERT)
 	assert(0);
 	return -1;
 }
+//	pos:
+//		横方向：左端指定
+//		縦方向：上端指定
+//		左上右下方向：左端上端指定
+//		右上左下方向：右端上端指定
+int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir, int len) {
+	int index = 0;
+	for(int i = 0; i != len; ++i) {
+		index *= 3;
+		index += (white&pos) != 0 ? 2 : (black&pos) != 0 ? 1 : 0;
+		pos >>= dir;
+	}
+	return index;
+}
+string bb_to_string(Bitboard bb) {
+	const int len = 2*6;
+	string str(len, ' ');
+	for(int i = 0; i != len; ++i) {
+		str[len-1-i] = "0123456789abcdef"[bb % 16];
+		bb /= 16;
+	}
+	return str;
+}
