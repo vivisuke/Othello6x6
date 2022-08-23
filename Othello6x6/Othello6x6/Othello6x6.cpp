@@ -107,16 +107,37 @@ int main()
    	}
    	if( true ) {
    		Bitboard black, white;
-   		for(int i = 0; i != 100; ++i) {
+		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
+   		for(int i = 0; i != 10000; ++i) {
 	   		init(black, white);
 		   	put_randomly(black, white, 24);	//	24 for 8個空き
-		   	int ev = perfect_game(black, white);
+		   	int ev = 0;
+		   	auto pos = negaAlpha(black, white, ev);
+		   	//int ev = perfect_game(black, white);
 		   	cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
    		}
+	    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+	    auto dur = end - start;        // 要した時間を計算
+	    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+	    cout << "\n# dur = " << msec << "msec.\n";
    	}
-   	if( true ) {
+   	if( false ) {
+   		//Bitboard black = 0x042910080c3e;		//	8個空き
+   		//Bitboard white = 0x32140f173000;
+   		Bitboard black = 0x070f050b013e;		//	2個空き
+   		Bitboard white = 0x38303a143e00;
+   		print(black, white);
+	   	int ev = 0;
+	   	auto pos = negaAlpha(black, white, ev);
+	   	cout << "ev = " << ev << "\n";
+	   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n";
+	   	//int ev = perfect_game(black, white, true);
+	   	//cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
+   	}
+   	if( false ) {
    		Bitboard black = 0x042910080c3e;
    		Bitboard white = 0x32140f173000;
+   		print(black, white);
 	   	int ev = perfect_game(black, white, true);
 	   	cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
    	}
@@ -276,31 +297,45 @@ void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed) {
 }
 int perfect_game(Bitboard black, Bitboard white, bool verbose) {
 	bool passed = false;
-   	int ev;
+   	int alpha;
 	for(bool rev = false; ; rev = !rev) {
 		if( verbose ) {
-			if( !rev )
+			if( !rev ) {
+				cout << bb_to_string(black) << " " << bb_to_string(white) << "\n";
 				print(black, white);
-			else
+			} else {
+				cout << bb_to_string(white) << " " << bb_to_string(black) << "\n";
 				print(white, black);
+			}
 		}
 	   	if( popcount(black) + popcount(white) == N_HORZ*N_VERT ) break;
-	   	ev = 0;
-	   	auto pos = negaAlpha(black, white, ev);
+	   	alpha = 0;
+	   	auto pos = negaAlpha(black, white, alpha);
 	   	if( pos == 0 ) {
-	   		if( passed ) break;
+			if (passed) {	//	双方パス
+				int bc = popcount(black);
+				int wc = popcount(white);
+				alpha = bc - wc;
+				Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
+				if( spc != 0 ) {	//	空欄ありの場合
+					if( bc > wc ) alpha += popcount(spc);
+					else if( bc < wc ) alpha -= popcount(spc);
+				}
+			   	cout << "alpha = " << alpha << "\n";
+				break;
+			}
 	   		passed = true;
 	   		if( verbose )
 		   		cout << "pass\n\n";
 	   	} else {
 	   		passed = false;
 	   		if( verbose ) {
-			   	cout << "ev = " << ev << "\n";
+			   	cout << "alpha = " << alpha << "\n";
 			   	cout << "pos = " << (char)('a'+bitToX(pos)) << (char)('1'+bitToY(pos)) << "\n\n";
 	   		}
 	   	}
 	   	put_black(black, white, pos);
 	   	std::swap(black, white);
 	}
-	return ev;
+	return alpha;
 }

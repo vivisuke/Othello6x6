@@ -147,11 +147,20 @@ int negaAlpha(Bitboard black, Bitboard white, int alpha, int beta, bool passed =
 			return -negaAlpha(white, black, -beta, -alpha, true);
 		} else {			//	１手前がパス → 双方パスで終局
 			//print(black, white);
-			//	undone: 空欄は勝者のものとしてカウント
-			return popcount(black) - popcount(white);
+			//	done: 空欄は勝者のものとしてカウント
+			int bc = popcount(black);
+			int wc = popcount(white);
+			alpha = bc - wc;
+			spc = ~(black | white) & BB_MASK;		//	空欄箇所
+			if( spc != 0 ) {	//	空欄ありの場合
+				if( bc > wc ) alpha += popcount(spc);
+				else if( bc < wc ) alpha -= popcount(spc);
+			}
+			//return alpha;
+			//return popcount(black) - popcount(white);
 		}
-	} else
-		return alpha;
+	}
+	return alpha;
 }
 //	（黒番）終盤完全読み
 //	双方着手不可能な場合は、alpha: -INT_MAX, return: 0 を返す
@@ -183,10 +192,10 @@ Bitboard negaAlpha(Bitboard black, Bitboard white, int &alpha) {
 		int bc = popcount(black);
 		int wc = popcount(white);
 		alpha = bc - wc;
-		int sc = popcount(spc);
+		spc = ~(black | white) & BB_MASK;		//	空欄箇所
 		if( spc != 0 ) {	//	空欄ありの場合
-			if( bc > wc ) alpha += sc;
-			else if( bc < wc ) alpha -= sc;
+			if( bc > wc ) alpha += popcount(spc);
+			else if( bc < wc ) alpha -= popcount(spc);
 		}
 	}
 	return mxpos;
