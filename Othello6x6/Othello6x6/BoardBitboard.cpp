@@ -233,6 +233,14 @@ int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir, int len
 	}
 	return index;
 }
+int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir) {
+	int index = 0;
+	while( pos != 0 ) {
+		index = index * 3 + ((white&pos) != 0 ? 2 : (black&pos) != 0 ? 1 : 0);
+		pos  = (pos >> dir) & BB_MASK;
+	}
+	return index;
+}
 string bb_to_string(Bitboard bb) {
 	const int len = 2*6;
 	string str(len, ' ');
@@ -242,3 +250,9 @@ string bb_to_string(Bitboard bb) {
 	}
 	return str;
 }
+#if 0
+//	空欄に隣接する部分をbbから削除
+Bitboard remove_on_space(Bitboard bb, Bitboard spc) {
+	return 0;
+}
+#endif

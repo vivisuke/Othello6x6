@@ -58,8 +58,10 @@ Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir);
 int popcount(Bitboard);
 Bitboard negaAlpha(Bitboard black, Bitboard white, int &ev);		//	終盤完全読み
 void put_black(Bitboard &black, Bitboard &white, Bitboard bit);
-int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir, int len=8);
+int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir, int len);
+int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir);
 std::string bb_to_string(Bitboard bb);
+Bitboard remove_on_space(Bitboard bb, Bitboard spc);		//	空欄に隣接する部分をbbから削除
 
 
 class BoardBitboard {

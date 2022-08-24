@@ -108,18 +108,30 @@ int main()
    	if( true ) {
    		Bitboard black, white;
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
-   		for(int i = 0; i != 10000; ++i) {
+		const int N = 10000;
+		int sum = 0;
+		int sum2 = 0;
+   		for(int i = 0; i != N; ++i) {
 	   		init(black, white);
 		   	put_randomly(black, white, 24);	//	24 for 8個空き
 		   	int ev = 0;
 		   	auto pos = negaAlpha(black, white, ev);
 		   	//int ev = perfect_game(black, white);
+		   	sum += ev;
+		   	sum2 += ev * ev;
 		   	cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
    		}
 	    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
 	    auto dur = end - start;        // 要した時間を計算
 	    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
-	    cout << "\n# dur = " << msec << "msec.\n";
+	    cout << "\n";
+	    cout << "# N = " << N << "\n";
+	    cout << "# dur = " << msec << "msec.\n\n";
+	    auto avg = (double)sum/N;
+	    auto sigma2 = (double)sum2/N - avg*avg;
+	    cout << "# avg(ev) = " << avg << "\n";
+	    cout << "# sigma = " << sqrt(sigma2) << "\n";
+	    //cout << "# sigma^2 = " << sigma2 << "\n";
    	}
    	if( false ) {
    		//Bitboard black = 0x042910080c3e;		//	8個空き
@@ -140,6 +152,40 @@ int main()
    		print(black, white);
 	   	int ev = perfect_game(black, white, true);
 	   	cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
+   	}
+   	if( false ) {
+   		Bitboard black, white;
+   		init(black, white);
+	   	put_randomly(black, white, 24);	//	24 for 8個空き
+   		print(black, white);
+   		cout << "\nhorizontal:\n";
+   		for(int y = 0; y != N_VERT; ++y) {
+   			int index = get_pat_index(black, white, xyToBit(0, y), DIR_L);
+   			cout << "  " << y << ": " << index << "\n";
+   		}
+   		cout << "\nvertical:\n";
+   		for(int x = 0; x != N_HORZ; ++x) {
+   			int index = get_pat_index(black, white, xyToBit(x, 0), DIR_U);
+   			cout << "  " << x << ": " << index << "\n";
+   		}
+   		cout << "\ndiagonal(／):\n";
+   		for(int x = 2; x != N_HORZ; ++x) {
+   			int index = get_pat_index(black, white, xyToBit(x, 0), DIR_UR);
+   			cout << "  " << x << ": " << index << "\n";
+   		}
+   		for(int y = 1; y != N_VERT-2; ++y) {
+   			int index = get_pat_index(black, white, xyToBit(N_HORZ-1, y), DIR_UR);
+   			cout << "  " << y << ": " << index << "\n";
+   		}
+   		cout << "\ndiagonal(＼):\n";
+   		for(int x = N_HORZ-2; --x >= 0;) {
+   			int index = get_pat_index(black, white, xyToBit(x, 0), DIR_UL);
+   			cout << "  " << x << ": " << index << "\n";
+   		}
+   		for(int y = 1; y != N_VERT-2; ++y) {
+   			int index = get_pat_index(black, white, xyToBit(0, y), DIR_UL);
+   			cout << "  " << y << ": " << index << "\n";
+   		}
    	}
 #if 0
     BoardArray ba;
