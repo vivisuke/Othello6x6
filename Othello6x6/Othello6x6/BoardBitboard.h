@@ -10,6 +10,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "Othello6x6.h"
 
 /*
@@ -60,6 +61,7 @@ Bitboard negaAlpha(Bitboard black, Bitboard white, int &ev);		//	終盤完全読
 void put_black(Bitboard &black, Bitboard &white, Bitboard bit);
 int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir, int len);
 int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir);
+void get_pat_indexes(Bitboard black, Bitboard white, std::vector<int>& lst);
 std::string bb_to_string(Bitboard bb);
 Bitboard remove_on_space(Bitboard bb, Bitboard spc);		//	空欄に隣接する部分をbbから削除
 

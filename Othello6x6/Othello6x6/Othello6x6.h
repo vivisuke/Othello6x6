@@ -18,6 +18,8 @@ enum {
 	ARY_WIDTH = N_HORZ + 1,
 	ARY_SIZE = ARY_WIDTH*(N_VERT+2) + 1,
 
+	N_PAT = 3*3*3*3*3*3,
+
 	EMPTY = 0,
 	BLACK,
 	WHITE,

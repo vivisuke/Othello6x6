@@ -241,6 +241,42 @@ int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir) {
 	}
 	return index;
 }
+void get_pat_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {
+	lst.clear();
+	for(int y = 0; y != N_VERT; ++y) {
+		int index = get_pat_index(black, white, xyToBit(0, y), DIR_L);
+		lst.push_back(index);
+		//cout << "  " << y << ": " << index << "\n";
+	}
+	//cout << "\nvertical:\n";
+	for(int x = 0; x != N_HORZ; ++x) {
+		int index = get_pat_index(black, white, xyToBit(x, 0), DIR_U);
+		lst.push_back(index);
+		//cout << "  " << x << ": " << index << "\n";
+	}
+	//cout << "\ndiagonal(／):\n";
+	for(int x = 2; x != N_HORZ; ++x) {
+		int index = get_pat_index(black, white, xyToBit(x, 0), DIR_UR);
+		lst.push_back(index);
+		//cout << "  " << x << ": " << index << "\n";
+	}
+	for(int y = 1; y != N_VERT-2; ++y) {
+		int index = get_pat_index(black, white, xyToBit(N_HORZ-1, y), DIR_UR);
+		lst.push_back(index);
+		//cout << "  " << y << ": " << index << "\n";
+	}
+	//cout << "\ndiagonal(＼):\n";
+	for(int x = N_HORZ-2; --x >= 0;) {
+		int index = get_pat_index(black, white, xyToBit(x, 0), DIR_UL);
+		lst.push_back(index);
+		//cout << "  " << x << ": " << index << "\n";
+	}
+	for(int y = 1; y != N_VERT-2; ++y) {
+		int index = get_pat_index(black, white, xyToBit(0, y), DIR_UL);
+		lst.push_back(index);
+		//cout << "  " << y << ": " << index << "\n";
+	}
+}
 string bb_to_string(Bitboard bb) {
 	const int len = 2*6;
 	string str(len, ' ');
