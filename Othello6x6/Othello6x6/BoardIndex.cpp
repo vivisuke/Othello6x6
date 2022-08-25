@@ -39,6 +39,17 @@ void indexToPat(ushort index, std::vector<uchar> &lst, int len) {
 		index /= 3;
 	}
 }
+void indexToPat(ushort index, std::string &lst, int len) {
+	lst.resize(len);
+	for(int i = 0; i != len; ++i) {
+		switch( index % 3 ) {
+		case 0:	lst[i] = '.';	break;
+		case 1:	lst[i] = 'X';	break;
+		case 2:	lst[i] = 'O';	break;
+		}
+		index /= 3;
+	}
+}
 void indexToPat(ushort index, uchar *ptr, int len) {
 	for(int i = 0; i != len; ++i) {
 		*ptr++ = index % 3;

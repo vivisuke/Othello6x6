@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <string>
 #include <vector>
 #include <random>
 #include <chrono>
@@ -25,6 +26,7 @@ void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探
 void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
 void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
 int perfect_game(Bitboard black, Bitboard white, bool=false);		//	最善手で終局まで進める
+//void index_to_pat(int index, string& pat);
 
 int main()
 {
@@ -184,9 +186,11 @@ int main()
 	    //cout << "# total = " << N << "\n";
 	    cout << "# dur = " << msec << "msec.\n\n";
 
+	    string txt;
 	    for(int i = 0; i != N_PAT; ++i) {
 	    	auto t = to_string(g_pat_val[i]);
-	    	cout << t << "\t" << i << "\n";
+	    	indexToPat(i, txt);
+	    	cout << t << "\t" << i << " " << txt << "\n";
 	    }
    	}
    	if( false ) {

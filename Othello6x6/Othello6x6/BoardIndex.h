@@ -52,6 +52,7 @@ m_ix_bl_ur：
 */
 
 ushort patToIndex(const std::vector<uchar> &lst);
+void indexToPat(ushort index, std::string &lst, int len = 6);
 void indexToPat(ushort index, std::vector<uchar> &lst, int len = 6);
 void indexToPat(ushort index, uchar *ptr, int len = 6);
 void buildIndexTable();
