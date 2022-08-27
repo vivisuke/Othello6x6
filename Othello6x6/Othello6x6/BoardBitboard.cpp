@@ -45,15 +45,11 @@ void BoardBitboard::print() const {
 bool can_put_black_dir(Bitboard black, Bitboard white, Bitboard bit, int dir) {
 	if( dir > 0 ) {
 		if( (white & (bit <<= dir)) == 0 ) return 0;	//	白でない
-		do {
-			b |= bit;
-		} while( (white & (bit <<= dir)) != 0 );		//	白が続く間ループ
+		while( (white & (bit <<= dir)) != 0 ) {}		//	白が続く間ループ
 	} else {
 		dir = -dir;
 		if( (white & (bit >>= dir)) == 0 ) return 0;	//	白でない
-		do {
-			b |= bit;
-		} while( (white & (bit >>= dir)) != 0 );		//	白が続く間ループ
+		while( (white & (bit >>= dir)) != 0 ) {}		//	白が続く間ループ
 	}
 	return (black & bit) != 0;
 }
@@ -62,6 +58,20 @@ bool can_put_black(Bitboard black, Bitboard white, Bitboard bit) {
 			can_put_black_dir(black, white, bit, DIR_UR) | can_put_black_dir(black, white, bit, DIR_L) |
 			can_put_black_dir(black, white, bit, DIR_R) | can_put_black_dir(black, white, bit, DIR_DL) |
 			can_put_black_dir(black, white, bit, DIR_D) | can_put_black_dir(black, white, bit, DIR_DR);
+}
+//	黒着手可能箇所数
+int num_place_can_put_black(Bitboard black, Bitboard white) {
+	int np = 0;
+	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
+	//	８近傍が白の場所のみ取り出す
+	spc &= (white<<DIR_UL) | (white<<DIR_U) | (white<<DIR_UR) | (white<<DIR_L) | 
+			(white>>DIR_UL) | (white>>DIR_U) | (white>>DIR_UR) | (white>>DIR_L);
+	while( spc != 0 ) {
+		Bitboard b = -(_int64)spc & spc;		//	最右ビットを取り出す
+		if( can_put_black(black, white, b) ) ++np;
+		spc ^= b;		//	最右ビット消去
+	}
+	return np;
 }
 //	空欄の bit 位置に黒を打った場合に、返る白石ビットを返す
 Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit) {

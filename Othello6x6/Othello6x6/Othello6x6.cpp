@@ -147,6 +147,16 @@ int main()
    	}
    	if( true ) {
    		Bitboard black, white;
+   		init(black, white);
+   		assert( num_place_can_put_black(black, white) == 4 );
+   		assert( num_place_can_put_black(white, black) == 4 );
+	   	put_randomly(black, white, 24);	//	24 for 8個空き
+	   	print(black, white);
+		cout << "np black = " << num_place_can_put_black(black, white) << "\n";
+		cout << "np white = " << num_place_can_put_black(white, black) << "\n";
+   	}
+   	if( false ) {
+   		Bitboard black, white;
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
 		const int  ITR = 30;
 		const int N = 1000;
@@ -202,7 +212,7 @@ int main()
 	    }
 #endif
    	}
-   	if( true ) {
+   	if( false ) {
    		Bitboard black, white;
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
 		const int  ITR = 30;
