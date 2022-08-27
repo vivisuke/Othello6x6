@@ -42,6 +42,27 @@ void print(Bitboard black, Bitboard white) {
 void BoardBitboard::print() const {
 	::print(m_black, m_white);
 }
+bool can_put_black_dir(Bitboard black, Bitboard white, Bitboard bit, int dir) {
+	if( dir > 0 ) {
+		if( (white & (bit <<= dir)) == 0 ) return 0;	//	白でない
+		do {
+			b |= bit;
+		} while( (white & (bit <<= dir)) != 0 );		//	白が続く間ループ
+	} else {
+		dir = -dir;
+		if( (white & (bit >>= dir)) == 0 ) return 0;	//	白でない
+		do {
+			b |= bit;
+		} while( (white & (bit >>= dir)) != 0 );		//	白が続く間ループ
+	}
+	return (black & bit) != 0;
+}
+bool can_put_black(Bitboard black, Bitboard white, Bitboard bit) {
+	return	can_put_black_dir(black, white, bit, DIR_UL) | can_put_black_dir(black, white, bit, DIR_U) |
+			can_put_black_dir(black, white, bit, DIR_UR) | can_put_black_dir(black, white, bit, DIR_L) |
+			can_put_black_dir(black, white, bit, DIR_R) | can_put_black_dir(black, white, bit, DIR_DL) |
+			can_put_black_dir(black, white, bit, DIR_D) | can_put_black_dir(black, white, bit, DIR_DR);
+}
 //	空欄の bit 位置に黒を打った場合に、返る白石ビットを返す
 Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit) {
 	return	get_revbits_dir(black, white, bit, DIR_UL) | get_revbits_dir(black, white, bit, DIR_U) | get_revbits_dir(black, white, bit, DIR_UR) | 

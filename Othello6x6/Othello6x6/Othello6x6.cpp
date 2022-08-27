@@ -17,6 +17,13 @@ std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット
 //std::mt19937 g_mt(1);     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
 
 double g_pat_val[N_PAT];
+double g_pat2_val[N_PTYPE][N_PAT];
+int g_pat_type[] = {
+	PTYPE_LINE1, PTYPE_LINE2, PTYPE_LINE3, PTYPE_LINE3, PTYPE_LINE2, PTYPE_LINE1, 
+	PTYPE_LINE1, PTYPE_LINE2, PTYPE_LINE3, PTYPE_LINE3, PTYPE_LINE2, PTYPE_LINE1, 
+	PTYPE_DIAG3, PTYPE_DIAG4, PTYPE_DIAG5, PTYPE_DIAG6, PTYPE_DIAG5, PTYPE_DIAG4, PTYPE_DIAG3, 
+	PTYPE_DIAG3, PTYPE_DIAG4, PTYPE_DIAG5, PTYPE_DIAG6, PTYPE_DIAG5, PTYPE_DIAG4, PTYPE_DIAG3, 
+};
 
 void init(Bitboard &black, Bitboard &white) {
 	black = C4_BIT | D3_BIT;
@@ -186,12 +193,71 @@ int main()
 	    //cout << "# total = " << N << "\n";
 	    cout << "# dur = " << msec << "msec.\n\n";
 
+#if 0
 	    string txt;
 	    for(int i = 0; i != N_PAT; ++i) {
 	    	auto t = to_string(g_pat_val[i]);
 	    	indexToPat(i, txt);
 	    	cout << t << "\t" << i << " " << txt << "\n";
 	    }
+#endif
+   	}
+   	if( true ) {
+   		Bitboard black, white;
+		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
+		const int  ITR = 30;
+		const int N = 1000;
+		const int TOTAL = ITR * N;
+		double sum2 = 0;
+   		for(int i = 0; i != N; ++i) {
+	   		init(black, white);
+		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	sum2 += ev * ev;
+   		}
+   		cout << "0: sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		sum2 = 0;
+		vector<int> lst;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	get_pat_indexes(black, white, lst);
+		   	double pv = 0.0;	//	パターンによる評価値
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		pv += g_pat2_val[g_pat_type[k]][lst[k]];
+		   	}
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	//int ev = perfect_game(black, white);
+			//cout << "pv = " << pv << ", ev = " << ev << "\n";
+		   	auto d = ev - pv;
+		   	sum2 += d * d;
+		   	d /= 26 * 8;		//	パターン評価値更新値
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		g_pat2_val[g_pat_type[k]][lst[k]] += d;
+		   	}
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		   		sum2 = 0.0;
+		   	}
+		   	//cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
+   		}
+	    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+	    auto dur = end - start;        // 要した時間を計算
+	    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+	    cout << "\n";
+	    //cout << "# total = " << N << "\n";
+	    cout << "# dur = " << msec << "msec.\n\n";
+
+#if 1
+	    string txt;
+	    for(int i = 0; i != N_PAT; ++i) {
+	    	auto t = to_string(g_pat2_val[PTYPE_DIAG6][i]);
+	    	indexToPat(i, txt);
+	    	cout << t << "\t" << i << " " << txt << "\n";
+	    }
+#endif
    	}
    	if( false ) {
    		//Bitboard black = 0x042910080c3e;		//	8個空き

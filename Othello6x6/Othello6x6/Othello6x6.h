@@ -24,6 +24,16 @@ enum {
 	BLACK,
 	WHITE,
 	WALL,			//	番人
+
+	//	パターンタイプ
+	PTYPE_LINE1 = 0,	//	1・6行目、1・6列目
+	PTYPE_LINE2,
+	PTYPE_LINE3,
+	PTYPE_DIAG6,		//	中央対角線上
+	PTYPE_DIAG5,		//	
+	PTYPE_DIAG4,		//	
+	PTYPE_DIAG3,		//	
+	N_PTYPE,
 };
 inline int xyToIndex(int x, int y) {		//	x: [1, N_HORZ], y: [1, N_VERT]
 	return y * ARY_WIDTH + x;

@@ -54,6 +54,7 @@ inline Bitboard xyToBit(int x, int y) {		//	x: [0, N_HORZ), y: [0, N_VERT)
 int bitToX(Bitboard b);		//	x: [0, N_HORZ), y: [0, N_VERT)
 int bitToY(Bitboard b);		//	x: [0, N_HORZ), y: [0, N_VERT)
 void print(Bitboard black, Bitboard white);
+bool can_put_black(Bitboard black, Bitboard white, Bitboard bit);
 Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit);	//	bit 位置に黒を打った場合に、返る白石ビットを返す
 Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir);		//	
 int popcount(Bitboard);
