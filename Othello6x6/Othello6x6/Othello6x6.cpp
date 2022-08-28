@@ -42,7 +42,7 @@ string double2string(double v) {
 }
 void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
 void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
-void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
+bool put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
 int perfect_game(Bitboard black, Bitboard white, bool=false);		//	最善手で終局まで進める
 //void index_to_pat(int index, string& pat);
 void print_npbw_table();			//	着手可能箇所数評価値テーブル値表示
@@ -300,7 +300,9 @@ int main()
 		vector<int> lst;
    		for(int i = 0; i != TOTAL; ++i) {
 	   		init(black, white);
-		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
 		   	get_pat_indexes(black, white, lst);
 		   	double pv = 0.0;	//	パターンによる評価値
 		   	for(int k = 0; k != lst.size(); ++k) {
@@ -521,10 +523,10 @@ void exp_game_tree(BoardArray& bd, int depth, bool black_turn) {
 	}
 }
 //	ランダムに手を進める、depth for 残り深さ
-void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed) {
+bool put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed) {
 	if( depth == 0 ) {		//	末端局面
 		//print(black, white);
-		return;
+		return true;
 	}
 	bool put = false;		//	着手箇所あり
 	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
@@ -543,17 +545,18 @@ void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed) {
 	}
 	if( lst.empty() ) {		//	パスの場合
 		if( !passed ) {		//	１手前がパスでない
-			put_randomly(white, black, depth, true);
+			return put_randomly(white, black, depth, true);
 		} else {			//	１手前がパス → 双方パスで終局
 			//print(black, white);
+			return false;
 		}
 	} else {
-		int ix = (g_mt() % (lst.size()/2)) * 2;
+		int ix = (g_mt() % (lst.size()/2)) * 2;		//	ランダムに着手を選ぶ
 		auto b = lst[ix];
 		auto rev = lst[ix + 1];
 		black |= b | rev;
 		white ^= rev;
-		put_randomly(white, black, depth - 1);
+		return put_randomly(white, black, depth - 1);
 	}
 }
 int perfect_game(Bitboard black, Bitboard white, bool verbose) {
