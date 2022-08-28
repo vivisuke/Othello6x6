@@ -16,8 +16,12 @@ std::random_device g_rnd;     // 非決定的な乱数生成器を生成
 std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
 //std::mt19937 g_mt(1);     //  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
 
+#define		MAX_NP				8
+#define		NPBW_TABLE_SZ		(MAX_NP+1)*(MAX_NP+1)
+
 double g_pat_val[N_PAT];
 double g_pat2_val[N_PTYPE][N_PAT];
+double g_npbw_val[NPBW_TABLE_SZ];		//	着手可能箇所数評価値テーブル、ix = npb + npw * 9、npb, npw は [0, 8]
 int g_pat_type[] = {
 	PTYPE_LINE1, PTYPE_LINE2, PTYPE_LINE3, PTYPE_LINE3, PTYPE_LINE2, PTYPE_LINE1, 
 	PTYPE_LINE1, PTYPE_LINE2, PTYPE_LINE3, PTYPE_LINE3, PTYPE_LINE2, PTYPE_LINE1, 
@@ -29,11 +33,19 @@ void init(Bitboard &black, Bitboard &white) {
 	black = C4_BIT | D3_BIT;
 	white = C3_BIT | D4_BIT;
 }
+string double2string(double v) {
+	string txt = to_string(v);
+	if( v >= 0.0 ) txt = '+' + txt;
+	//if( txt.size() > 9 ) txt = txt.substr(0, 9);
+	if( abs(v) < 10.0 ) txt = ' ' + txt;
+	return txt;
+}
 void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
 void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
 void put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
 int perfect_game(Bitboard black, Bitboard white, bool=false);		//	最善手で終局まで進める
 //void index_to_pat(int index, string& pat);
+void print_npbw_table();			//	着手可能箇所数評価値テーブル値表示
 
 int main()
 {
@@ -145,7 +157,7 @@ int main()
 	    cout << "# sigma = " << sqrt(sigma2) << "\n";
 	    //cout << "# sigma^2 = " << sigma2 << "\n";
    	}
-   	if( true ) {
+   	if( false ) {
    		Bitboard black, white;
    		init(black, white);
    		assert( num_place_can_put_black(black, white) == 4 );
@@ -268,6 +280,67 @@ int main()
 	    	cout << t << "\t" << i << " " << txt << "\n";
 	    }
 #endif
+   	}
+   	if( true ) {
+   		Bitboard black, white;
+		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
+		const int  ITR = 100;
+		const int N = 10000;
+		const int TOTAL = ITR * N;
+		double sum2 = 0;
+   		for(int i = 0; i != N; ++i) {
+	   		init(black, white);
+		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	sum2 += ev * ev;
+   		}
+   		cout << "0: sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		sum2 = 0;
+		vector<int> lst;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	get_pat_indexes(black, white, lst);
+		   	double pv = 0.0;	//	パターンによる評価値
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		pv += g_pat2_val[g_pat_type[k]][lst[k]];
+		   	}
+		   	auto npb = num_place_can_put_black(black, white);
+		   	auto npw = num_place_can_put_black(white, black);
+		   	if( npb == 0 && npw == 8 ) {
+		   		print(black, white);
+			   	int ev = 0;			//	完全読みによる石差
+			   	auto pos = negaAlpha(black, white, ev);
+			   	cout << "ev = " << ev << "\n";
+				cout << "\n";
+		   	}
+			pv += g_npbw_val[npb + npw * (MAX_NP + 1)];
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	//int ev = perfect_game(black, white);
+			//cout << "pv = " << pv << ", ev = " << ev << "\n";
+		   	auto d = ev - pv;
+		   	sum2 += d * d;
+		   	d /= 27 * 8;		//	パターン評価値更新値
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		g_pat2_val[g_pat_type[k]][lst[k]] += d;
+		   	}
+		   	g_npbw_val[npb + npw * (MAX_NP+1)] += d;
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		   		sum2 = 0.0;
+		   	}
+		   	//cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
+   		}
+	    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+	    auto dur = end - start;        // 要した時間を計算
+	    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+	    cout << "\n";
+	    //cout << "# total = " << N << "\n";
+	    cout << "# dur = " << msec << "msec.\n\n";
+
+   		print_npbw_table();
    	}
    	if( false ) {
    		//Bitboard black = 0x042910080c3e;		//	8個空き
@@ -520,4 +593,14 @@ int perfect_game(Bitboard black, Bitboard white, bool verbose) {
 	   	std::swap(black, white);
 	}
 	return alpha;
+}
+//	着手可能箇所数評価値テーブル値表示
+void print_npbw_table() {
+	for(int y = 0; y <= MAX_NP; ++y) {
+		for(int x = 0; x <= MAX_NP; ++x) {
+			auto t = double2string(g_npbw_val[x + y * (MAX_NP+1)]);
+			cout << t << " ";
+		}
+		cout << "\n";
+	}
 }
