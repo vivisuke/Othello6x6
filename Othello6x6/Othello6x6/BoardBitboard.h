@@ -58,7 +58,7 @@ bool can_put_black(Bitboard black, Bitboard white, Bitboard bit);
 Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit);	//	bit 位置に黒を打った場合に、返る白石ビットを返す
 Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir);		//	
 int popcount(Bitboard);
-Bitboard negaAlpha(Bitboard black, Bitboard white, int &ev);		//	終盤完全読み
+Bitboard negaAlpha(Bitboard black, Bitboard white, int &ev, bool=false);		//	終盤完全読み
 void put_black(Bitboard &black, Bitboard &white, Bitboard bit);
 int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir, int len);
 int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir);

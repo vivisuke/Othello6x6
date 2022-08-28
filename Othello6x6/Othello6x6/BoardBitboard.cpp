@@ -195,7 +195,7 @@ int negaAlpha(Bitboard black, Bitboard white, int alpha, int beta, bool passed =
 }
 //	（黒番）終盤完全読み
 //	双方着手不可能な場合は、alpha: -INT_MAX, return: 0 を返す
-Bitboard negaAlpha(Bitboard black, Bitboard white, int &alpha) {
+Bitboard negaAlpha(Bitboard black, Bitboard white, int &alpha, bool passed) {
 	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
 	if( spc == 0 ) {	//	空欄無しの場合
 		alpha = popcount(black) - popcount(white);
@@ -220,13 +220,18 @@ Bitboard negaAlpha(Bitboard black, Bitboard white, int &alpha) {
 		spc ^= b;		//	最右ビット消去
 	}
 	if( mxpos == 0 ) {		//	黒着手不可の場合
-		int bc = popcount(black);
-		int wc = popcount(white);
-		alpha = bc - wc;
-		spc = ~(black | white) & BB_MASK;		//	空欄箇所
-		if( spc != 0 ) {	//	空欄ありの場合
-			if( bc > wc ) alpha += popcount(spc);
-			else if( bc < wc ) alpha -= popcount(spc);
+		if( passed ) {		//	双方パスの場合
+			int bc = popcount(black);
+			int wc = popcount(white);
+			alpha = bc - wc;
+			spc = ~(black | white) & BB_MASK;		//	空欄箇所
+			if( spc != 0 ) {	//	空欄ありの場合
+				if( bc > wc ) alpha += popcount(spc);
+				else if( bc < wc ) alpha -= popcount(spc);
+			}
+		} else {
+			mxpos = negaAlpha(white, black, alpha, true);
+			alpha = -alpha;
 		}
 	}
 	return mxpos;

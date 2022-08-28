@@ -284,7 +284,7 @@ int main()
    	if( true ) {
    		Bitboard black, white;
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
-		const int  ITR = 100;
+		const int  ITR = 30;
 		const int N = 10000;
 		const int TOTAL = ITR * N;
 		double sum2 = 0;
@@ -308,13 +308,19 @@ int main()
 		   	}
 		   	auto npb = num_place_can_put_black(black, white);
 		   	auto npw = num_place_can_put_black(white, black);
-		   	if( npb == 0 && npw == 8 ) {
+#if 0
+		   	//if( npb == 0 && npw == 8 )
+		   	if( npb == 8 && npw == 0 )
+		   	{
 		   		print(black, white);
 			   	int ev = 0;			//	完全読みによる石差
-			   	auto pos = negaAlpha(black, white, ev);
-			   	cout << "ev = " << ev << "\n";
+			   	negaAlpha(black, white, ev);
+			   	cout << "ev1 = " << ev << "\n";
+				negaAlpha(white, black,  ev);
+				cout << "ev2 = " << ev << "\n";
 				cout << "\n";
 		   	}
+#endif
 			pv += g_npbw_val[npb + npw * (MAX_NP + 1)];
 		   	int ev = 0;			//	完全読みによる石差
 		   	auto pos = negaAlpha(black, white, ev);
