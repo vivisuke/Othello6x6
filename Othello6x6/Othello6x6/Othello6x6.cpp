@@ -19,6 +19,7 @@ std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット
 #define		MAX_NP				8
 #define		NPBW_TABLE_SZ		(MAX_NP+1)*(MAX_NP+1)
 
+int g_rev_index[N_PAT];			//	左右反転したパターンインデックス
 double g_pat_val[N_PAT];
 double g_pat2_val[N_PTYPE][N_PAT];
 double g_npbw_val[NPBW_TABLE_SZ];		//	着手可能箇所数評価値テーブル、ix = npb + npw * 9、npb, npw は [0, 8]
@@ -28,6 +29,14 @@ int g_pat_type[] = {
 	PTYPE_DIAG3, PTYPE_DIAG4, PTYPE_DIAG5, PTYPE_DIAG6, PTYPE_DIAG5, PTYPE_DIAG4, PTYPE_DIAG3, 
 	PTYPE_DIAG3, PTYPE_DIAG4, PTYPE_DIAG5, PTYPE_DIAG6, PTYPE_DIAG5, PTYPE_DIAG4, PTYPE_DIAG3, 
 };
+
+void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
+void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
+bool put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
+int perfect_game(Bitboard black, Bitboard white, bool=false);		//	最善手で終局まで進める
+//void indexToPat(int index, string& pat);
+void print_pat_val(int, bool=false);		//	パターン評価値テーブル値表示
+void print_npbw_table();		//	着手可能箇所数評価値テーブル値表示
 
 void init(Bitboard &black, Bitboard &white) {
 	black = C4_BIT | D3_BIT;
@@ -40,12 +49,19 @@ string double2string(double v) {
 	if( abs(v) < 10.0 ) txt = ' ' + txt;
 	return txt;
 }
-void exp_game_tree(BoardArray&, int depth, bool black=true);		//	ゲーム木探索、depth for 残り深さ
-void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed=false);		//	ゲーム木探索、depth for 残り深さ
-bool put_randomly(Bitboard &black, Bitboard &white, int depth, bool passed=false);		//	ランダムに手を進める、depth for 残り深さ
-int perfect_game(Bitboard black, Bitboard white, bool=false);		//	最善手で終局まで進める
-//void index_to_pat(int index, string& pat);
-void print_npbw_table();			//	着手可能箇所数評価値テーブル値表示
+void build_rev_index() {
+	vector<uchar> lst;
+	//string txt, rtxt;
+	for(int ix = 0; ix != N_PAT; ++ix) {
+		indexToPat(ix, lst);
+		//indexToPat(ix, txt);
+		std::reverse(lst.begin(), lst.end());
+		auto rix = patToIndex(lst);
+		//indexToPat(rix, rtxt);
+		//cout << ix << " " << txt << " " << rix << " " << rtxt << "\n";
+		g_rev_index[ix] = rix;
+	}
+}
 
 int main()
 {
@@ -63,6 +79,7 @@ int main()
 	//cout << (0x10 << d) << "\n";
 	//d = -1;
 	//cout << (0x10 << d) << "\n";
+	build_rev_index();
 #if 0
     BoardIndex bi;
     bi.print();
@@ -225,10 +242,11 @@ int main()
 #endif
    	}
    	if( false ) {
+   		//	直線パターン評価値学習
    		Bitboard black, white;
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
 		const int  ITR = 30;
-		const int N = 1000;
+		const int N = 10000;
 		const int TOTAL = ITR * N;
 		double sum2 = 0;
    		for(int i = 0; i != N; ++i) {
@@ -243,7 +261,9 @@ int main()
 		vector<int> lst;
    		for(int i = 0; i != TOTAL; ++i) {
 	   		init(black, white);
-		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
 		   	get_pat_indexes(black, white, lst);
 		   	double pv = 0.0;	//	パターンによる評価値
 		   	for(int k = 0; k != lst.size(); ++k) {
@@ -257,7 +277,13 @@ int main()
 		   	sum2 += d * d;
 		   	d /= 26 * 8;		//	パターン評価値更新値
 		   	for(int k = 0; k != lst.size(); ++k) {
-		   		g_pat2_val[g_pat_type[k]][lst[k]] += d;
+		   		auto type = g_pat_type[k];
+		   		g_pat2_val[type][lst[k]] += d;
+		   		if( type <= PTYPE_LINE3 || type == PTYPE_DIAG6 ) {
+		   			auto ix2 = g_rev_index[lst[k]];
+		   			if( ix2 != lst[k] )
+				   		g_pat2_val[type][ix2] += d;
+		   		}
 		   	}
 		   	if( (i % N) == N - 1 ) {
 		   		cout << (i/N+1) << ": sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
@@ -275,16 +301,18 @@ int main()
 #if 1
 	    string txt;
 	    for(int i = 0; i != N_PAT; ++i) {
-	    	auto t = to_string(g_pat2_val[PTYPE_DIAG6][i]);
+	    	auto t = to_string(g_pat2_val[PTYPE_LINE1][i]);
+	    	//auto t = to_string(g_pat2_val[PTYPE_DIAG6][i]);
 	    	indexToPat(i, txt);
 	    	cout << t << "\t" << i << " " << txt << "\n";
 	    }
 #endif
    	}
    	if( true ) {
+   		//	直線パターン・着手可能箇所数評価値学習
    		Bitboard black, white;
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
-		const int  ITR = 30;
+		const int  ITR = 20;
 		const int N = 10000;
 		const int TOTAL = ITR * N;
 		double sum2 = 0;
@@ -332,7 +360,20 @@ int main()
 		   	sum2 += d * d;
 		   	d /= 27 * 8;		//	パターン評価値更新値
 		   	for(int k = 0; k != lst.size(); ++k) {
-		   		g_pat2_val[g_pat_type[k]][lst[k]] += d;
+		   		auto type = g_pat_type[k];
+		   		g_pat2_val[type][lst[k]] += d;
+	   			auto ix2 = g_rev_index[lst[k]];
+	   			switch( type ) {
+	   			case PTYPE_DIAG5: ix2 /= 3;	break;
+	   			case PTYPE_DIAG4: ix2 /= 9;	break;
+	   			case PTYPE_DIAG3: ix2 /= 27;	break;
+	   			}
+	   			if( ix2 != lst[k] )
+			   		g_pat2_val[type][ix2] += d;
+		   		//if( type <= PTYPE_LINE3 || type == PTYPE_DIAG6 ) {
+		   		//	if( ix2 != lst[k] )
+				//   		g_pat2_val[type][ix2] += d;
+		   		//}
 		   	}
 		   	g_npbw_val[npb + npw * (MAX_NP+1)] += d;
 		   	if( (i % N) == N - 1 ) {
@@ -348,6 +389,15 @@ int main()
 	    //cout << "# total = " << N << "\n";
 	    cout << "# dur = " << msec << "msec.\n\n";
 
+	    cout << "PAT LINE1:\n";
+	    print_pat_val(PTYPE_LINE1);
+	    cout << "PAT LINE2:\n";
+	    print_pat_val(PTYPE_LINE2);
+	    cout << "PAT LINE3:\n";
+	    print_pat_val(PTYPE_LINE3, true);
+	    cout << "PAT DIAG6:\n";
+	    print_pat_val(PTYPE_DIAG6, true);
+	    //
    		print_npbw_table();
    	}
    	if( false ) {
@@ -612,4 +662,18 @@ void print_npbw_table() {
 		}
 		cout << "\n";
 	}
+}
+//	パターン評価値テーブル値表示
+void print_pat_val(int type, bool center) {		//	center: 3, 4 番目は空でないこと
+    string pat;
+    for(int i = 0; i != N_PAT; ++i) {
+    	auto val = to_string(g_pat2_val[type][i]);
+    	indexToPat(i, pat);
+    	if( val[0] != '-' ) val = ' ' + val;
+    	if( center && (pat[2] == '.' || pat[3] == '.') )
+			val = "   N/A   ";
+    	cout << pat << ": " << val << "\t";
+    	if( ((i+1) % 3) == 0 ) cout << "\n";
+    }
+    cout << "\n";
 }
