@@ -260,12 +260,21 @@ int bitToY(Bitboard b) {		//	x: [0, N_HORZ), y: [0, N_VERT)
 //		縦方向：上端指定
 //		左上右下方向：左端上端指定
 //		右上左下方向：右端上端指定
-int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir, int len) {
+int get_pat_index_shr(Bitboard black, Bitboard white, Bitboard pos, int dir, int len) {
 	int index = 0;
 	for(int i = 0; i != len; ++i) {
 		index *= 3;
 		index += (white&pos) != 0 ? 2 : (black&pos) != 0 ? 1 : 0;
 		pos >>= dir;
+	}
+	return index;
+}
+int get_pat_index_shl(Bitboard black, Bitboard white, Bitboard pos, int dir, int len) {
+	int index = 0;
+	for(int i = 0; i != len; ++i) {
+		index *= 3;
+		index += (white&pos) != 0 ? 2 : (black&pos) != 0 ? 1 : 0;
+		pos <<= dir;
 	}
 	return index;
 }
@@ -312,6 +321,84 @@ void get_pat_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {
 		lst.push_back(index);
 		//cout << "  " << y << ": " << index << "\n";
 	}
+}
+//	４角の 3x3 コーナーのパターンインデックス取得
+//	※ 縦横２方向で計算し、小さい方の値を返す
+void get_corner_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {
+	lst.resize(4);
+	//	左上コーナー
+	int ix1 = get_pat_index_shr(black, white, xyToBit(0, 0), DIR_L, 3);
+	ix1 = ix1 * (3*3*3) + get_pat_index_shr(black, white, xyToBit(0, 1), DIR_L, 3);
+	ix1 = ix1 * (3*3*3) + get_pat_index_shr(black, white, xyToBit(0, 2), DIR_L, 3);
+	int ix2 = get_pat_index_shr(black, white, xyToBit(0, 0), DIR_U, 3);
+	ix2 = ix2 * (3*3*3) + get_pat_index_shr(black, white, xyToBit(1, 0), DIR_U, 3);
+	ix2 = ix2 * (3*3*3) + get_pat_index_shr(black, white, xyToBit(2, 0), DIR_U, 3);
+	lst[0] = std::min(ix1, ix2);
+	//	右上コーナー
+	ix1 = get_pat_index_shl(black, white, xyToBit(N_HORZ-1, 0), DIR_L, 3);
+	ix1 = ix1 * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, 1), DIR_L, 3);
+	ix1 = ix1 * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, 2), DIR_L, 3);
+	ix2 = get_pat_index_shr(black, white, xyToBit(N_HORZ-1, 0), DIR_U, 3);
+	ix2 = ix2 * (3*3*3) + get_pat_index_shr(black, white, xyToBit(N_HORZ-2, 0), DIR_U, 3);
+	ix2 = ix2 * (3*3*3) + get_pat_index_shr(black, white, xyToBit(N_HORZ-3, 0), DIR_U, 3);
+	lst[1] = std::min(ix1, ix2);
+	//	左下コーナー
+	ix1 = get_pat_index_shr(black, white, xyToBit(0, N_VERT-1), DIR_L, 3);
+	ix1 = ix1 * (3*3*3) + get_pat_index_shr(black, white, xyToBit(0, N_VERT-2), DIR_L, 3);
+	ix1 = ix1 * (3*3*3) + get_pat_index_shr(black, white, xyToBit(0, N_VERT-3), DIR_L, 3);
+	ix2 = get_pat_index_shl(black, white, xyToBit(0, N_VERT-1), DIR_U, 3);
+	ix2 = ix2 * (3*3*3) + get_pat_index_shl(black, white, xyToBit(1, N_VERT-1), DIR_U, 3);
+	ix2 = ix2 * (3*3*3) + get_pat_index_shl(black, white, xyToBit(2, N_VERT-1), DIR_U, 3);
+	lst[2] = std::min(ix1, ix2);
+	//	右下コーナー
+	ix1 = get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-1), DIR_L, 3);
+	ix1 = ix1 * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-2), DIR_L, 3);
+	ix1 = ix1 * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-3), DIR_L, 3);
+	ix2 = get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-1), DIR_U, 3);
+	ix2 = ix2 * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-2, N_VERT-1), DIR_U, 3);
+	ix2 = ix2 * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-3, N_VERT-1), DIR_U, 3);
+	lst[3] = std::min(ix1, ix2);
+}
+//	角パターンインデックス計算、水平優先
+void get_corner_indexes_hv(Bitboard black, Bitboard white, std::vector<int>& lst)
+{
+	lst.resize(4);
+	//	左上コーナー
+	lst[0] = get_pat_index_shr(black, white, xyToBit(0, 0), DIR_L, 3);
+	lst[0] = lst[0] * (3*3*3) + get_pat_index_shr(black, white, xyToBit(0, 1), DIR_L, 3);
+	lst[0] = lst[0] * (3*3) + get_pat_index_shr(black, white, xyToBit(0, 2), DIR_L, 2);
+	//	右上コーナー
+	lst[1] = get_pat_index_shl(black, white, xyToBit(N_HORZ-1, 0), DIR_L, 3);
+	lst[1] = lst[1] * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, 1), DIR_L, 3);
+	lst[1] = lst[1] * (3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, 2), DIR_L, 2);
+	//	左下コーナー
+	lst[2] = get_pat_index_shr(black, white, xyToBit(0, N_VERT-1), DIR_L, 3);
+	lst[2] = lst[2] * (3*3*3) + get_pat_index_shr(black, white, xyToBit(0, N_VERT-2), DIR_L, 3);
+	lst[2] = lst[2] * (3*3) + get_pat_index_shr(black, white, xyToBit(0, N_VERT-3), DIR_L, 2);
+	//	右下コーナー
+	lst[3] = get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-1), DIR_L, 3);
+	lst[3] = lst[3] * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-2), DIR_L, 3);
+	lst[3] = lst[3] * (3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-3), DIR_L, 2);
+}
+//	角パターンインデックス計算、垂直優先
+void get_corner_indexes_vh(Bitboard black, Bitboard white, std::vector<int>& lst) {
+	lst.resize(4);
+	//	左上コーナー
+	lst[0] = get_pat_index_shr(black, white, xyToBit(0, 0), DIR_U, 3);
+	lst[0] = lst[0] * (3*3*3) + get_pat_index_shr(black, white, xyToBit(1, 0), DIR_U, 3);
+	lst[0] = lst[0] * (3*3) + get_pat_index_shr(black, white, xyToBit(2, 0), DIR_U, 2);
+	//	右上コーナー
+	lst[1] = get_pat_index_shr(black, white, xyToBit(N_HORZ-1, 0), DIR_U, 3);
+	lst[1] = lst[1] * (3*3*3) + get_pat_index_shr(black, white, xyToBit(N_HORZ-2, 0), DIR_U, 3);
+	lst[1] = lst[1] * (3*3) + get_pat_index_shr(black, white, xyToBit(N_HORZ-3, 0), DIR_U, 2);
+	//	左下コーナー
+	lst[2] = get_pat_index_shl(black, white, xyToBit(0, N_VERT-1), DIR_U, 3);
+	lst[2] = lst[2] * (3*3*3) + get_pat_index_shl(black, white, xyToBit(1, N_VERT-1), DIR_U, 3);
+	lst[2] = lst[2] * (3*3) + get_pat_index_shl(black, white, xyToBit(2, N_VERT-1), DIR_U, 2);
+	//	右下コーナー
+	lst[3] = get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-1), DIR_U, 3);
+	lst[3] = lst[3] * (3*3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-2, N_VERT-1), DIR_U, 3);
+	lst[3] = lst[3] * (3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-3, N_VERT-1), DIR_U, 2);
 }
 string bb_to_string(Bitboard bb) {
 	const int len = 2*6;

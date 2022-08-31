@@ -19,6 +19,8 @@ enum {
 	ARY_SIZE = ARY_WIDTH*(N_VERT+2) + 1,
 
 	N_PAT = 3*3*3*3*3*3,
+	N_PAT8 = 3*3*3*3*3*3*3*3,
+	N_PAT9 = 3*3*3*3*3*3*3*3*3,
 
 	EMPTY = 0,
 	BLACK,

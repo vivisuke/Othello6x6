@@ -22,6 +22,7 @@ std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット
 int g_rev_index[N_PAT];			//	左右反転したパターンインデックス
 double g_pat_val[N_PAT];
 double g_pat2_val[N_PTYPE][N_PAT];
+double g_pat8_val[N_PAT8];				//	角８個パターン
 double g_npbw_val[NPBW_TABLE_SZ];		//	着手可能箇所数評価値テーブル、ix = npb + npw * 9、npb, npw は [0, 8]
 int g_pat_type[] = {
 	PTYPE_LINE1, PTYPE_LINE2, PTYPE_LINE3, PTYPE_LINE3, PTYPE_LINE2, PTYPE_LINE1, 
@@ -308,11 +309,11 @@ int main()
 	    }
 #endif
    	}
-   	if( true ) {
+   	if( false ) {
    		//	直線パターン・着手可能箇所数評価値学習
    		Bitboard black, white;
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
-		const int  ITR = 20;
+		const int  ITR = 100;
 		const int N = 10000;
 		const int TOTAL = ITR * N;
 		double sum2 = 0;
@@ -374,6 +375,166 @@ int main()
 		   		//	if( ix2 != lst[k] )
 				//   		g_pat2_val[type][ix2] += d;
 		   		//}
+		   	}
+		   	g_npbw_val[npb + npw * (MAX_NP+1)] += d;
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		   		sum2 = 0.0;
+		   	}
+		   	//cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
+   		}
+	    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+	    auto dur = end - start;        // 要した時間を計算
+	    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+	    cout << "\n";
+	    //cout << "# total = " << N << "\n";
+	    cout << "# dur = " << msec << "msec.\n\n";
+
+	    cout << "PAT LINE1:\n";
+	    print_pat_val(PTYPE_LINE1);
+	    cout << "PAT LINE2:\n";
+	    print_pat_val(PTYPE_LINE2);
+	    cout << "PAT LINE3:\n";
+	    print_pat_val(PTYPE_LINE3, true);
+	    cout << "PAT DIAG6:\n";
+	    print_pat_val(PTYPE_DIAG6, true);
+	    //
+   		print_npbw_table();
+   	}
+   	if( false ) {
+   		//	着手可能箇所数評価値学習
+   		Bitboard black, white;
+		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
+		const int  ITR = 20;
+		const int N = 10000;
+		const int TOTAL = ITR * N;
+		double sum2 = 0;
+   		for(int i = 0; i != N; ++i) {
+	   		init(black, white);
+		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	sum2 += ev * ev;
+   		}
+   		cout << "0: sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		sum2 = 0;
+		vector<int> lst;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	get_pat_indexes(black, white, lst);
+		   	double pv = 0.0;	//	パターンによる評価値
+		   	//for(int k = 0; k != lst.size(); ++k) {
+		   	//	pv += g_pat2_val[g_pat_type[k]][lst[k]];
+		   	//}
+		   	auto npb = num_place_can_put_black(black, white);
+		   	auto npw = num_place_can_put_black(white, black);
+			pv += g_npbw_val[npb + npw * (MAX_NP + 1)];
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	//int ev = perfect_game(black, white);
+			//cout << "pv = " << pv << ", ev = " << ev << "\n";
+		   	auto d = ev - pv;
+		   	sum2 += d * d;
+		   	d /= 1 * 8;		//	パターン評価値更新値
+#if 0
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		auto type = g_pat_type[k];
+		   		g_pat2_val[type][lst[k]] += d;
+	   			auto ix2 = g_rev_index[lst[k]];
+	   			switch( type ) {
+	   			case PTYPE_DIAG5: ix2 /= 3;	break;
+	   			case PTYPE_DIAG4: ix2 /= 9;	break;
+	   			case PTYPE_DIAG3: ix2 /= 27;	break;
+	   			}
+	   			if( ix2 != lst[k] )
+			   		g_pat2_val[type][ix2] += d;
+		   		//if( type <= PTYPE_LINE3 || type == PTYPE_DIAG6 ) {
+		   		//	if( ix2 != lst[k] )
+				//   		g_pat2_val[type][ix2] += d;
+		   		//}
+		   	}
+#endif
+		   	g_npbw_val[npb + npw * (MAX_NP+1)] += d;
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		   		sum2 = 0.0;
+		   	}
+		   	//cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
+   		}
+	    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+	    auto dur = end - start;        // 要した時間を計算
+	    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+	    cout << "\n";
+	    //cout << "# total = " << N << "\n";
+	    cout << "# dur = " << msec << "msec.\n\n";
+
+   		print_npbw_table();
+   	}
+   	if( true ) {
+   		//	直線パターン・コーナー８個パターン・着手可能箇所数評価値学習
+   		Bitboard black, white;
+		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
+		const int  ITR = 100;
+		const int N = 10000;
+		const int TOTAL = ITR * N;
+		double sum2 = 0;
+   		for(int i = 0; i != N; ++i) {
+	   		init(black, white);
+		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	sum2 += ev * ev;
+   		}
+   		cout << "0: sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		sum2 = 0;
+		vector<int> lst, lst8;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	double pv = 0.0;	//	パターンによる評価値
+		   	get_pat_indexes(black, white, lst);
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		pv += g_pat2_val[g_pat_type[k]][lst[k]];
+		   	}
+		   	get_corner_indexes_hv(black, white, lst8);
+		   	for(int k = 0; k != lst8.size(); ++k) {
+		   		pv += g_pat8_val[lst8[k]];
+		   	}
+		   	auto npb = num_place_can_put_black(black, white);
+		   	auto npw = num_place_can_put_black(white, black);
+			pv += g_npbw_val[npb + npw * (MAX_NP + 1)];
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	//int ev = perfect_game(black, white);
+			//cout << "pv = " << pv << ", ev = " << ev << "\n";
+		   	auto d = ev - pv;
+		   	sum2 += d * d;
+		   	d /= 28 * 8;		//	パターン評価値更新値
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		auto type = g_pat_type[k];
+		   		g_pat2_val[type][lst[k]] += d;
+	   			auto ix2 = g_rev_index[lst[k]];
+	   			switch( type ) {
+	   			case PTYPE_DIAG5: ix2 /= 3;	break;
+	   			case PTYPE_DIAG4: ix2 /= 9;	break;
+	   			case PTYPE_DIAG3: ix2 /= 27;	break;
+	   			}
+	   			if( ix2 != lst[k] )
+			   		g_pat2_val[type][ix2] += d;
+		   		//if( type <= PTYPE_LINE3 || type == PTYPE_DIAG6 ) {
+		   		//	if( ix2 != lst[k] )
+				//   		g_pat2_val[type][ix2] += d;
+		   		//}
+		   	}
+			vector<int> lst8s;
+		   	get_corner_indexes_vh(black, white, lst8s);
+		   	for(int k = 0; k != lst8.size(); ++k) {
+		   		g_pat8_val[lst8s[k]] = g_pat8_val[lst8[k]] += d;
 		   	}
 		   	g_npbw_val[npb + npw * (MAX_NP+1)] += d;
 		   	if( (i % N) == N - 1 ) {
