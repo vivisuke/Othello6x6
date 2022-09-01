@@ -43,6 +43,7 @@
 #define		DIR_D		(-8)
 #define		DIR_DR		(-9)
 
+typedef unsigned char uchar;
 typedef unsigned _int64	Bitboard;
 
 inline Bitboard xyToBit(int x, int y) {		//	x: [0, N_HORZ), y: [0, N_VERT)
@@ -70,6 +71,9 @@ void get_corner_indexes_vh(Bitboard black, Bitboard white, std::vector<int>& lst
 int num_place_can_put_black(Bitboard black, Bitboard white);		//	黒着手可能箇所数
 std::string bb_to_string(Bitboard bb);
 Bitboard remove_on_space(Bitboard bb, Bitboard spc);		//	空欄に隣接する部分をbbから削除
+uchar get_color(Bitboard black, Bitboard white, Bitboard bit);
+void scan_shr(Bitboard black, Bitboard white, Bitboard bit, int dir);	//	dir 方向にスキャン
+Bitboard scan_cannot_turnover_shr(Bitboard black, Bitboard white, Bitboard bit, int dir);	//	dir 方向にスキャンし、ひっくり返らないビットを返す
 
 
 class BoardBitboard {

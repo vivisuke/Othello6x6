@@ -415,3 +415,50 @@ Bitboard remove_on_space(Bitboard bb, Bitboard spc) {
 	return 0;
 }
 #endif
+uchar get_color(Bitboard black, Bitboard white, Bitboard bit) {
+	if( (bit & BB_MASK) == 0 ) return WALL;
+	if( (black & bit) != 0 ) return BLACK;
+	if( (white & bit) != 0 ) return WHITE;
+	return EMPTY;
+}
+//	dir 方向にスキャン
+void scan_shr(Bitboard black, Bitboard white, Bitboard bit, int dir) {
+	uchar pc = WALL;	//	連直前色
+	uchar c;			//	次の色
+	auto col = get_color(black, white, bit);		//	現在の色
+	for(;;) {
+		do {
+			bit >>= dir;
+		} while( (c = get_color(black, white, bit)) == col );
+		//  pc==BLACK, col==WHITE, c==EMPTY なら bit 位置に黒着手可能
+		//  col==BLACK or WHITE && (pc!=EMPTY && c!=EMPTY || pc == WALL || c == WALL) ならばcolの連はこの方向には返らない
+		if( c == WALL ) break;
+		pc = col;
+		col = c;
+	}
+}
+//	dir 方向にスキャンし、ひっくり返らないビットを返す
+Bitboard scan_cannot_turnover_shr(Bitboard black, Bitboard white, Bitboard bit, int dir) {
+	Bitboard cnto = 0;		//	ひっくり返らないビット
+	uchar pc = WALL;		//	連直前色
+	uchar c;				//	次の色
+	Bitboard sbit = bit;	//	スタート位置ビット
+	auto col = get_color(black, white, bit);		//	現在の色
+	for(;;) {
+		do {
+			bit >>= dir;
+		} while( (c = get_color(black, white, bit)) == col );
+		//  pc==BLACK, col==WHITE, c==EMPTY なら bit 位置に黒着手可能
+		//  col==BLACK or WHITE && (pc!=EMPTY && c!=EMPTY || pc == WALL || c == WALL) ならばcolの連はこの方向には返らない
+		if( (col == BLACK || col == WHITE) && (pc == WALL || c == WALL || pc != EMPTY && c != EMPTY) ) {
+			do {
+				cnto |= sbit;
+			} while( (sbit >>= dir) != bit );
+		}
+		if( c == WALL ) break;
+		sbit = bit;
+		pc = col;
+		col = c;
+	}
+	return cnto;
+}

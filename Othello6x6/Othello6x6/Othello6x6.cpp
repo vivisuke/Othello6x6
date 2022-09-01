@@ -473,7 +473,7 @@ int main()
 
    		print_npbw_table();
    	}
-   	if( true ) {
+   	if( false ) {
    		//	直線パターン・コーナー８個パターン・着手可能箇所数評価値学習
    		Bitboard black, white;
 		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
@@ -560,6 +560,43 @@ int main()
 	    print_pat_val(PTYPE_DIAG6, true);
 	    //
    		print_npbw_table();
+   	}
+   	if( true ) {
+   		//	スキャンテスト
+   		Bitboard black = 0x042910080c3e;		//	8個空き
+   		Bitboard white = 0x32140f173000;
+   		//Bitboard black = 0x070f050b013e;		//	2個空き
+   		//Bitboard white = 0x38303a143e00;
+   		print(black, white);
+   		Bitboard cnto_h = 0;
+   		for(int y = 0; y != N_VERT; ++y) {
+   			cnto_h |= scan_cannot_turnover_shr(black, white, xyToBit(0, y), DIR_L);
+   		}
+   		cout << bb_to_string(cnto_h) << "\n";
+   		Bitboard cnto_v = 0;
+   		for(int x = 0; x != N_HORZ; ++x) {
+   			cnto_v |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_U);
+   		}
+   		cout << bb_to_string(cnto_v) << "\n";
+   		Bitboard cnto_sl = 0x308000000103;		//	／方向
+   		for(int x = 2; x != N_HORZ; ++x) {
+   			cnto_sl |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_UR);
+   		}
+   		for(int y = 1; y != N_HORZ-2; ++y) {
+   			cnto_sl |= scan_cannot_turnover_shr(black, white, xyToBit(N_HORZ-1, y), DIR_UR);
+   		}
+   		cout << bb_to_string(cnto_sl) << "\n";
+   		Bitboard cnto_bs = 0x308000000103;		//	＼方向
+   		for(int x = N_HORZ-2; --x >= 0; ) {
+   			cnto_bs |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_UL);
+   		}
+   		for(int y = 1; y != N_HORZ-2; ++y) {
+   			cnto_bs |= scan_cannot_turnover_shr(black, white, xyToBit(0, y), DIR_UL);
+   		}
+   		cout << bb_to_string(cnto_bs) << "\n";
+   		cout << "\n";
+   		cout << "black = " << bb_to_string(black & cnto_h & cnto_v & cnto_sl & cnto_bs) << "\n";
+   		cout << "white = " << bb_to_string(white & cnto_h & cnto_v & cnto_sl & cnto_bs) << "\n";
    	}
    	if( false ) {
    		//Bitboard black = 0x042910080c3e;		//	8個空き
