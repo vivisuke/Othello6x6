@@ -74,6 +74,7 @@ Bitboard remove_on_space(Bitboard bb, Bitboard spc);		//	空欄に隣接する�
 uchar get_color(Bitboard black, Bitboard white, Bitboard bit);
 void scan_shr(Bitboard black, Bitboard white, Bitboard bit, int dir);	//	dir 方向にスキャン
 Bitboard scan_cannot_turnover_shr(Bitboard black, Bitboard white, Bitboard bit, int dir);	//	dir 方向にスキャンし、ひっくり返らないビットを返す
+void get_num_cannot_turnover(Bitboard black, Bitboard white, int &nb, int &nw);
 
 
 class BoardBitboard {

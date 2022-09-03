@@ -462,3 +462,31 @@ Bitboard scan_cannot_turnover_shr(Bitboard black, Bitboard white, Bitboard bit, 
 	}
 	return cnto;
 }
+//	黒・白の準確定石数計算
+void get_num_cannot_turnover(Bitboard black, Bitboard white, int &nb, int &nw) {
+	Bitboard cnto_h = 0;
+	for(int y = 0; y != N_VERT; ++y) {
+		cnto_h |= scan_cannot_turnover_shr(black, white, xyToBit(0, y), DIR_L);
+	}
+	Bitboard cnto_v = 0;
+	for(int x = 0; x != N_HORZ; ++x) {
+		cnto_v |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_U);
+	}
+	Bitboard cnto_sl = 0x302000000103;		//	／方向
+	for(int x = 2; x != N_HORZ; ++x) {
+		cnto_sl |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_UR);
+	}
+	for(int y = 1; y != N_HORZ-2; ++y) {
+		cnto_sl |= scan_cannot_turnover_shr(black, white, xyToBit(N_HORZ-1, y), DIR_UR);
+	}
+	Bitboard cnto_bs = 0x030100002030;		//	＼方向
+	for(int x = N_HORZ-2; --x >= 0; ) {
+		cnto_bs |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_UL);
+	}
+	for(int y = 1; y != N_HORZ-2; ++y) {
+		cnto_bs |= scan_cannot_turnover_shr(black, white, xyToBit(0, y), DIR_UL);
+	}
+	Bitboard cnto = cnto_h & cnto_v & cnto_sl & cnto_bs;
+	nb = popcount(black & cnto);
+	nw = popcount(white & cnto);
+}

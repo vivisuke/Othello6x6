@@ -561,12 +561,59 @@ int main()
 	    //
    		print_npbw_table();
    	}
-   	if( true ) {
+   	if( false ) {
    		//	スキャンテスト
-   		Bitboard black = 0x042910080c3e;		//	8個空き
-   		Bitboard white = 0x32140f173000;
+   		Bitboard black = 0x050d072c0700;		//	8個空き
+   		Bitboard white = 0x38303810083c;
+   		//Bitboard black = 0x042910080c3e;		//	8個空き
+   		//Bitboard white = 0x32140f173000;
    		//Bitboard black = 0x070f050b013e;		//	2個空き
    		//Bitboard white = 0x38303a143e00;
+   		print(black, white);
+   		Bitboard cnto_h = 0;
+   		for(int y = 0; y != N_VERT; ++y) {
+   			cnto_h |= scan_cannot_turnover_shr(black, white, xyToBit(0, y), DIR_L);
+   		}
+   		cout << "h: " << bb_to_string(cnto_h) << "\n";
+   		Bitboard cnto_v = 0;
+   		for(int x = 0; x != N_HORZ; ++x) {
+   			cnto_v |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_U);
+   		}
+   		cout << "v: " << bb_to_string(cnto_v) << "\n";
+   		Bitboard cnto_sl = 0x302000000103;		//	／方向
+   		for(int x = 2; x != N_HORZ; ++x) {
+   			cnto_sl |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_UR);
+   		}
+   		for(int y = 1; y != N_HORZ-2; ++y) {
+   			cnto_sl |= scan_cannot_turnover_shr(black, white, xyToBit(N_HORZ-1, y), DIR_UR);
+   		}
+   		cout << "s: " << bb_to_string(cnto_sl) << "\n";
+   		Bitboard cnto_bs = 0x030100002030;		//	＼方向
+   		for(int x = N_HORZ-2; --x >= 0; ) {
+   			cnto_bs |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_UL);
+   		}
+   		for(int y = 1; y != N_HORZ-2; ++y) {
+   			cnto_bs |= scan_cannot_turnover_shr(black, white, xyToBit(0, y), DIR_UL);
+   		}
+   		cout <<"b: " << bb_to_string(cnto_bs) << "\n";
+   		cout << "\n";
+   		cout << "black = " << bb_to_string(black & cnto_h & cnto_v & cnto_sl & cnto_bs) << "\n";
+   		cout << "white = " << bb_to_string(white & cnto_h & cnto_v & cnto_sl & cnto_bs) << "\n";
+   		int nb, nw;
+   		get_num_cannot_turnover(black, white, nb, nw);
+   		//cout << "nb = " << nb << ", nw = " << nw << "\n";
+   		cout << "nb = " << nb << ", nw = " << nw << ", diff = " << (nb - nw) << "\n";
+	   	int ev = 0;
+	   	auto pos = negaAlpha(black, white, ev);
+	   	cout << "ev = " << ev << "\n";
+   	}
+   	if( false ) {
+   		//	スキャンテスト
+   		Bitboard black, white;
+   		init(black, white);
+	   	put_randomly(black, white, 24);	//	24 for 8個空き
+   		cout << "black = " << bb_to_string(black) << "\n";
+   		cout << "white = " << bb_to_string(white) << "\n";
    		print(black, white);
    		Bitboard cnto_h = 0;
    		for(int y = 0; y != N_VERT; ++y) {
@@ -586,7 +633,7 @@ int main()
    			cnto_sl |= scan_cannot_turnover_shr(black, white, xyToBit(N_HORZ-1, y), DIR_UR);
    		}
    		cout << bb_to_string(cnto_sl) << "\n";
-   		Bitboard cnto_bs = 0x308000000103;		//	＼方向
+   		Bitboard cnto_bs = 0x030100002030;		//	＼方向
    		for(int x = N_HORZ-2; --x >= 0; ) {
    			cnto_bs |= scan_cannot_turnover_shr(black, white, xyToBit(x, 0), DIR_UL);
    		}
@@ -597,6 +644,27 @@ int main()
    		cout << "\n";
    		cout << "black = " << bb_to_string(black & cnto_h & cnto_v & cnto_sl & cnto_bs) << "\n";
    		cout << "white = " << bb_to_string(white & cnto_h & cnto_v & cnto_sl & cnto_bs) << "\n";
+   		int nb, nw;
+   		get_num_cannot_turnover(black, white, nb, nw);
+   		cout << "nb = " << nb << ", nw = " << nw << ", diff = " << (nb - nw) << "\n";
+	   	int ev = 0;
+	   	auto pos = negaAlpha(black, white, ev);
+	   	cout << "ev = " << ev << "\n";
+   	}
+   	if( true ) {
+   		//	スキャンテスト
+   		Bitboard black, white;
+   		for(int i = 0; i != 100; ++i) {
+	   		init(black, white);
+		   	//put_randomly(black, white, 24);	//	24 for 8個空き
+		   	put_randomly(black, white, 28);	//	28 for 4個空き
+	   		int nb, nw;
+	   		get_num_cannot_turnover(black, white, nb, nw);
+	   		//cout << "nb = " << nb << ", nw = " << nw << ", diff = " << (nb - nw) << "\n";
+		   	int ev = 0;
+		   	auto pos = negaAlpha(black, white, ev);
+		   	cout << (nb-nw) << ", " << ev << "\n";
+   		}
    	}
    	if( false ) {
    		//Bitboard black = 0x042910080c3e;		//	8個空き
