@@ -8,6 +8,7 @@
 #include "BoardArray.h"
 #include "BoardBitboard.h"
 #include "BoardIndex.h"
+#include "ML.h"
 
 using namespace std;
 
@@ -19,8 +20,9 @@ std::mt19937 g_mt(g_rnd());     //  メルセンヌ・ツイスタの32ビット
 #define		MAX_NP				8
 #define		NPBW_TABLE_SZ		(MAX_NP+1)*(MAX_NP+1)
 
+double g_cnto_slope = 1.0;			//	評価値 = 準確定石数差 * g_cnto_slope
 int g_rev_index[N_PAT];			//	左右反転したパターンインデックス
-double g_pat_val[N_PAT];
+double g_pat_val[N_PAT];				//	（全位置共通）直線パターン評価値
 double g_pat2_val[N_PTYPE][N_PAT];
 double g_pat8_val[N_PAT8];				//	角８個パターン
 double g_npbw_val[NPBW_TABLE_SZ];		//	着手可能箇所数評価値テーブル、ix = npb + npw * 9、npb, npw は [0, 8]
@@ -62,6 +64,34 @@ void build_rev_index() {
 		//cout << ix << " " << txt << " " << rix << " " << rtxt << "\n";
 		g_rev_index[ix] = rix;
 	}
+}
+
+//	直線パターン・コーナー８個パターン・着手可能箇所数・準確定石数評価、手番：黒
+double eval_pat_corner8_ncanput_ncnto(Bitboard black, Bitboard white,
+									int& npb, int& npw,		//	着手可能箇所数
+									int& nb, int& nw) {		//	準確定石数
+	vector<int> lst, lst8;
+   	double pv = 0.0;
+   	//	縦横斜め直線パターンによる評価値
+   	get_pat_indexes(black, white, lst);
+   	for(int k = 0; k != lst.size(); ++k) {
+   		pv += g_pat2_val[g_pat_type[k]][lst[k]];
+   	}
+   	//	コーナー８箇所評価
+   	get_corner_indexes_hv(black, white, lst8);
+   	for(int k = 0; k != lst8.size(); ++k) {
+   		pv += g_pat8_val[lst8[k]];
+   	}
+   	//	着手可能箇所数
+   	npb = num_place_can_put_black(black, white);
+   	npw = num_place_can_put_black(white, black);
+	pv += g_npbw_val[npb + npw * (MAX_NP + 1)];
+	//	準確定石数差
+	//int nb, nw;
+	get_num_cannot_turnover(black, white, nb, nw);
+	pv += g_cnto_slope * (nb - nw);
+	//return (int)round(pv);
+	return pv;
 }
 
 int main()
@@ -562,6 +592,117 @@ int main()
    		print_npbw_table();
    	}
    	if( false ) {
+   		//	直線パターン・コーナー８個パターン・着手可能箇所数・準確定石数評価値学習
+   		Bitboard black, white;
+		auto start = std::chrono::system_clock::now();      // 計測スタート時刻
+		const int  ITR = 30;
+		const int N = 10000;
+		const int TOTAL = ITR * N;
+		g_cnto_slope = 1.0;
+		double sum2 = 0;
+   		for(int i = 0; i != N; ++i) {
+	   		init(black, white);
+		   	put_randomly(black, white, 24);	//	24 for 8個空き
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	sum2 += ev * ev;
+   		}
+   		cout << "0: sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		sum2 = 0;
+		vector<int> lst, lst8;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+#if 0
+		   	int npb, npw;	//	着手可能箇所数
+		   	int nb, nw;		//	準確定石数
+		   	double pv = eval_pat_corner8_ncanput_ncnto(black, white, npb, npw, nb, nw);
+#else
+		   	double pv = 0.0;	//	パターンによる評価値
+		   	get_pat_indexes(black, white, lst);
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		pv += g_pat2_val[g_pat_type[k]][lst[k]];
+		   	}
+		   	get_corner_indexes_hv(black, white, lst8);
+		   	for(int k = 0; k != lst8.size(); ++k) {
+		   		pv += g_pat8_val[lst8[k]];
+		   	}
+		   	//	着手可能箇所数
+		   	auto npb = num_place_can_put_black(black, white);
+		   	auto npw = num_place_can_put_black(white, black);
+			pv += g_npbw_val[npb + npw * (MAX_NP + 1)];
+			//	準確定石数差
+			int nb, nw;
+			get_num_cannot_turnover(black, white, nb, nw);
+			pv += g_cnto_slope * (nb - nw);
+				if( true ) {
+			   	int npb, npw;	//	着手可能箇所数
+			   	int nb, nw;		//	準確定石数
+			   	double pv2 = eval_pat_corner8_ncanput_ncnto(black, white, npb, npw, nb, nw);
+			   	assert( pv2 == pv );
+			}
+#endif
+			//
+		   	int ev = 0;			//	完全読みによる石差
+		   	auto pos = negaAlpha(black, white, ev);
+		   	//int ev = perfect_game(black, white);
+			//cout << "pv = " << pv << ", ev = " << ev << "\n";
+		   	double d = ev - pv;
+		   	sum2 += d * d;
+		   	d /= 29 * 8;		//	パターン評価値更新値
+		   	for(int k = 0; k != lst.size(); ++k) {
+		   		auto type = g_pat_type[k];
+		   		g_pat2_val[type][lst[k]] += d;
+	   			auto ix2 = g_rev_index[lst[k]];
+	   			switch( type ) {
+	   			case PTYPE_DIAG5: ix2 /= 3;	break;
+	   			case PTYPE_DIAG4: ix2 /= 9;	break;
+	   			case PTYPE_DIAG3: ix2 /= 27;	break;
+	   			}
+	   			if( ix2 != lst[k] )
+			   		g_pat2_val[type][ix2] += d;
+		   		//if( type <= PTYPE_LINE3 || type == PTYPE_DIAG6 ) {
+		   		//	if( ix2 != lst[k] )
+				//   		g_pat2_val[type][ix2] += d;
+		   		//}
+		   	}
+			vector<int> lst8s;
+		   	get_corner_indexes_vh(black, white, lst8s);
+		   	for(int k = 0; k != lst8.size(); ++k) {
+		   		g_pat8_val[lst8s[k]] = g_pat8_val[lst8[k]] += d;
+		   	}
+		   	g_npbw_val[npb + npw * (MAX_NP+1)] += d;
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(sum2/N) = " << sqrt(sum2/N) << "\n";
+		   		sum2 = 0.0;
+		   	}
+		   	//cout << bb_to_string(black) << " " << bb_to_string(white) << " " << ev << "\n";
+		   	if( nb != nw )
+			   	g_cnto_slope += (double)d / (nb - nw);
+   		}
+	    auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+	    auto dur = end - start;        // 要した時間を計算
+	    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+	    cout << "\n";
+	    //cout << "# total = " << N << "\n";
+	    cout << "# dur = " << msec << "msec.\n\n";
+
+	    cout << "PAT LINE1:\n";
+	    print_pat_val(PTYPE_LINE1);
+	    cout << "PAT LINE2:\n";
+	    print_pat_val(PTYPE_LINE2);
+	    cout << "PAT LINE3:\n";
+	    print_pat_val(PTYPE_LINE3, true);
+	    cout << "PAT DIAG6:\n";
+	    print_pat_val(PTYPE_DIAG6, true);
+	    //
+   		print_npbw_table();
+   		//
+   		cout << "g_cnto_slope = " << g_cnto_slope << "\n";
+   	}
+   	if( false ) {
    		//	スキャンテスト
    		Bitboard black = 0x050d072c0700;		//	8個空き
    		Bitboard white = 0x38303810083c;
@@ -651,7 +792,7 @@ int main()
 	   	auto pos = negaAlpha(black, white, ev);
 	   	cout << "ev = " << ev << "\n";
    	}
-   	if( true ) {
+   	if( false ) {
    		//	スキャンテスト
    		Bitboard black, white;
    		for(int i = 0; i != 100; ++i) {
@@ -719,6 +860,10 @@ int main()
    			int index = get_pat_index(black, white, xyToBit(0, y), DIR_UL);
    			cout << "  " << y << ": " << index << "\n";
    		}
+   	}
+   	if( true ) {
+   		ML ml;		//	機械学習オブジェクト
+   		ml.print_pat_vals();
    	}
 #if 0
     BoardArray ba;
@@ -928,6 +1073,7 @@ void print_npbw_table() {
 		}
 		cout << "\n";
 	}
+	cout << "\n";
 }
 //	パターン評価値テーブル値表示
 void print_pat_val(int type, bool center) {		//	center: 3, 4 番目は空でないこと

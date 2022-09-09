@@ -130,12 +130,14 @@
     <ClCompile Include="BoardArray.cpp" />
     <ClCompile Include="BoardBitboard.cpp" />
     <ClCompile Include="BoardIndex.cpp" />
+    <ClCompile Include="ML.cpp" />
     <ClCompile Include="Othello6x6.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoardArray.h" />
     <ClInclude Include="BoardBitboard.h" />
     <ClInclude Include="BoardIndex.h" />
+    <ClInclude Include="ML.h" />
     <ClInclude Include="Othello6x6.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
