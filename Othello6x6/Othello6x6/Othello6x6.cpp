@@ -861,9 +861,49 @@ int main()
    			cout << "  " << y << ": " << index << "\n";
    		}
    	}
+   	if( false ) {
+   		ML ml;		//	機械学習オブジェクト
+   		//ml.print_pat_vals();
+   		Bitboard black, white;
+   		init(black, white);
+	   	put_randomly(black, white, 24);	//	24 for 8個空き
+   		print(black, white);
+	   	int alpha = 0;
+	   	auto pos = negaAlpha(black, white, alpha);
+	   	ml.learn_pat_vals(black, white, alpha);
+   		ml.print_pat_vals();
+
+   	}
    	if( true ) {
    		ML ml;		//	機械学習オブジェクト
-   		ml.print_pat_vals();
+   		Bitboard black, white;
+		const int  ITR = 20;
+		const int N = 10000;
+		const int TOTAL = ITR * N;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	ml.learn_pat_vals(black, white, alpha);
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(err2/N) = " << sqrt(ml.get_err2()/N) << "\n";
+		   		ml.clear_round_err2();
+		   	}
+   		}
+   		//	学習結果評価用データ出力
+   		for(int i = 0; i != 100; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	auto ev = ml.ev_pat_vals(black, white);
+		   	cout << ev << ", " << alpha << "\n";
+   		}
    	}
 #if 0
     BoardArray ba;
