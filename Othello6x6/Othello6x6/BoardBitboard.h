@@ -65,9 +65,9 @@ int get_pat_index_shr(Bitboard black, Bitboard white, Bitboard pos, int dir, int
 int get_pat_index_shl(Bitboard black, Bitboard white, Bitboard pos, int dir, int len);
 int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir);
 void get_pat_indexes(Bitboard black, Bitboard white, std::vector<int>& lst);
-void get_corner_indexes(Bitboard black, Bitboard white, std::vector<int>& lst);
-void get_corner_indexes_hv(Bitboard black, Bitboard white, std::vector<int>& lst);		//	角パターンインデックス計算、水平優先
-void get_corner_indexes_vh(Bitboard black, Bitboard white, std::vector<int>& lst);		//	角パターンインデックス計算、垂直優先
+void get_corner9_indexes(Bitboard black, Bitboard white, std::vector<int>& lst);
+void get_corner8_indexes_hv(Bitboard black, Bitboard white, std::vector<int>& lst);		//	角パターンインデックス計算、水平優先
+void get_corner8_indexes_vh(Bitboard black, Bitboard white, std::vector<int>& lst);		//	角パターンインデックス計算、垂直優先
 int num_place_can_put_black(Bitboard black, Bitboard white);		//	黒着手可能箇所数
 std::string bb_to_string(Bitboard bb);
 Bitboard remove_on_space(Bitboard bb, Bitboard spc);		//	空欄に隣接する部分をbbから削除

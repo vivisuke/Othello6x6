@@ -78,7 +78,7 @@ double eval_pat_corner8_ncanput_ncnto(Bitboard black, Bitboard white,
    		pv += g_pat2_val[g_pat_type[k]][lst[k]];
    	}
    	//	コーナー８箇所評価
-   	get_corner_indexes_hv(black, white, lst8);
+   	get_corner8_indexes_hv(black, white, lst8);
    	for(int k = 0; k != lst8.size(); ++k) {
    		pv += g_pat8_val[lst8[k]];
    	}
@@ -531,7 +531,7 @@ int main()
 		   	for(int k = 0; k != lst.size(); ++k) {
 		   		pv += g_pat2_val[g_pat_type[k]][lst[k]];
 		   	}
-		   	get_corner_indexes_hv(black, white, lst8);
+		   	get_corner8_indexes_hv(black, white, lst8);
 		   	for(int k = 0; k != lst8.size(); ++k) {
 		   		pv += g_pat8_val[lst8[k]];
 		   	}
@@ -562,7 +562,7 @@ int main()
 		   		//}
 		   	}
 			vector<int> lst8s;
-		   	get_corner_indexes_vh(black, white, lst8s);
+		   	get_corner8_indexes_vh(black, white, lst8s);
 		   	for(int k = 0; k != lst8.size(); ++k) {
 		   		g_pat8_val[lst8s[k]] = g_pat8_val[lst8[k]] += d;
 		   	}
@@ -625,7 +625,7 @@ int main()
 		   	for(int k = 0; k != lst.size(); ++k) {
 		   		pv += g_pat2_val[g_pat_type[k]][lst[k]];
 		   	}
-		   	get_corner_indexes_hv(black, white, lst8);
+		   	get_corner8_indexes_hv(black, white, lst8);
 		   	for(int k = 0; k != lst8.size(); ++k) {
 		   		pv += g_pat8_val[lst8[k]];
 		   	}
@@ -669,7 +669,7 @@ int main()
 		   		//}
 		   	}
 			vector<int> lst8s;
-		   	get_corner_indexes_vh(black, white, lst8s);
+		   	get_corner8_indexes_vh(black, white, lst8s);
 		   	for(int k = 0; k != lst8.size(); ++k) {
 		   		g_pat8_val[lst8s[k]] = g_pat8_val[lst8[k]] += d;
 		   	}
@@ -905,7 +905,7 @@ int main()
 		   	cout << ev << ", " << alpha << "\n";
    		}
    	}
-   	if( true ) {
+   	if( false ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
 		const int  ITR = 20;
@@ -935,6 +935,50 @@ int main()
 		   	auto ev = ml.ev_pat2_vals(black, white);
 		   	cout << ev << ", " << alpha << "\n";
    		}
+   	}
+   	if( true ) {
+   		ML ml;		//	機械学習オブジェクト
+   		Bitboard black, white;
+		const int  ITR = 100;
+		const int N = 10000;
+		const int TOTAL = ITR * N;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	ml.learn_pat2_corner8_vals(black, white, alpha);		//	位置ごとパターン評価値学習
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(err2/N) = " << sqrt(ml.get_err2()/N) << "\n";
+		   		ml.clear_round_err2();
+		   	}
+   		}
+   		cout << "\n";
+   		//	学習結果評価用データ出力
+   		for(int i = 0; i != 100; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	auto ev = ml.ev_pat2_corner8_vals(black, white);
+		   	cout << ev << ", " << alpha << "\n";
+   		}
+   		cout << "\n";
+   		for(int i = 0; i != 100; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 28) ) {	//	28 for 4個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	auto ev = ml.ev_pat2_corner8_vals(black, white);
+		   	cout << ev << ", " << alpha << "\n";
+   		}
+   		cout << "\n";
    	}
 #if 0
     BoardArray ba;

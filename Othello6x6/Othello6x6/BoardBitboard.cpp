@@ -324,7 +324,7 @@ void get_pat_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {
 }
 //	４角の 3x3 コーナーのパターンインデックス取得
 //	※ 縦横２方向で計算し、小さい方の値を返す
-void get_corner_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {
+void get_corner9_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {
 	lst.resize(4);
 	//	左上コーナー
 	int ix1 = get_pat_index_shr(black, white, xyToBit(0, 0), DIR_L, 3);
@@ -360,7 +360,7 @@ void get_corner_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {
 	lst[3] = std::min(ix1, ix2);
 }
 //	角パターンインデックス計算、水平優先
-void get_corner_indexes_hv(Bitboard black, Bitboard white, std::vector<int>& lst)
+void get_corner8_indexes_hv(Bitboard black, Bitboard white, std::vector<int>& lst)
 {
 	lst.resize(4);
 	//	左上コーナー
@@ -381,7 +381,7 @@ void get_corner_indexes_hv(Bitboard black, Bitboard white, std::vector<int>& lst
 	lst[3] = lst[3] * (3*3) + get_pat_index_shl(black, white, xyToBit(N_HORZ-1, N_VERT-3), DIR_L, 2);
 }
 //	角パターンインデックス計算、垂直優先
-void get_corner_indexes_vh(Bitboard black, Bitboard white, std::vector<int>& lst) {
+void get_corner8_indexes_vh(Bitboard black, Bitboard white, std::vector<int>& lst) {
 	lst.resize(4);
 	//	左上コーナー
 	lst[0] = get_pat_index_shr(black, white, xyToBit(0, 0), DIR_U, 3);

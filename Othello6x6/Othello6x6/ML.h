@@ -31,13 +31,17 @@ public:
 	void	learn_pat_vals(Bitboard black, Bitboard white, int cv);		//	評価値が cv に近づくよう１回学習
 	double	ev_pat2_vals(Bitboard black, Bitboard white) const;			//	現 m_pat2_val[][] を用いて評価関数計算
 	void	learn_pat2_vals(Bitboard black, Bitboard white, int cv);	//	評価値が cv に近づくよう１回学習
+	double	ev_pat2_corner8_vals(Bitboard black, Bitboard white) const;			//	現 m_pat2_val[][], m_corner8_val[] を用いて評価関数計算
+	void	learn_pat2_corner8_vals(Bitboard black, Bitboard white, int cv);	//	評価値が cv に近づくよう１回学習
 public:
 	int		m_round;						//	学習回数
 	double	m_err2;							//	自乗誤差累計
 	mutable std::vector<int>	m_pat_ixes;			//	m_pat_val インデックスリスト
+	mutable std::vector<int>	m_corner8_hv_ixes;		//	m_corner8_val インデックスリスト
+	mutable std::vector<int>	m_corner8_vh_ixes;		//	m_corner8_val インデックスリスト
 	int m_rev_index[N_PAT];					//	左右反転したパターンインデックス
 	double m_pat_val[N_PAT];				//	パターン評価値（全タイプ共通）
 	double m_pat2_val[N_PTYPE][N_PAT];		//	タイプ別パターン評価値
-	double m_pat8_val[N_PAT8];				//	角８個パターン
+	double m_corner8_val[N_PAT8];			//	角８個パターン
 	double m_npbw_val[NPBW_TABLE_SZ];		//	着手可能箇所数評価値テーブル、ix = npb + npw * 9、npb, npw は [0, 8]
 };
