@@ -16,6 +16,8 @@ using namespace std;
 
 #define		ML_PARAM		8			//	山登りパラメータ（誤差の逆数分修正）
 
+extern int g_pat_type[];
+
 void ML::clear_round_err2() {
 	m_round = 0;
 	m_err2 = 0.0;
@@ -59,5 +61,26 @@ void ML::learn_pat_vals(Bitboard black, Bitboard white, int cv) {
    	d /= m_pat_ixes.size() * ML_PARAM;
    	for(int k = 0; k != m_pat_ixes.size(); ++k) {
    		m_pat_val[m_pat_ixes[k]] += d;
+   	}
+}
+//	現 m_pat2_val[] を用いて評価関数計算
+double ML::ev_pat2_vals(Bitboard black, Bitboard white) const {
+	//vector<int> lst;		//	パターンインデックス格納用配列
+   	get_pat_indexes(black, white, m_pat_ixes);
+   	double pv = 0.0;	//	パターンによる評価値
+   	for(int k = 0; k != m_pat_ixes.size(); ++k) {
+   		pv += m_pat2_val[g_pat_type[k]][m_pat_ixes[k]];
+   	}
+   	return pv;
+}
+//	評価値が cv に近づくよう m_pat2_val[][] を１回学習
+void ML::learn_pat2_vals(Bitboard black, Bitboard white, int cv) {
+	++m_round;
+   	auto d = cv - ev_pat2_vals(black, white);
+   	m_err2 += d * d;
+   	//	パターン評価値更新値
+   	d /= m_pat_ixes.size() * ML_PARAM;
+   	for(int k = 0; k != m_pat_ixes.size(); ++k) {
+   		m_pat2_val[g_pat_type[k]][m_pat_ixes[k]] += d;
    	}
 }

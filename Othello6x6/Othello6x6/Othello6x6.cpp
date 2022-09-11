@@ -874,7 +874,7 @@ int main()
    		ml.print_pat_vals();
 
    	}
-   	if( true ) {
+   	if( false ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
 		const int  ITR = 20;
@@ -887,7 +887,7 @@ int main()
 		   	}
 		   	int alpha = 0;
 		   	auto pos = negaAlpha(black, white, alpha);
-		   	ml.learn_pat_vals(black, white, alpha);
+		   	ml.learn_pat_vals(black, white, alpha);		//	全位置共通パターン評価値学習
 		   	if( (i % N) == N - 1 ) {
 		   		cout << (i/N+1) << ": sqrt(err2/N) = " << sqrt(ml.get_err2()/N) << "\n";
 		   		ml.clear_round_err2();
@@ -902,6 +902,37 @@ int main()
 		   	int alpha = 0;
 		   	auto pos = negaAlpha(black, white, alpha);
 		   	auto ev = ml.ev_pat_vals(black, white);
+		   	cout << ev << ", " << alpha << "\n";
+   		}
+   	}
+   	if( true ) {
+   		ML ml;		//	機械学習オブジェクト
+   		Bitboard black, white;
+		const int  ITR = 20;
+		const int N = 10000;
+		const int TOTAL = ITR * N;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	ml.learn_pat2_vals(black, white, alpha);		//	位置ごとパターン評価値学習
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(err2/N) = " << sqrt(ml.get_err2()/N) << "\n";
+		   		ml.clear_round_err2();
+		   	}
+   		}
+   		//	学習結果評価用データ出力
+   		for(int i = 0; i != 100; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	auto ev = ml.ev_pat2_vals(black, white);
 		   	cout << ev << ", " << alpha << "\n";
    		}
    	}
