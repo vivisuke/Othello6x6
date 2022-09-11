@@ -936,7 +936,7 @@ int main()
 		   	cout << ev << ", " << alpha << "\n";
    		}
    	}
-   	if( true ) {
+   	if( false ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
 		const int  ITR = 100;
@@ -979,6 +979,52 @@ int main()
 		   	cout << ev << ", " << alpha << "\n";
    		}
    		cout << "\n";
+   	}
+   	if( true ) {
+   		ML ml;		//	機械学習オブジェクト
+   		Bitboard black, white;
+		const int  ITR = 100;
+		const int N = 10000;
+		const int TOTAL = ITR * N;
+   		for(int i = 0; i != TOTAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	ml.learn_pat2_corner8_npbw_vals(black, white, alpha);		//	評価関数パラメータ学習
+		   	if( (i % N) == N - 1 ) {
+		   		cout << (i/N+1) << ": sqrt(err2/N) = " << sqrt(ml.get_err2()/N) << "\n";
+		   		ml.clear_round_err2();
+		   	}
+   		}
+   		cout << "\n";
+   		//	学習結果評価用データ出力
+   		for(int i = 0; i != 100; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	auto ev = ml.ev_pat2_corner8_npbw_vals(black, white);
+		   	cout << ev << ", " << alpha << "\n";
+   		}
+   		cout << "\n";
+#if	0
+   		for(int i = 0; i != 100; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 28) ) {	//	28 for 4個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	auto ev = ml.ev_pat2_corner8_npbw_vals(black, white);
+		   	cout << ev << ", " << alpha << "\n";
+   		}
+   		cout << "\n";
+#endif
    	}
 #if 0
     BoardArray ba;

@@ -33,9 +33,13 @@ public:
 	void	learn_pat2_vals(Bitboard black, Bitboard white, int cv);	//	評価値が cv に近づくよう１回学習
 	double	ev_pat2_corner8_vals(Bitboard black, Bitboard white) const;			//	現 m_pat2_val[][], m_corner8_val[] を用いて評価関数計算
 	void	learn_pat2_corner8_vals(Bitboard black, Bitboard white, int cv);	//	評価値が cv に近づくよう１回学習
+	double	ev_pat2_corner8_npbw_vals(Bitboard black, Bitboard white) const;		//	現 m_pat2_val[][], m_corner8_val[], を用いて評価関数計算
+	void	learn_pat2_corner8_npbw_vals(Bitboard black, Bitboard white, int cv);	//	評価値が cv に近づくよう１回学習
 public:
-	int		m_round;						//	学習回数
-	double	m_err2;							//	自乗誤差累計
+	int		m_round;			//	学習回数
+	double	m_err2;				//	自乗誤差累計
+	mutable int		m_npb;		//	黒着手可能箇所数
+	mutable int		m_npw;		//	白着手可能箇所数
 	mutable std::vector<int>	m_pat_ixes;			//	m_pat_val インデックスリスト
 	mutable std::vector<int>	m_corner8_hv_ixes;		//	m_corner8_val インデックスリスト
 	mutable std::vector<int>	m_corner8_vh_ixes;		//	m_corner8_val インデックスリスト

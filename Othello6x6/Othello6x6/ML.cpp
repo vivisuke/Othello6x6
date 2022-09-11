@@ -114,3 +114,38 @@ void ML::learn_pat2_corner8_vals(Bitboard black, Bitboard white, int cv) {
    		m_corner8_val[m_corner8_vh_ixes[k]] = m_corner8_val[m_corner8_hv_ixes[k]] += d;
    	}
 }
+//	現 m_pat2_val[], m_corner8_val[], m_npbw_val[] を用いて評価関数計算
+double ML::ev_pat2_corner8_npbw_vals(Bitboard black, Bitboard white) const {
+	//vector<int> lst;		//	パターンインデックス格納用配列
+    double pv = 0.0;	//	パターンによる評価値
+    get_pat_indexes(black, white, m_pat_ixes);
+   	for(int k = 0; k != m_pat_ixes.size(); ++k) {
+   		pv += m_pat2_val[g_pat_type[k]][m_pat_ixes[k]];
+   	}
+   	get_corner8_indexes_hv(black, white, m_corner8_hv_ixes);
+   	for(int k = 0; k != m_corner8_hv_ixes.size(); ++k) {
+        //auto ix = m_corner8_hv_ixes[k];
+   		pv += m_corner8_val[m_corner8_hv_ixes[k]];
+   	}
+   	//	着手可能箇所数
+   	m_npb = num_place_can_put_black(black, white);
+   	m_npw = num_place_can_put_black(white, black);
+	pv += m_npbw_val[m_npb + m_npw*(MAX_NP + 1)];
+   	return pv;
+}
+//	評価値が cv に近づくよう m_pat2_val[][], m_corner8_val[], m_npbw_val[] を１回学習
+void ML::learn_pat2_corner8_npbw_vals(Bitboard black, Bitboard white, int cv) {
+	++m_round;
+   	auto d = cv - ev_pat2_corner8_vals(black, white);
+   	m_err2 += d * d;
+   	//	パターン評価値更新値
+   	d /= (m_pat_ixes.size() + m_corner8_hv_ixes.size() + 1) * ML_PARAM;
+   	for(int k = 0; k != m_pat_ixes.size(); ++k) {
+   		m_pat2_val[g_pat_type[k]][m_pat_ixes[k]] += d;
+   	}
+   	get_corner8_indexes_vh(black, white, m_corner8_vh_ixes);
+   	for(int k = 0; k != m_corner8_hv_ixes.size(); ++k) {
+   		m_corner8_val[m_corner8_vh_ixes[k]] = m_corner8_val[m_corner8_hv_ixes[k]] += d;
+   	}
+   	m_npbw_val[m_npb + m_npw*(MAX_NP+1)] += d;
+}
