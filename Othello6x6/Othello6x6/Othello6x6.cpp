@@ -983,7 +983,7 @@ int main()
    	if( true ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
-		const int  ITR = 100;
+		const int  ITR = 50;
 		const int N = 10000;
 		const int TOTAL = ITR * N;
    		for(int i = 0; i != TOTAL; ++i) {
@@ -1001,7 +1001,9 @@ int main()
    		}
    		cout << "\n";
    		//	学習結果評価用データ出力
-   		for(int i = 0; i != 100; ++i) {
+   		const int N_EVAL = 100;
+   		double err2 = 0.0;
+   		for(int i = 0; i != N_EVAL; ++i) {
 	   		init(black, white);
 		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
 		   		init(black, white);
@@ -1010,7 +1012,9 @@ int main()
 		   	auto pos = negaAlpha(black, white, alpha);
 		   	auto ev = ml.ev_pat2_corner8_npbw_vals(black, white);
 		   	cout << ev << ", " << alpha << "\n";
+		   	err2 += (ev - alpha) * (ev - alpha);
    		}
+   		cout << "σ = " << sqrt(err2/N_EVAL) << "\n";
    		cout << "\n";
 #if	0
    		for(int i = 0; i != 100; ++i) {
