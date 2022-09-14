@@ -1002,7 +1002,12 @@ int main()
    		cout << "\n";
    		//	学習結果評価用データ出力
    		const int N_EVAL = 100;
-   		double err2 = 0.0;
+   		double err2 = 0.0;			//	自乗誤差
+   		double sumx = 0.0;			//	評価値合計
+   		double sumx2 = 0.0;			//	評価値自乗合計
+   		double sumy = 0.0;			//	石差合計
+   		double sumy2 = 0.0;			//	石差自乗合計
+   		double sumxy = 0.0;			//	評価値*石差合計
    		for(int i = 0; i != N_EVAL; ++i) {
 	   		init(black, white);
 		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
@@ -1013,8 +1018,19 @@ int main()
 		   	auto ev = ml.ev_pat2_corner8_npbw_vals(black, white);
 		   	cout << ev << ", " << alpha << "\n";
 		   	err2 += (ev - alpha) * (ev - alpha);
+		   	sumx += ev;
+		   	sumx2 += ev * ev;
+		   	sumy += alpha;
+		   	sumy2 += alpha * alpha;
+		   	sumxy += ev * alpha;
    		}
    		cout << "σ = " << sqrt(err2/N_EVAL) << "\n";
+   		double avgx = sumx / N_EVAL;
+   		double avgy = sumy / N_EVAL;
+   		double sgmx = sqrt((sumx2 - avgx*avgx)/N_EVAL);
+   		double sgmy = sqrt((sumy2 - avgy*avgy)/N_EVAL);
+   		double r = ((sumxy/N_EVAL) - avgx*avgy) / (sgmx * sgmy);
+   		cout << "R = " << r << "\n";
    		cout << "\n";
 #if	0
    		for(int i = 0; i != 100; ++i) {
