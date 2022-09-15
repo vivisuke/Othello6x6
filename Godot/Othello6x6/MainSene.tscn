@@ -1,0 +1,7 @@
+[gd_scene format=2]
+
+[node name="MainSene" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 500.0
+margin_bottom = 900.0
