@@ -43,6 +43,7 @@ var rng = RandomNumberGenerator.new()
 var thread = null
 var AI_putIX = 0	# -1 for pass, >0 for put IX
 var putIX = 0
+var pressedPos = Vector2(0, 0)
 
 
 func _ready():
@@ -61,9 +62,9 @@ func _ready():
 	#
 	##update_humanAIColor()	# 人間・AI 石色表示
 	init_bd_array()
-	putBlack(4, 3)
-	putIX = xyToArrayIX(4, 3)
-	next_color = WHITE
+	#putBlack(4, 3)
+	#putIX = xyToArrayIX(4, 3)
+	#next_color = WHITE
 	update_TileMap()
 	update_cursor()
 
@@ -243,12 +244,25 @@ func un_putBlack():
 
 func _input(event):
 	if event is InputEventMouseButton:
-		print(event.position)
-		print($Board/TileMap.world_to_map(event.position - BOARD_ORG))
+		#print(event.position)
+		#print($Board/TileMap.world_to_map(event.position - BOARD_ORG))
+		var pos = $Board/TileMap.world_to_map(event.position - BOARD_ORG)
 		print("mouse button")
 		if event.is_pressed():
 			print("pressed")
+			pressedPos = pos
 		else:
 			print("released")
-		#elif event.is_action_released()
+			if pos == pressedPos:
+				if next_color == BLACK:
+					if !canPutBlack(pos.x, pos.y): return
+					putBlack(pos.x, pos.y)
+					next_color = WHITE
+				else:	#if next_color == WHITE:
+					if !canPutWhite(pos.x, pos.y): return
+					putWhite(pos.x, pos.y)
+					next_color = BLACK
+			putIX = xyToArrayIX(pos.x, pos.y)
+			update_TileMap()
+			update_cursor()
 	pass

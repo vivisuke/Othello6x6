@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://images/BG.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Board.gd" type="Script" id=2]
@@ -9,6 +9,9 @@
 [ext_resource path="res://fonts/Hokjesgeest-PDGB.ttf" type="DynamicFontData" id=7]
 [ext_resource path="res://scripts/TitleBar.gd" type="Script" id=8]
 [ext_resource path="res://images/cursor.png" type="Texture" id=9]
+[ext_resource path="res://images/person_outline.png" type="Texture" id=10]
+[ext_resource path="res://images/outline_psychology.png" type="Texture" id=11]
+[ext_resource path="res://fonts/arialbd.ttf" type="DynamicFontData" id=12]
 
 [sub_resource type="DynamicFont" id=2]
 size = 30
@@ -74,6 +77,10 @@ font_data = ExtResource( 7 )
 1/shapes = [  ]
 1/z_index = 0
 
+[sub_resource type="DynamicFont" id=5]
+size = 32
+font_data = ExtResource( 12 )
+
 [node name="MainSene" type="Node2D"]
 script = ExtResource( 6 )
 
@@ -115,3 +122,92 @@ tile_set = SubResource( 4 )
 cell_size = Vector2( 75, 75 )
 format = 1
 tile_data = PoolIntArray( 65538, 1, 0, 131073, 1, 0, 196611, 0, 0, 196612, 1, 0, 262147, 1, 0 )
+
+[node name="HumanBG" type="ColorRect" parent="."]
+margin_left = 20.0
+margin_top = 75.0
+margin_right = 220.0
+margin_bottom = 125.0
+color = Color( 0.627451, 0.627451, 0.627451, 1 )
+
+[node name="TextureRect" type="TextureRect" parent="HumanBG"]
+margin_right = 40.0
+margin_bottom = 40.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 10 )
+
+[node name="Black" type="TextureRect" parent="HumanBG"]
+margin_left = 75.0
+margin_right = 150.0
+margin_bottom = 75.0
+rect_scale = Vector2( 0.67, 0.67 )
+texture = ExtResource( 5 )
+
+[node name="White" type="TextureRect" parent="HumanBG"]
+visible = false
+margin_left = 75.0
+margin_right = 150.0
+margin_bottom = 75.0
+rect_scale = Vector2( 0.67, 0.67 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="HumanBG"]
+margin_left = 139.0
+margin_right = 192.0
+margin_bottom = 60.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 5 )
+text = "36"
+align = 2
+valign = 1
+
+[node name="Underline" type="ColorRect" parent="HumanBG"]
+margin_top = 50.0
+margin_right = 200.0
+margin_bottom = 60.0
+color = Color( 1, 1, 0, 1 )
+
+[node name="AIBG" type="ColorRect" parent="."]
+margin_left = 270.0
+margin_top = 75.0
+margin_right = 470.0
+margin_bottom = 125.0
+color = Color( 0.627451, 0.627451, 0.627451, 1 )
+
+[node name="TextureRect" type="TextureRect" parent="AIBG"]
+margin_right = 40.0
+margin_bottom = 40.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 11 )
+
+[node name="Black" type="TextureRect" parent="AIBG"]
+visible = false
+margin_left = 75.0
+margin_right = 150.0
+margin_bottom = 75.0
+rect_scale = Vector2( 0.67, 0.67 )
+texture = ExtResource( 5 )
+
+[node name="White" type="TextureRect" parent="AIBG"]
+margin_left = 75.0
+margin_right = 150.0
+margin_bottom = 75.0
+rect_scale = Vector2( 0.67, 0.67 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="AIBG"]
+margin_left = 139.0
+margin_right = 192.0
+margin_bottom = 60.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 5 )
+text = "36"
+align = 2
+valign = 1
+
+[node name="Underline" type="ColorRect" parent="AIBG"]
+visible = false
+margin_top = 50.0
+margin_right = 200.0
+margin_bottom = 60.0
+color = Color( 1, 1, 0, 1 )
