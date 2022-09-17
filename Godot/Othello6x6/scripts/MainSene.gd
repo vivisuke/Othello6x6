@@ -61,8 +61,12 @@ func _ready():
 	#
 	##update_humanAIColor()	# 人間・AI 石色表示
 	init_bd_array()
+	putBlack(4, 3)
+	putIX = xyToArrayIX(4, 3)
+	next_color = WHITE
 	update_TileMap()
 	update_cursor()
+
 func xyToArrayIX(x, y):		# 0 <= x, y < 8
 	return (y+1)*ARY_WIDTH + (x+1)
 func aixToX(ix : int):
@@ -158,6 +162,84 @@ func canPutWhiteSomewhere():
 			if canPutWhite(x, y):
 				return true;
 	return false;
+func putWhiteSub(ix, dir):
+	ix += dir
+	if bd_array[ix] != BLACK:
+		return 0
+	var n = 0
+	while bd_array[ix] == BLACK:
+		n += 1
+		ix += dir
+	if bd_array[ix] != WHITE:
+		return 0
+	for i in range(n):
+		ix -= dir
+		bd_array[ix] = WHITE
+		put_stack.push_back(ix)
+	return n
+func putBlackSub(ix, dir):
+	ix += dir
+	if bd_array[ix] != WHITE:
+		return 0
+	var n = 0
+	while bd_array[ix] == WHITE:
+		n += 1
+		ix += dir
+	if bd_array[ix] != BLACK:
+		return 0
+	for i in range(n):
+		ix -= dir
+		bd_array[ix] = BLACK
+		put_stack.push_back(ix)
+	return n
+func putWhite(x, y):	# 返した石数を返す
+	return putWhiteIX(xyToArrayIX(x, y))
+func putWhiteIX(ix):	# 返した石数を返す
+	#var ix = xyToArrayIX(x, y)
+	var n = putWhiteSub(ix, -ARY_WIDTH-1)
+	n += putWhiteSub(ix, -ARY_WIDTH)
+	n += putWhiteSub(ix, -ARY_WIDTH+1)
+	n += putWhiteSub(ix, -1)
+	n += putWhiteSub(ix, 1)
+	n += putWhiteSub(ix, ARY_WIDTH-1)
+	n += putWhiteSub(ix, ARY_WIDTH)
+	n += putWhiteSub(ix, ARY_WIDTH+1)
+	if n != 0:
+		bd_array[ix] = WHITE
+		put_stack.push_back(n)
+		put_stack.push_back(ix)
+	return n
+func putBlack(x, y):	# 返した石数を返す
+	return putBlackIX(xyToArrayIX(x, y))
+func putBlackIX(ix):	# 返した石数を返す
+	#var ix = xyToArrayIX(x, y)
+	var n = putBlackSub(ix, -ARY_WIDTH-1)
+	n += putBlackSub(ix, -ARY_WIDTH)
+	n += putBlackSub(ix, -ARY_WIDTH+1)
+	n += putBlackSub(ix, -1)
+	n += putBlackSub(ix, 1)
+	n += putBlackSub(ix, ARY_WIDTH-1)
+	n += putBlackSub(ix, ARY_WIDTH)
+	n += putBlackSub(ix, ARY_WIDTH+1)
+	if n != 0:
+		bd_array[ix] = BLACK
+		put_stack.push_back(n)
+		put_stack.push_back(ix)
+	return n
+func un_putWhite():
+	var ix = put_stack.pop_back()
+	bd_array[ix] = EMPTY
+	var n = put_stack.pop_back()
+	for i in range(n):
+		var k = put_stack.pop_back()
+		bd_array[k] = BLACK
+func un_putBlack():
+	var ix = put_stack.pop_back()
+	bd_array[ix] = EMPTY
+	var n = put_stack.pop_back()
+	for i in range(n):
+		var k = put_stack.pop_back()
+		bd_array[k] = WHITE
 
 func _input(event):
 	if event is InputEventMouseButton:
