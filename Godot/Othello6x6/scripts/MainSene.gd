@@ -19,6 +19,7 @@ const xaxis = "abcdef"
 
 var BOARD_ORG_X
 var BOARD_ORG_Y
+var BOARD_ORG
 var CELL_WD
 var CELL_HT
 var BOARD_WIDTH
@@ -47,6 +48,8 @@ var putIX = 0
 func _ready():
 	BOARD_ORG_X = $Board/TileMap.global_position.x
 	BOARD_ORG_Y = $Board/TileMap.global_position.y
+	BOARD_ORG = Vector2(BOARD_ORG_X, BOARD_ORG_Y)
+	print("BOARD_ORG = ", BOARD_ORG)
 	CELL_WD = $Board/TileMap.cell_size.x
 	CELL_HT = $Board/TileMap.cell_size.y
 	BOARD_WIDTH = CELL_WD * N_CELL_HORZ
@@ -61,3 +64,15 @@ func _ready():
 	$Board/TileMap.set_cell(2, 3, BLACK-1)
 	$Board/TileMap.set_cell(3, 2, BLACK-1)
 	pass # Replace with function body.
+
+func _input(event):
+	if event is InputEventMouseButton:
+		print(event.position)
+		print($Board/TileMap.world_to_map(event.position - BOARD_ORG))
+		print("mouse button")
+		if event.is_pressed():
+			print("pressed")
+		else:
+			print("released")
+		#elif event.is_action_released()
+	pass
