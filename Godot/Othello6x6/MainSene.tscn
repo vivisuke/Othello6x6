@@ -152,6 +152,7 @@ rect_scale = Vector2( 0.67, 0.67 )
 texture = ExtResource( 4 )
 
 [node name="Label" type="Label" parent="HumanBG"]
+visible = false
 margin_left = 139.0
 margin_right = 192.0
 margin_bottom = 60.0
@@ -189,6 +190,7 @@ rect_scale = Vector2( 0.67, 0.67 )
 texture = ExtResource( 5 )
 
 [node name="White" type="TextureRect" parent="AIBG"]
+visible = false
 margin_left = 75.0
 margin_right = 150.0
 margin_bottom = 75.0

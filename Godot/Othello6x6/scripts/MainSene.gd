@@ -60,13 +60,19 @@ func _ready():
 	bd_canPutBlack.resize(ARY_SIZE)
 	bd_canPutWhite.resize(ARY_SIZE)
 	#
-	##update_humanAIColor()	# 人間・AI 石色表示
+	update_humanAIColor()	# 人間・AI 石色表示
 	init_bd_array()
 	#putBlack(4, 3)
 	#putIX = xyToArrayIX(4, 3)
 	#next_color = WHITE
 	update_TileMap()
 	update_cursor()
+	update_nextTurn()
+func update_humanAIColor():
+	$HumanBG/Black.set_visible(AI_color == WHITE)
+	$HumanBG/White.set_visible(AI_color != WHITE)
+	$AIBG/Black.set_visible(AI_color != WHITE)
+	$AIBG/White.set_visible(AI_color == WHITE)
 
 func xyToArrayIX(x, y):		# 0 <= x, y < 8
 	return (y+1)*ARY_WIDTH + (x+1)
@@ -111,6 +117,9 @@ func update_cursor():
 					next_color == WHITE && canPutWhite(x, y) ):
 				id = CAN_PUT
 			$Board/CursorTileMap.set_cell(x, y, id)
+func update_nextTurn():
+	$HumanBG/Underline.set_visible(next_color != AI_color)
+	$AIBG/Underline.set_visible(next_color == AI_color)
 func canPutWhiteSub(ix, dir):
 	ix += dir
 	if bd_array[ix] != BLACK:
@@ -265,4 +274,5 @@ func _input(event):
 			putIX = xyToArrayIX(pos.x, pos.y)
 			update_TileMap()
 			update_cursor()
+			update_nextTurn()
 	pass
