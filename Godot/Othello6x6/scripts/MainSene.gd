@@ -4,7 +4,7 @@ enum {
 	EMPTY = 0, BLACK, WHITE, WALL,
 }
 enum {
-	CAN_PUT = 0, DID_PUT,
+	DID_PUT = 0, CAN_PUT, 
 }
 const TRANSPARENT = -1
 #const EMPTY = -1
@@ -62,7 +62,7 @@ func _ready():
 	##update_humanAIColor()	# 人間・AI 石色表示
 	init_bd_array()
 	update_TileMap()
-	##update_cursor()
+	update_cursor()
 func xyToArrayIX(x, y):		# 0 <= x, y < 8
 	return (y+1)*ARY_WIDTH + (x+1)
 func aixToX(ix : int):
@@ -96,6 +96,68 @@ func update_TileMap():
 	var aix = 1 if AI_color == BLACK else 2
 	##$HumanBG/num.text = "%d" % nColors[hix]
 	##$AIBG/num.text = "%d" % nColors[aix]
+func update_cursor():
+	for y in range(N_CELL_VERT):
+		for x in range(N_CELL_HORZ):
+			var id = TRANSPARENT
+			if xyToArrayIX(x, y) == putIX:
+				id = DID_PUT
+			elif( next_color == BLACK && canPutBlack(x, y) ||
+					next_color == WHITE && canPutWhite(x, y) ):
+				id = CAN_PUT
+			$Board/CursorTileMap.set_cell(x, y, id)
+func canPutWhiteSub(ix, dir):
+	ix += dir
+	if bd_array[ix] != BLACK:
+		return false
+	while bd_array[ix] == BLACK:
+		ix += dir
+	return bd_array[ix] == WHITE
+func canPutBlackSub(ix, dir):
+	ix += dir
+	if bd_array[ix] != WHITE:
+		return false
+	while bd_array[ix] == WHITE:
+		ix += dir
+	return bd_array[ix] == BLACK
+func canPutWhite(x, y):
+	return canPutWhiteIX(xyToArrayIX(x, y))
+func canPutWhiteIX(ix):
+	if (bd_array[ix] != EMPTY):
+		return false;
+	return (canPutWhiteSub(ix, -ARY_WIDTH-1) ||
+			canPutWhiteSub(ix, -ARY_WIDTH) ||
+			canPutWhiteSub(ix, -ARY_WIDTH+1) ||
+			canPutWhiteSub(ix, -1) ||
+			canPutWhiteSub(ix, +1) ||
+			canPutWhiteSub(ix, ARY_WIDTH-1) ||
+			canPutWhiteSub(ix, ARY_WIDTH) ||
+			canPutWhiteSub(ix, ARY_WIDTH+1))
+func canPutBlack(x, y):
+	return canPutBlackIX(xyToArrayIX(x, y))
+func canPutBlackIX(ix):
+	if (bd_array[ix] != EMPTY):
+		return false;
+	return (canPutBlackSub(ix, -ARY_WIDTH-1) ||
+			canPutBlackSub(ix, -ARY_WIDTH) ||
+			canPutBlackSub(ix, -ARY_WIDTH+1) ||
+			canPutBlackSub(ix, -1) ||
+			canPutBlackSub(ix, +1) ||
+			canPutBlackSub(ix, ARY_WIDTH-1) ||
+			canPutBlackSub(ix, ARY_WIDTH) ||
+			canPutBlackSub(ix, ARY_WIDTH+1))
+func canPutBlackSomewhere():
+	for y in range(N_CELL_VERT):
+		for x in range(N_CELL_HORZ):
+			if canPutBlack(x, y):
+				return true;
+	return false;
+func canPutWhiteSomewhere():
+	for y in range(N_CELL_VERT):
+		for x in range(N_CELL_HORZ):
+			if canPutWhite(x, y):
+				return true;
+	return false;
 
 func _input(event):
 	if event is InputEventMouseButton:
