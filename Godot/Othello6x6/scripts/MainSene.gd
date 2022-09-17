@@ -105,8 +105,8 @@ func update_TileMap():
 			nColors[col] += 1
 	var hix = 1 if AI_color == WHITE else 2
 	var aix = 1 if AI_color == BLACK else 2
-	##$HumanBG/num.text = "%d" % nColors[hix]
-	##$AIBG/num.text = "%d" % nColors[aix]
+	$HumanBG/Num.text = "%d" % nColors[hix]
+	$AIBG/Num.text = "%d" % nColors[aix]
 func update_cursor():
 	for y in range(N_CELL_VERT):
 		for x in range(N_CELL_HORZ):
