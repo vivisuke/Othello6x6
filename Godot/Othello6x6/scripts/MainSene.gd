@@ -120,6 +120,22 @@ func update_cursor():
 func update_nextTurn():
 	$HumanBG/Underline.set_visible(next_color != AI_color)
 	$AIBG/Underline.set_visible(next_color == AI_color)
+#
+func thinkAI_random():
+	if game_over:
+		return
+	var lst = Array()
+	for y in range(N_CELL_VERT):
+		for x in range(N_CELL_HORZ):
+			if( next_color == WHITE && canPutWhite(x, y) ||
+					next_color == BLACK && canPutBlack(x, y) ):
+				lst.push_back(xyToArrayIX(x, y))
+	if lst.empty():
+		return 0
+	rng.randomize()
+	var r = rng.randi_range(0, lst.size() - 1)
+	return lst[r]
+#
 func canPutWhiteSub(ix, dir):
 	ix += dir
 	if bd_array[ix] != BLACK:
@@ -172,6 +188,7 @@ func canPutWhiteSomewhere():
 			if canPutWhite(x, y):
 				return true;
 	return false;
+#
 func putWhiteSub(ix, dir):
 	ix += dir
 	if bd_array[ix] != BLACK:
@@ -250,7 +267,18 @@ func un_putBlack():
 	for i in range(n):
 		var k = put_stack.pop_back()
 		bd_array[k] = WHITE
-
+#
+func _process(delta):
+	if !AI_thinking && next_color == AI_color:
+		AI_thinking = true
+		putIX = thinkAI_random()
+		putWhiteIX(putIX)
+		next_color = BLACK
+		update_TileMap()
+		update_cursor()
+		update_nextTurn()
+		AI_thinking = false
+	pass
 func _input(event):
 	if event is InputEventMouseButton:
 		#print(event.position)
