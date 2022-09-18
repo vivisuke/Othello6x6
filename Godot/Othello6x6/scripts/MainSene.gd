@@ -15,6 +15,14 @@ const N_CELL_VERT = 6
 const ARY_WIDTH : int = N_CELL_HORZ + 1
 const ARY_HEIGHT : int = N_CELL_VERT + 2
 const ARY_SIZE = ARY_WIDTH * ARY_HEIGHT + 1
+const DIR_UL = -ARY_WIDTH - 1
+const DIR_U = -ARY_WIDTH
+const DIR_UR = -ARY_WIDTH + 1
+const DIR_L = -1
+const DIR_R = 1
+const DIR_DL = ARY_WIDTH - 1
+const DIR_D = ARY_WIDTH
+const DIR_DR = ARY_WIDTH + 1
 const xaxis = "abcdef"
 
 var BOARD_ORG_X
@@ -68,6 +76,8 @@ func _ready():
 	update_TileMap()
 	update_cursor()
 	update_nextTurn()
+	#
+	print(get_pat_indexes())
 func update_humanAIColor():
 	$HumanBG/Black.set_visible(AI_color == WHITE)
 	$HumanBG/White.set_visible(AI_color != WHITE)
@@ -267,6 +277,32 @@ func un_putBlack():
 	for i in range(n):
 		var k = put_stack.pop_back()
 		bd_array[k] = WHITE
+#
+func get_pat_index(ix, dir, n):		# ix 位置から dir 方向の長さ n のパターンインデックスを計算
+	var v = 0
+	for i in range(n):
+		v = v * 3 + bd_array[ix]
+		ix += dir
+	return v
+func get_pat_indexes():		# 盤面の直線パターンインデックスを計算し、結果を配列で返す
+	var lst = []
+	# 水平方向スキャン
+	for y in range(N_CELL_VERT):
+		lst.push_back(get_pat_index(xyToArrayIX(0, y), DIR_R, N_CELL_HORZ))
+	# 垂直方向スキャン
+	for x in range(N_CELL_HORZ):
+		lst.push_back(get_pat_index(xyToArrayIX(x, 0), DIR_D, N_CELL_VERT))
+	# ／方向スキャン
+	for y in range(2, N_CELL_VERT):
+		lst.push_back(get_pat_index(xyToArrayIX(0, y), DIR_UR, y+1))
+	for x in range(1, N_CELL_HORZ-2):
+		lst.push_back(get_pat_index(xyToArrayIX(x, N_CELL_VERT-1), DIR_UR, N_CELL_VERT-x))
+	# ＼方向スキャン
+	for y in range(2, N_CELL_VERT):
+		lst.push_back(get_pat_index(xyToArrayIX(0, N_CELL_VERT-1-y), DIR_DR, y+1))
+	for x in range(1, N_CELL_HORZ-2):
+		lst.push_back(get_pat_index(xyToArrayIX(x, 0), DIR_DR, N_CELL_VERT-x))
+	return lst
 #
 func _process(delta):
 	if !AI_thinking && next_color == AI_color:
