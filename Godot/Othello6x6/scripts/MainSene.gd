@@ -123,11 +123,37 @@ func xyToBit(x, y):		# 0 <= x, y < 6
 func init_bb():
 	bb_black = C4_BIT | D3_BIT
 	bb_white = C3_BIT | D4_BIT
-func bb_get_color(black, white, x, y):
+func bb_get_color(black:int, white:int, x, y):
 	var bit = xyToBit(x, y)
 	if (black & bit) != 0: return BLACK
 	if (white & bit) != 0: return WHITE
 	return EMPTY
+func bb_can_put_black_dir(black:int, white:int, pos, dir) -> bool:
+	if dir > 0:
+		pos <<= dir
+		if( (white & pos) == 0 ): return false;		#	白でない
+		while true:
+			pos <<= dir
+			if( (white & pos) == 0 ): break		#	白が続く間ループ
+	else:
+		dir = -dir;
+		pos >>= dir
+		if( (white & pos) == 0 ): return false;		#	白でない
+		while true:
+			pos >>= dir
+			if( (white & pos) == 0 ): break		#	白が続く間ループ
+	return (black & pos) != 0
+func bb_can_put_black(black:int, white:int, pos) -> bool:
+	#if bb_can_put_black_dir(black, white, pos, BB_DIR_UL): return true
+	#return false
+	return (bb_can_put_black_dir(black, white, pos, BB_DIR_UL) ||
+			bb_can_put_black_dir(black, white, pos, BB_DIR_U) ||
+			bb_can_put_black_dir(black, white, pos, BB_DIR_UR) ||
+			bb_can_put_black_dir(black, white, pos, BB_DIR_L) ||
+			bb_can_put_black_dir(black, white, pos, BB_DIR_R) ||
+			bb_can_put_black_dir(black, white, pos, BB_DIR_DL) ||
+			bb_can_put_black_dir(black, white, pos, BB_DIR_D) ||
+			bb_can_put_black_dir(black, white, pos, BB_DIR_DR))
 #
 func xyToArrayIX(x, y):		# 0 <= x, y < 6
 	return (y+1)*ARY_WIDTH + (x+1)
@@ -169,8 +195,10 @@ func update_cursor():
 			var id = TRANSPARENT
 			if xyToArrayIX(x, y) == putIX:
 				id = DID_PUT
-			elif( next_color == BLACK && canPutBlack(x, y) ||
-					next_color == WHITE && canPutWhite(x, y) ):
+			#elif( next_color == BLACK && canPutBlack(x, y) ||
+			#		next_color == WHITE && canPutWhite(x, y) ):
+			elif( next_color == BLACK && bb_can_put_black(bb_black, bb_white, xyToBit(x, y)) ||
+					next_color == WHITE && bb_can_put_black(bb_white, bb_black, xyToBit(x, y)) ):
 				id = CAN_PUT
 			$Board/CursorTileMap.set_cell(x, y, id)
 func update_nextTurn():
