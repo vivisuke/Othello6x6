@@ -146,6 +146,7 @@ func bb_can_put_black_dir(black:int, white:int, pos, dir) -> bool:
 func bb_can_put_black(black:int, white:int, pos) -> bool:
 	#if bb_can_put_black_dir(black, white, pos, BB_DIR_UL): return true
 	#return false
+	if (black & pos) != 0 || (white & pos) != 0: return false
 	return (bb_can_put_black_dir(black, white, pos, BB_DIR_UL) ||
 			bb_can_put_black_dir(black, white, pos, BB_DIR_U) ||
 			bb_can_put_black_dir(black, white, pos, BB_DIR_UR) ||
