@@ -894,6 +894,7 @@ int main()
 		   	}
    		}
    		//	学習結果評価用データ出力
+#if 0
    		for(int i = 0; i != 100; ++i) {
 	   		init(black, white);
 		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
@@ -904,8 +905,40 @@ int main()
 		   	auto ev = ml.ev_pat_vals(black, white);
 		   	cout << ev << ", " << alpha << "\n";
    		}
+#endif
+   		const int N_EVAL = 100;
+   		double err2 = 0.0;			//	自乗誤差
+   		double sumx = 0.0;			//	評価値合計
+   		double sumx2 = 0.0;			//	評価値自乗合計
+   		double sumy = 0.0;			//	石差合計
+   		double sumy2 = 0.0;			//	石差自乗合計
+   		double sumxy = 0.0;			//	評価値*石差合計
+   		for(int i = 0; i != N_EVAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	auto ev = ml.ev_pat_vals(black, white);
+		   	//auto ev = ml.ev_pat2_corner8_npbw_vals(black, white);
+		   	cout << ev << ", " << alpha << "\n";
+		   	err2 += (ev - alpha) * (ev - alpha);
+		   	sumx += ev;
+		   	sumx2 += ev * ev;
+		   	sumy += alpha;
+		   	sumy2 += alpha * alpha;
+		   	sumxy += ev * alpha;
+   		}
+   		cout << "σ = " << sqrt(err2/N_EVAL) << "\n";
+   		double avgx = sumx / N_EVAL;
+   		double avgy = sumy / N_EVAL;
+   		double sgmx = sqrt((sumx2 - avgx*avgx)/N_EVAL);
+   		double sgmy = sqrt((sumy2 - avgy*avgy)/N_EVAL);
+   		double r = ((sumxy/N_EVAL) - avgx*avgy) / (sgmx * sgmy);
+   		cout << "R = " << r << "\n";
    	}
-   	if( false ) {
+   	if( true ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
 		const int  ITR = 20;
@@ -924,7 +957,18 @@ int main()
 		   		ml.clear_round_err2();
 		   	}
    		}
+   		cout << "\n";
+   		//	学習結果パターン評価値表示
+   		for(int t = 0; t != N_PTYPE; ++t) {
+   			for(int i = 0; i != N_PAT8; ++i) {
+   				cout << ml.m_pat2_val[t][i] << ", ";
+   				if( (i+1)%9 == 0 ) cout << "\n";
+   			}
+	   		cout << "\n";
+   		}
+   		cout << "\n";
    		//	学習結果評価用データ出力
+#if 0
    		for(int i = 0; i != 100; ++i) {
 	   		init(black, white);
 		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
@@ -935,6 +979,38 @@ int main()
 		   	auto ev = ml.ev_pat2_vals(black, white);
 		   	cout << ev << ", " << alpha << "\n";
    		}
+#endif
+   		const int N_EVAL = 100;
+   		double err2 = 0.0;			//	自乗誤差
+   		double sumx = 0.0;			//	評価値合計
+   		double sumx2 = 0.0;			//	評価値自乗合計
+   		double sumy = 0.0;			//	石差合計
+   		double sumy2 = 0.0;			//	石差自乗合計
+   		double sumxy = 0.0;			//	評価値*石差合計
+   		for(int i = 0; i != N_EVAL; ++i) {
+	   		init(black, white);
+		   	while( !put_randomly(black, white, 24) ) {	//	24 for 8個空き
+		   		init(black, white);
+		   	}
+		   	int alpha = 0;
+		   	auto pos = negaAlpha(black, white, alpha);
+		   	auto ev = ml.ev_pat2_vals(black, white);
+		   	//auto ev = ml.ev_pat2_corner8_npbw_vals(black, white);
+		   	cout << ev << ", " << alpha << "\n";
+		   	err2 += (ev - alpha) * (ev - alpha);
+		   	sumx += ev;
+		   	sumx2 += ev * ev;
+		   	sumy += alpha;
+		   	sumy2 += alpha * alpha;
+		   	sumxy += ev * alpha;
+   		}
+   		cout << "σ = " << sqrt(err2/N_EVAL) << "\n";
+   		double avgx = sumx / N_EVAL;
+   		double avgy = sumy / N_EVAL;
+   		double sgmx = sqrt((sumx2 - avgx*avgx)/N_EVAL);
+   		double sgmy = sqrt((sumy2 - avgy*avgy)/N_EVAL);
+   		double r = ((sumxy/N_EVAL) - avgx*avgy) / (sgmx * sgmy);
+   		cout << "R = " << r << "\n";
    	}
    	if( false ) {
    		ML ml;		//	機械学習オブジェクト
@@ -980,7 +1056,7 @@ int main()
    		}
    		cout << "\n";
    	}
-   	if( true ) {
+   	if( false ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
 		const int  ITR = 50;

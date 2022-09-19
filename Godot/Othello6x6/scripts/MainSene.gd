@@ -25,6 +25,36 @@ const DIR_D = ARY_WIDTH
 const DIR_DR = ARY_WIDTH + 1
 const xaxis = "abcdef"
 
+#/*
+#	Bitboard:
+#
+#	＼ ａ ｂ ｃ ｄ ｅ ｆ →X
+#	１ 20 10 08 04 02 01	<< 40
+#	２ 20 10 08 04 02 01	<< 32
+#	３ 20 10 08 04 02 01	<< 24
+#	４ 20 10 08 04 02 01	<< 16
+#	５ 20 10 08 04 02 01	<< 8
+#	６ 20 10 08 04 02 01	
+#	↓Y
+#*/
+
+const BB_MASK = 0x3f3f3f3f3f3f
+
+const C3_BIT = (0x08<<(8*3))
+const C4_BIT = (0x08<<(8*2))
+const D3_BIT = (0x04<<(8*3))
+const D4_BIT = (0x04<<(8*2))
+const E4_BIT = (0x02<<(8*2))
+
+const BB_DIR_UL = 9
+const BB_DIR_U = 8
+const BB_DIR_UR = 7
+const BB_DIR_L = 1
+const BB_DIR_R = (-1)
+const BB_DIR_DL = (-7)
+const BB_DIR_D = (-8)
+const BB_DIR_DR = (-9)
+
 var BOARD_ORG_X
 var BOARD_ORG_Y
 var BOARD_ORG
@@ -53,6 +83,9 @@ var AI_putIX = 0	# -1 for pass, >0 for put IX
 var putIX = 0
 var pressedPos = Vector2(0, 0)
 
+var bb_black
+var bb_white
+
 
 func _ready():
 	BOARD_ORG_X = $Board/TileMap.global_position.x
@@ -69,6 +102,7 @@ func _ready():
 	bd_canPutWhite.resize(ARY_SIZE)
 	#
 	update_humanAIColor()	# 人間・AI 石色表示
+	init_bb()
 	init_bd_array()
 	#putBlack(4, 3)
 	#putIX = xyToArrayIX(4, 3)
@@ -83,8 +117,19 @@ func update_humanAIColor():
 	$HumanBG/White.set_visible(AI_color != WHITE)
 	$AIBG/Black.set_visible(AI_color != WHITE)
 	$AIBG/White.set_visible(AI_color == WHITE)
-
-func xyToArrayIX(x, y):		# 0 <= x, y < 8
+#
+func xyToBit(x, y):		# 0 <= x, y < 6
+	return 1<<(N_CELL_HORZ-1-x + 8*(N_CELL_VERT-1-y))
+func init_bb():
+	bb_black = C4_BIT | D3_BIT
+	bb_white = C3_BIT | D4_BIT
+func bb_get_color(black, white, x, y):
+	var bit = xyToBit(x, y)
+	if (black & bit) != 0: return BLACK
+	if (white & bit) != 0: return WHITE
+	return EMPTY
+#
+func xyToArrayIX(x, y):		# 0 <= x, y < 6
 	return (y+1)*ARY_WIDTH + (x+1)
 func aixToX(ix : int):
 	return ix % ARY_WIDTH - 1
@@ -110,7 +155,8 @@ func update_TileMap():
 	nColors = [0, 0, 0]		# 空白、黒石、白石数
 	for y in range(N_CELL_VERT):
 		for x in range(N_CELL_HORZ):
-			var col = bd_array[xyToArrayIX(x, y)]
+			#var col = bd_array[xyToArrayIX(x, y)]
+			var col = bb_get_color(bb_black, bb_white, x, y)
 			$Board/TileMap.set_cell(x, y, col-1)
 			nColors[col] += 1
 	var hix = 1 if AI_color == WHITE else 2
