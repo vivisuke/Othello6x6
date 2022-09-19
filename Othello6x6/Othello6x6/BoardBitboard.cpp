@@ -54,10 +54,10 @@ bool can_put_black_dir(Bitboard black, Bitboard white, Bitboard bit, int dir) {
 	return (black & bit) != 0;
 }
 bool can_put_black(Bitboard black, Bitboard white, Bitboard bit) {
-	return	can_put_black_dir(black, white, bit, DIR_UL) | can_put_black_dir(black, white, bit, DIR_U) |
-			can_put_black_dir(black, white, bit, DIR_UR) | can_put_black_dir(black, white, bit, DIR_L) |
-			can_put_black_dir(black, white, bit, DIR_R) | can_put_black_dir(black, white, bit, DIR_DL) |
-			can_put_black_dir(black, white, bit, DIR_D) | can_put_black_dir(black, white, bit, DIR_DR);
+	return	can_put_black_dir(black, white, bit, DIR_UL) || can_put_black_dir(black, white, bit, DIR_U) ||
+			can_put_black_dir(black, white, bit, DIR_UR) || can_put_black_dir(black, white, bit, DIR_L) ||
+			can_put_black_dir(black, white, bit, DIR_R) || can_put_black_dir(black, white, bit, DIR_DL) ||
+			can_put_black_dir(black, white, bit, DIR_D) || can_put_black_dir(black, white, bit, DIR_DR);
 }
 //	黒着手可能箇所数
 int num_place_can_put_black(Bitboard black, Bitboard white) {
