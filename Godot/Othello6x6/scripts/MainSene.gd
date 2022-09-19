@@ -10,8 +10,8 @@ const TRANSPARENT = -1
 #const EMPTY = -1
 #const BLACK = 1
 #const WHITE = 2
-const N_CELL_HORZ = 6
-const N_CELL_VERT = 6
+const N_CELL_HORZ : int = 6
+const N_CELL_VERT : int = 6
 const ARY_WIDTH : int = N_CELL_HORZ + 1
 const ARY_HEIGHT : int = N_CELL_VERT + 2
 const ARY_SIZE = ARY_WIDTH * ARY_HEIGHT + 1
@@ -119,7 +119,7 @@ func update_humanAIColor():
 	$AIBG/White.set_visible(AI_color == WHITE)
 #
 func xyToBit(x, y):		# 0 <= x, y < 6
-	return 1<<(N_CELL_HORZ-1-x + 8*(N_CELL_VERT-1-y))
+	return 1<<int(N_CELL_HORZ-1-x + 8*(N_CELL_VERT-1-y))
 func init_bb():
 	bb_black = C4_BIT | D3_BIT
 	bb_white = C3_BIT | D4_BIT
@@ -154,6 +154,42 @@ func bb_can_put_black(black:int, white:int, pos) -> bool:
 			bb_can_put_black_dir(black, white, pos, BB_DIR_DL) ||
 			bb_can_put_black_dir(black, white, pos, BB_DIR_D) ||
 			bb_can_put_black_dir(black, white, pos, BB_DIR_DR))
+func bb_get_revbits_dir(black:int, white:int, pos, dir) -> int:
+	var b = 0
+	if( dir > 0 ):
+		pos <<= dir
+		if( (white & pos) == 0 ): return 0;		#	白でない
+		while true:
+			b |= pos;
+			pos <<= dir
+			if( (white & pos) == 0 ): break			#	白が続く間ループ
+	else:
+		dir = -dir;
+		pos >>= dir
+		if( (white & pos) == 0 ): return 0;		#	白でない
+		while true:
+			b |= pos;
+			pos >>= dir
+			if( (white & pos) == 0 ): break			#	白が続く間ループ
+	if( (black & pos) != 0 ): return b;
+	return 0
+func bb_get_revbits(black:int, white:int, pos) -> int:
+	return (bb_get_revbits_dir(black, white, pos, DIR_UL) |
+			bb_get_revbits_dir(black, white, pos, DIR_U) |
+			bb_get_revbits_dir(black, white, pos, DIR_UR) |
+			bb_get_revbits_dir(black, white, pos, DIR_L) |
+			bb_get_revbits_dir(black, white, pos, DIR_R) |
+			bb_get_revbits_dir(black, white, pos, DIR_DL) |
+			bb_get_revbits_dir(black, white, pos, DIR_D) |
+			bb_get_revbits_dir(black, white, pos, DIR_DR))
+func bb_put_black(pos):
+	var rev = bb_get_revbits(bb_black, bb_white, pos)
+	bb_black |= (pos | rev)
+	bb_white ^= rev
+func bb_put_white(pos):
+	var rev = bb_get_revbits(bb_white, bb_black, pos)
+	bb_white |= (pos | rev)
+	bb_black ^= rev
 #
 func xyToArrayIX(x, y):		# 0 <= x, y < 6
 	return (y+1)*ARY_WIDTH + (x+1)
@@ -190,6 +226,7 @@ func update_TileMap():
 	$HumanBG/Num.text = "%d" % nColors[hix]
 	$AIBG/Num.text = "%d" % nColors[aix]
 func update_cursor():
+	print("next_color = ", next_color)
 	for y in range(N_CELL_VERT):
 		for x in range(N_CELL_HORZ):
 			var id = TRANSPARENT
@@ -382,7 +419,10 @@ func _process(delta):
 	if !AI_thinking && next_color == AI_color:
 		AI_thinking = true
 		putIX = thinkAI_random()
-		putWhiteIX(putIX)
+		#putWhiteIX(putIX)
+		var x = aixToX(putIX)
+		var y = aixToY(putIX)
+		bb_put_white(xyToBit(x, y))
 		next_color = BLACK
 		update_TileMap()
 		update_cursor()
@@ -402,12 +442,14 @@ func _input(event):
 			print("released")
 			if pos == pressedPos:
 				if next_color == BLACK:
-					if !canPutBlack(pos.x, pos.y): return
-					putBlack(pos.x, pos.y)
+					#if !canPutBlack(pos.x, pos.y): return
+					#putBlack(pos.x, pos.y)
+					bb_put_black(xyToBit(pos.x, pos.y))
 					next_color = WHITE
 				else:	#if next_color == WHITE:
-					if !canPutWhite(pos.x, pos.y): return
-					putWhite(pos.x, pos.y)
+					#if !canPutWhite(pos.x, pos.y): return
+					#putWhite(pos.x, pos.y)
+					bb_put_white(xyToBit(pos.x, pos.y))
 					next_color = BLACK
 			putIX = xyToArrayIX(pos.x, pos.y)
 			update_TileMap()
