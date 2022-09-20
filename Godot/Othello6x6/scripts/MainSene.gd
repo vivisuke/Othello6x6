@@ -80,7 +80,8 @@ var put_stack = []		# PoolByteArray()
 var rng = RandomNumberGenerator.new()
 var thread = null
 var AI_putIX = 0	# -1 for pass, >0 for put IX
-var putIX = 0
+#var putIX = 0
+var putPos = 0		# 直前着手位置
 var pressedPos = Vector2(0, 0)
 
 var bb_black
@@ -88,6 +89,10 @@ var bb_white
 
 
 func _ready():
+	print("C3_BIT = ", C3_BIT, ", xyToBit(2, 2) = ", xyToBit(2, 2))
+	print("bitToX(C3_BIT) = ", bitToX(C3_BIT))
+	print("bitToY(C4_BIT) = ", bitToY(C4_BIT))
+	#
 	BOARD_ORG_X = $Board/TileMap.global_position.x
 	BOARD_ORG_Y = $Board/TileMap.global_position.y
 	BOARD_ORG = Vector2(BOARD_ORG_X, BOARD_ORG_Y)
@@ -120,6 +125,25 @@ func update_humanAIColor():
 #
 func xyToBit(x, y):		# 0 <= x, y < 6
 	return 1<<int(N_CELL_HORZ-1-x + 8*(N_CELL_VERT-1-y))
+func bitToX(pos):
+	if( pos != 0 ):
+		while( (pos & 255) == 0 ):
+			pos >>= 8;
+		var mask = 1;
+		#for(int x = N_HORZ; --x >= 0; mask<<=1) {
+		for x in range(N_CELL_HORZ):
+			if( (pos & mask) != 0 ): return N_CELL_HORZ-1-x;
+			mask <<= 1
+	#assert(0);
+	return -1;
+func bitToY(pos):
+	#for(int y = N_HORZ; --y >= 0; b>>=8) {
+	for y in range(N_CELL_VERT):
+		if( (pos & 255) != 0 ): return N_CELL_VERT-1-y;
+		pos >>= 8
+	#assert(0);
+	return -1;
+	
 func init_bb():
 	bb_black = C4_BIT | D3_BIT
 	bb_white = C3_BIT | D4_BIT
@@ -175,14 +199,14 @@ func bb_get_revbits_dir(black:int, white:int, pos, dir) -> int:
 	if( (black & pos) != 0 ): return b;
 	return 0
 func bb_get_revbits(black:int, white:int, pos) -> int:
-	return (bb_get_revbits_dir(black, white, pos, DIR_UL) |
-			bb_get_revbits_dir(black, white, pos, DIR_U) |
-			bb_get_revbits_dir(black, white, pos, DIR_UR) |
-			bb_get_revbits_dir(black, white, pos, DIR_L) |
-			bb_get_revbits_dir(black, white, pos, DIR_R) |
-			bb_get_revbits_dir(black, white, pos, DIR_DL) |
-			bb_get_revbits_dir(black, white, pos, DIR_D) |
-			bb_get_revbits_dir(black, white, pos, DIR_DR))
+	return (bb_get_revbits_dir(black, white, pos, BB_DIR_UL) |
+			bb_get_revbits_dir(black, white, pos, BB_DIR_U) |
+			bb_get_revbits_dir(black, white, pos, BB_DIR_UR) |
+			bb_get_revbits_dir(black, white, pos, BB_DIR_L) |
+			bb_get_revbits_dir(black, white, pos, BB_DIR_R) |
+			bb_get_revbits_dir(black, white, pos, BB_DIR_DL) |
+			bb_get_revbits_dir(black, white, pos, BB_DIR_D) |
+			bb_get_revbits_dir(black, white, pos, BB_DIR_DR))
 func bb_put_black(pos):
 	var rev = bb_get_revbits(bb_black, bb_white, pos)
 	bb_black |= (pos | rev)
@@ -212,7 +236,7 @@ func init_bd_array():		#	盤面初期化
 	bd_array[xyToArrayIX(2, 2)] = WHITE
 	bd_array[xyToArrayIX(3, 3)] = WHITE
 	next_color = BLACK
-	putIX = 0
+	putPos = 0
 	game_over = false
 func update_TileMap():
 	nColors = [0, 0, 0]		# 空白、黒石、白石数
@@ -231,10 +255,12 @@ func update_cursor():
 	for y in range(N_CELL_VERT):
 		for x in range(N_CELL_HORZ):
 			var id = TRANSPARENT
-			if xyToArrayIX(x, y) == putIX:
-				id = DID_PUT
+			#if xyToArrayIX(x, y) == putIX:
+			#	id = DID_PUT
 			#elif( next_color == BLACK && canPutBlack(x, y) ||
 			#		next_color == WHITE && canPutWhite(x, y) ):
+			if xyToBit(x, y) == putPos:
+				id = DID_PUT
 			elif( next_color == BLACK && bb_can_put_black(bb_black, bb_white, xyToBit(x, y)) ||
 					next_color == WHITE && bb_can_put_black(bb_white, bb_black, xyToBit(x, y)) ):
 				id = CAN_PUT
@@ -249,9 +275,12 @@ func thinkAI_random():
 	var lst = Array()
 	for y in range(N_CELL_VERT):
 		for x in range(N_CELL_HORZ):
-			if( next_color == WHITE && canPutWhite(x, y) ||
-					next_color == BLACK && canPutBlack(x, y) ):
-				lst.push_back(xyToArrayIX(x, y))
+			#if( next_color == WHITE && canPutWhite(x, y) ||
+			#		next_color == BLACK && canPutBlack(x, y) ):
+			#	lst.push_back(xyToArrayIX(x, y))
+			if( next_color == BLACK && bb_can_put_black(bb_black, bb_white, xyToBit(x, y)) ||
+				next_color == WHITE && bb_can_put_black(bb_white, bb_black, xyToBit(x, y)) ):
+					lst.push_back(xyToBit(x, y))
 	if lst.empty():
 		return 0
 	rng.randomize()
@@ -419,10 +448,11 @@ func get_pat_indexes():		# 盤面の直線パターンインデックスを計�
 func _process(delta):
 	if !AI_thinking && next_color == AI_color:
 		AI_thinking = true
-		putIX = thinkAI_random()
+		#putIX = thinkAI_random()
 		#putWhiteIX(putIX)
-		var x = aixToX(putIX)
-		var y = aixToY(putIX)
+		putPos = thinkAI_random()
+		var x = bitToX(putPos)
+		var y = bitToY(putPos)
 		bb_put_white(xyToBit(x, y))
 		next_color = BLACK
 		update_TileMap()
@@ -452,7 +482,8 @@ func _input(event):
 					#putWhite(pos.x, pos.y)
 					bb_put_white(xyToBit(pos.x, pos.y))
 					next_color = BLACK
-			putIX = xyToArrayIX(pos.x, pos.y)
+			#putIX = xyToArrayIX(pos.x, pos.y)
+			putPos = xyToBit(pos.x, pos.y)
 			update_TileMap()
 			update_cursor()
 			update_nextTurn()
