@@ -89,7 +89,7 @@ var bb_white
 
 
 func _ready():
-	print(g_pat2_val)
+	#print(g_pat2_val)
 	#print("C3_BIT = ", C3_BIT, ", xyToBit(2, 2) = ", xyToBit(2, 2))
 	#print("bitToX(C3_BIT) = ", bitToX(C3_BIT))
 	#print("bitToY(C4_BIT) = ", bitToY(C4_BIT))
@@ -117,7 +117,7 @@ func _ready():
 	update_cursor()
 	update_nextTurn()
 	#
-	print(bb_get_pat_indexes())
+	print(bb_get_pat_indexes(bb_black, bb_white))
 func update_humanAIColor():
 	$HumanBG/Black.set_visible(AI_color == WHITE)
 	$HumanBG/White.set_visible(AI_color != WHITE)
@@ -447,31 +447,31 @@ func get_pat_indexes():		# 盤面の直線パターンインデックスを計�
 	for x in range(1, N_CELL_HORZ-2):
 		lst.push_back(get_pat_index(xyToArrayIX(x, 0), DIR_DR, N_CELL_VERT-x))
 	return lst
-func bb_get_pat_index(pos, dir, n):		# pos 位置から dir 方向の長さ n のパターンインデックスを計算
+func bb_get_pat_index(black, white, pos, dir, n):		# pos 位置から dir 方向の長さ n のパターンインデックスを計算
 	var v = 0
 	for i in range(n):
-		v = v * 3 + bb_get_pos_color(bb_black, bb_white, pos)
+		v = v * 3 + bb_get_pos_color(black, white, pos)
 		if dir > 0: pos <<= dir
 		else: pos >>= -dir
 	return v
-func bb_get_pat_indexes():		# 盤面の直線パターンインデックスを計算し、結果を配列で返す
+func bb_get_pat_indexes(black, white):		# 盤面の直線パターンインデックスを計算し、結果を配列で返す
 	var lst = []
 	# 水平方向スキャン
 	for y in range(N_CELL_VERT):
-		lst.push_back(bb_get_pat_index(xyToBit(0, y), BB_DIR_R, N_CELL_HORZ))
+		lst.push_back(bb_get_pat_index(black, white, xyToBit(0, y), BB_DIR_R, N_CELL_HORZ))
 	# 垂直方向スキャン
 	for x in range(N_CELL_HORZ):
-		lst.push_back(bb_get_pat_index(xyToBit(x, 0), BB_DIR_D, N_CELL_VERT))
+		lst.push_back(bb_get_pat_index(black, white, xyToBit(x, 0), BB_DIR_D, N_CELL_VERT))
 	# ／方向スキャン
 	for y in range(2, N_CELL_VERT):
-		lst.push_back(bb_get_pat_index(xyToBit(0, y), BB_DIR_UR, y+1))
+		lst.push_back(bb_get_pat_index(black, white, xyToBit(0, y), BB_DIR_UR, y+1))
 	for x in range(1, N_CELL_HORZ-2):
-		lst.push_back(bb_get_pat_index(xyToBit(x, N_CELL_VERT-1), BB_DIR_UR, N_CELL_VERT-x))
+		lst.push_back(bb_get_pat_index(black, white, xyToBit(x, N_CELL_VERT-1), BB_DIR_UR, N_CELL_VERT-x))
 	# ＼方向スキャン
 	for y in range(2, N_CELL_VERT):
-		lst.push_back(bb_get_pat_index(xyToBit(0, N_CELL_VERT-1-y), BB_DIR_DR, y+1))
+		lst.push_back(bb_get_pat_index(black, white, xyToBit(0, N_CELL_VERT-1-y), BB_DIR_DR, y+1))
 	for x in range(1, N_CELL_HORZ-2):
-		lst.push_back(bb_get_pat_index(xyToBit(x, 0), BB_DIR_DR, N_CELL_VERT-x))
+		lst.push_back(bb_get_pat_index(black, white, xyToBit(x, 0), BB_DIR_DR, N_CELL_VERT-x))
 	return lst
 #
 func _process(delta):
@@ -517,6 +517,10 @@ func _input(event):
 			update_cursor()
 			update_nextTurn()
 	pass
+#
+func bb_eval(black : int, white : int) -> float:
+	var ev = 0.0
+	return ev
 #
 const g_pat2_val = [
   [
