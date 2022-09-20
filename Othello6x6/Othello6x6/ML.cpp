@@ -42,6 +42,22 @@ void ML::print_pat_vals() const {
     	cout << t << "\t" << i << " " << txt << "\n";
     }
 }
+void ML::print_pat2_vals() const {
+    cout << "[\n";
+    string txt;
+    for(int k = 0; k != N_PTYPE; ++k) {
+	    cout << "  [\n  ";
+	    for(int i = 0; i != N_PAT; ++i) {
+	    	auto t = to_string(m_pat2_val[k][i]);
+	    	//indexToPat(i, txt);
+	    	//cout << t << "\t" << i << " " << txt << "\n";
+	    	cout << t << ", ";
+	    	if( (i+1)%9 == 0 ) cout << "\n  ";
+	    }
+	    cout << "],\n";
+    }
+    cout << "]\n";
+}
 //	現 m_pat_val[] を用いて評価関数計算
 double ML::ev_pat_vals(Bitboard black, Bitboard white) const {
 	//vector<int> lst;		//	パターンインデックス格納用配列

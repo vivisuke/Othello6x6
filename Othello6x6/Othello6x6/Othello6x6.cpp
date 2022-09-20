@@ -938,7 +938,7 @@ int main()
    		double r = ((sumxy/N_EVAL) - avgx*avgy) / (sgmx * sgmy);
    		cout << "R = " << r << "\n";
    	}
-   	if( true ) {
+   	if( false ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
 		const int  ITR = 20;
@@ -1056,10 +1056,10 @@ int main()
    		}
    		cout << "\n";
    	}
-   	if( false ) {
+   	if( true ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
-		const int  ITR = 50;
+		const int  ITR = 100;
 		const int N = 10000;
 		const int TOTAL = ITR * N;
    		for(int i = 0; i != TOTAL; ++i) {
@@ -1100,6 +1100,7 @@ int main()
 		   	sumy2 += alpha * alpha;
 		   	sumxy += ev * alpha;
    		}
+   		cout << "\n";
    		cout << "σ = " << sqrt(err2/N_EVAL) << "\n";
    		double avgx = sumx / N_EVAL;
    		double avgy = sumy / N_EVAL;
@@ -1108,6 +1109,7 @@ int main()
    		double r = ((sumxy/N_EVAL) - avgx*avgy) / (sgmx * sgmy);
    		cout << "R = " << r << "\n";
    		cout << "\n";
+   		ml.print_pat2_vals();
 #if	0
    		for(int i = 0; i != 100; ++i) {
 	   		init(black, white);
