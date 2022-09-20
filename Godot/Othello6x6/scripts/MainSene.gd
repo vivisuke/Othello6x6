@@ -6,6 +6,16 @@ enum {
 enum {
 	DID_PUT = 0, CAN_PUT, 
 }
+enum {	#	パターンタイプ
+	PTYPE_LINE1 = 0,	#	1・6行目、1・6列目
+	PTYPE_LINE2,
+	PTYPE_LINE3,
+	PTYPE_DIAG6,		#	中央対角線上
+	PTYPE_DIAG5,		#	
+	PTYPE_DIAG4,		#	
+	PTYPE_DIAG3,		#	
+	N_PTYPE,
+}
 const TRANSPARENT = -1
 #const EMPTY = -1
 #const BLACK = 1
@@ -54,6 +64,12 @@ const BB_DIR_R = (-1)
 const BB_DIR_DL = (-7)
 const BB_DIR_D = (-8)
 const BB_DIR_DR = (-9)
+const g_pat_type = [
+	PTYPE_LINE1, PTYPE_LINE2, PTYPE_LINE3, PTYPE_LINE3, PTYPE_LINE2, PTYPE_LINE1, 
+	PTYPE_LINE1, PTYPE_LINE2, PTYPE_LINE3, PTYPE_LINE3, PTYPE_LINE2, PTYPE_LINE1, 
+	PTYPE_DIAG3, PTYPE_DIAG4, PTYPE_DIAG5, PTYPE_DIAG6, PTYPE_DIAG5, PTYPE_DIAG4, PTYPE_DIAG3, 
+	PTYPE_DIAG3, PTYPE_DIAG4, PTYPE_DIAG5, PTYPE_DIAG6, PTYPE_DIAG5, PTYPE_DIAG4, PTYPE_DIAG3, 
+]
 
 var BOARD_ORG_X
 var BOARD_ORG_Y
@@ -118,6 +134,7 @@ func _ready():
 	update_nextTurn()
 	#
 	print(bb_get_pat_indexes(bb_black, bb_white))
+	print("ev = ", bb_eval(bb_black, bb_white))
 func update_humanAIColor():
 	$HumanBG/Black.set_visible(AI_color == WHITE)
 	$HumanBG/White.set_visible(AI_color != WHITE)
@@ -487,6 +504,7 @@ func _process(delta):
 		update_TileMap()
 		update_cursor()
 		update_nextTurn()
+		print("ev = ", bb_eval(bb_black, bb_white))
 		AI_thinking = false
 	pass
 func _input(event):
@@ -520,6 +538,9 @@ func _input(event):
 #
 func bb_eval(black : int, white : int) -> float:
 	var ev = 0.0
+	var lst = bb_get_pat_indexes(black, white)
+	for i in range(lst.size()):
+		ev += g_pat2_val[g_pat_type[i]][lst[i]]
 	return ev
 #
 const g_pat2_val = [
