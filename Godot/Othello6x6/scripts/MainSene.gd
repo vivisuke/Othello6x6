@@ -316,11 +316,11 @@ func nega_alpha(black, white, alpha, beta, depth, passed) -> float:
 		var rev = bb_get_revbits(black, white, b)
 		if rev != 0:
 			alpha = max(alpha, -nega_alpha(white^rev, black|rev|b, -beta, -alpha, depth-1, false))
-			if alpha >= beta:  return alpha
+			if alpha >= beta:  return alpha		# ベータカット
 			put = true
 		spc ^= b
 	if put: return alpha
-	#if 
+	if passed: return bb_eval(black, white)		# 双方パスの場合
 	else: return -nega_alpha(white, black, -beta, -alpha, depth, true)
 func thinkAI_nega_alpha_black(black, white) -> Array:	# [打つ位置, 評価値] を返す
 	var alpha = -9999
@@ -331,7 +331,8 @@ func thinkAI_nega_alpha_black(black, white) -> Array:	# [打つ位置, 評価値
 		var b = -spc & spc;		#	最右ビットを取り出す
 		var rev = bb_get_revbits(black, white, b)
 		if rev != 0:
-			var ev = -nega_alpha(white^rev, black|rev|b, -beta, -alpha, 0, false)
+			var g_depth = 3
+			var ev = -nega_alpha(white^rev, black|rev|b, -beta, -alpha, g_depth, false)
 			if ev > alpha:
 				alpha = ev
 				bestpos = b
