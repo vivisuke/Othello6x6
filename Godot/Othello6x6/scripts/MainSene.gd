@@ -97,7 +97,8 @@ var rng = RandomNumberGenerator.new()
 var thread = null
 var AI_putIX = 0	# -1 for pass, >0 for put IX
 #var putIX = 0
-var putPos = 0		# 直前着手位置
+var n_legal_move = 0	# 着手可能箇所数
+var putPos = 0			# 直前着手位置
 var pressedPos = Vector2(0, 0)
 
 var bb_black
@@ -272,6 +273,7 @@ func update_TileMap():
 	$AIBG/Num.text = "%d" % nColors[aix]
 func update_cursor():
 	print("next_color = ", next_color)
+	n_legal_move = 0
 	for y in range(N_CELL_VERT):
 		for x in range(N_CELL_HORZ):
 			var id = TRANSPARENT
@@ -284,10 +286,20 @@ func update_cursor():
 			elif( next_color == BLACK && bb_can_put_black(bb_black, bb_white, xyToBit(x, y)) ||
 					next_color == WHITE && bb_can_put_black(bb_white, bb_black, xyToBit(x, y)) ):
 				id = CAN_PUT
+				n_legal_move += 1
 			$Board/CursorTileMap.set_cell(x, y, id)
 func update_nextTurn():
-	$HumanBG/Underline.set_visible(next_color != AI_color)
-	$AIBG/Underline.set_visible(next_color == AI_color)
+	if n_legal_move == 0:
+		next_color = (BLACK + WHITE) - next_color
+		update_cursor()
+	if n_legal_move == 0:
+		game_over = true
+		next_color = EMPTY
+		$HumanBG/Underline.set_visible(false)
+		$AIBG/Underline.set_visible(false)
+	else:
+		$HumanBG/Underline.set_visible(next_color != AI_color)
+		$AIBG/Underline.set_visible(next_color == AI_color)
 #
 func thinkAI_random():
 	if game_over:
@@ -331,7 +343,7 @@ func thinkAI_nega_alpha_black(black, white) -> Array:	# [打つ位置, 評価値
 		var b = -spc & spc;		#	最右ビットを取り出す
 		var rev = bb_get_revbits(black, white, b)
 		if rev != 0:
-			var g_depth = 3
+			var g_depth = 4
 			var ev = -nega_alpha(white^rev, black|rev|b, -beta, -alpha, g_depth, false)
 			if ev > alpha:
 				alpha = ev
@@ -529,7 +541,7 @@ func bb_get_pat_indexes(black, white):		# 盤面の直線パターンインデ�
 	return lst
 #
 func _process(delta):
-	if !AI_thinking && next_color == AI_color:
+	if !game_over && !AI_thinking && next_color == AI_color:
 		AI_thinking = true
 		#putIX = thinkAI_random()
 		#putWhiteIX(putIX)
@@ -545,7 +557,7 @@ func _process(delta):
 		update_TileMap()
 		update_cursor()
 		update_nextTurn()
-		print("ev = ", bb_eval(bb_black, bb_white))
+		#print("ev = ", bb_eval(bb_black, bb_white))
 		AI_thinking = false
 	pass
 func _input(event):
@@ -563,11 +575,13 @@ func _input(event):
 				if next_color == BLACK:
 					#if !canPutBlack(pos.x, pos.y): return
 					#putBlack(pos.x, pos.y)
+					if !bb_can_put_black(bb_black, bb_white, xyToBit(pos.x, pos.y)): return
 					bb_put_black(xyToBit(pos.x, pos.y))
 					next_color = WHITE
 				else:	#if next_color == WHITE:
 					#if !canPutWhite(pos.x, pos.y): return
 					#putWhite(pos.x, pos.y)
+					if !bb_can_put_black(bb_white, bb_black, xyToBit(pos.x, pos.y)): return
 					bb_put_white(xyToBit(pos.x, pos.y))
 					next_color = BLACK
 			#putIX = xyToArrayIX(pos.x, pos.y)
