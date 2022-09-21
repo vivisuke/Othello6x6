@@ -307,6 +307,42 @@ func thinkAI_random():
 	var r = rng.randi_range(0, lst.size() - 1)
 	return lst[r]
 #
+func nega_alpha(black, white, alpha, beta, depth, passed) -> float:
+	if !depth: return bb_eval(black, white)
+	var put : bool = false
+	var spc : int = ~(black | white) & BB_MASK
+	while spc != 0:
+		var b = -spc & spc;		#	最右ビットを取り出す
+		var rev = bb_get_revbits(black, white, b)
+		if rev != 0:
+			alpha = max(alpha, -nega_alpha(white^rev, black|rev|b, -beta, -alpha, depth-1, false))
+			if alpha >= beta:  return alpha
+			put = true
+		spc ^= b
+	if put: return alpha
+	#if 
+	else: return -nega_alpha(white, black, -beta, -alpha, depth, true)
+func thinkAI_nega_alpha_black(black, white) -> Array:	# [打つ位置, 評価値] を返す
+	var alpha = -9999
+	var beta = 9999
+	var bestpos = 0
+	var spc : int = ~(black | white) & BB_MASK
+	while spc != 0:
+		var b = -spc & spc;		#	最右ビットを取り出す
+		var rev = bb_get_revbits(black, white, b)
+		if rev != 0:
+			var ev = -nega_alpha(white^rev, black|rev|b, -beta, -alpha, 0, false)
+			if ev > alpha:
+				alpha = ev
+				bestpos = b
+		spc ^= b
+	return [bestpos, alpha]
+func thinkAI_nega_alpha() -> Array:	# [打つ位置, 評価値] を返す
+	if next_color == BLACK:
+		return thinkAI_nega_alpha_black(bb_black, bb_white)
+	else:
+		return thinkAI_nega_alpha_black(bb_white, bb_black)
+#
 func canPutWhiteSub(ix, dir):
 	ix += dir
 	if bd_array[ix] != BLACK:
@@ -496,10 +532,14 @@ func _process(delta):
 		AI_thinking = true
 		#putIX = thinkAI_random()
 		#putWhiteIX(putIX)
-		putPos = thinkAI_random()
-		var x = bitToX(putPos)
-		var y = bitToY(putPos)
-		bb_put_white(xyToBit(x, y))
+		#putPos = thinkAI_random()
+		var pair = thinkAI_nega_alpha()
+		print("eval = ", pair[1])
+		putPos = pair[0]
+		if putPos != 0:		# パスでない場合
+			var x = bitToX(putPos)
+			var y = bitToY(putPos)
+			bb_put_white(xyToBit(x, y))
 		next_color = BLACK
 		update_TileMap()
 		update_cursor()
