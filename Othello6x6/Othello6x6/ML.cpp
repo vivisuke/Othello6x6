@@ -58,6 +58,20 @@ void ML::print_pat2_vals() const {
     }
     cout << "]\n";
 }
+void ML::print_npbw_vals() const {
+    cout << "[\n";
+    string txt;
+    int ix = 0;
+    for(int k = 0; k <= 8; ++k) {
+	    cout << "  [  ";
+	    for(int i = 0; i <= 8; ++i) {
+	    	auto t = to_string(m_npbw_val[ix++]);
+	    	cout << t << ", ";
+	    }
+	    cout << "],\n";
+    }
+    cout << "]\n";
+}
 //	現 m_pat_val[] を用いて評価関数計算
 double ML::ev_pat_vals(Bitboard black, Bitboard white) const {
 	//vector<int> lst;		//	パターンインデックス格納用配列
@@ -152,7 +166,7 @@ double ML::ev_pat2_corner8_npbw_vals(Bitboard black, Bitboard white) const {
 //	評価値が cv に近づくよう m_pat2_val[][], m_corner8_val[], m_npbw_val[] を１回学習
 void ML::learn_pat2_corner8_npbw_vals(Bitboard black, Bitboard white, int cv) {
 	++m_round;
-   	auto d = cv - ev_pat2_corner8_vals(black, white);
+   	auto d = cv - ev_pat2_corner8_npbw_vals(black, white);
    	m_err2 += d * d;
    	//	パターン評価値更新値
    	d /= (m_pat_ixes.size() + m_corner8_hv_ixes.size() + 1) * ML_PARAM;

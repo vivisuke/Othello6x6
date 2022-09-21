@@ -201,6 +201,14 @@ func bb_can_put_black(black:int, white:int, pos) -> bool:
 			bb_can_put_black_dir(black, white, pos, BB_DIR_DL) ||
 			bb_can_put_black_dir(black, white, pos, BB_DIR_D) ||
 			bb_can_put_black_dir(black, white, pos, BB_DIR_DR))
+func count_n_legal_move_black(black:int, white:int):
+	var cnt = 0
+	var spc : int = ~(black | white) & BB_MASK
+	while spc != 0:
+		var b = -spc & spc
+		if bb_can_put_black(black, white, b): cnt += 1
+		spc ^= b
+	return cnt
 func bb_get_revbits_dir(black:int, white:int, pos, dir) -> int:
 	var b = 0
 	if( dir > 0 ):
@@ -344,7 +352,7 @@ func thinkAI_nega_alpha_black(black, white) -> Array:	# [打つ位置, 評価値
 		var b = -spc & spc;		#	最右ビットを取り出す
 		var rev = bb_get_revbits(black, white, b)
 		if rev != 0:
-			var g_depth = 5
+			var g_depth = 4
 			var ev = -nega_alpha(white^rev, black|rev|b, -beta, -alpha, g_depth, false)
 			if ev > alpha:
 				alpha = ev
@@ -600,6 +608,9 @@ func bb_eval(black : int, white : int) -> float:
 	var lst = bb_get_pat_indexes(black, white)
 	for i in range(lst.size()):
 		ev += g_pat2_val[g_pat_type[i]][lst[i]]
+	var npb = min(8, count_n_legal_move_black(black, white))
+	var npw = min(8, count_n_legal_move_black(white, black))
+	ev += g_npbw_val[npw][npb]
 	return ev
 #
 const g_pat2_val = [
@@ -1184,4 +1195,15 @@ const g_pat2_val = [
   0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000,
   0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000,
   ],
+]
+const g_npbw_val = [
+  [  -1.100957, -1.580669, 0.421011, 3.402425, 6.805137, 8.287308, 8.932731, 9.724490, 9.594696, ],
+  [  -0.238193, -2.835734, -0.652330, 2.883754, 4.680688, 7.387002, 8.750883, 9.638002, 9.996876, ],
+  [  -2.491301, -6.621022, -3.467678, 0.603922, 3.389340, 5.600759, 7.708919, 8.463098, 8.859036, ],
+  [  -6.768501, -8.533801, -4.783741, -0.683168, 1.784597, 4.413062, 5.856626, 6.518043, 7.769190, ],
+  [  -9.143374, -9.387193, -5.272302, -1.986885, 0.183539, 2.590005, 4.185691, 5.814040, 5.757242, ],
+  [  -10.777906, -8.803990, -6.178785, -2.730830, -0.685045, 1.467368, 2.663987, 3.697831, 4.212288, ],
+  [  -11.269992, -8.877430, -5.405372, -3.452391, -1.488815, 0.129756, 1.907144, 2.339594, 2.555117, ],
+  [  -10.606501, -8.697511, -5.784572, -3.995143, -2.403796, -0.735672, 0.330543, 0.741030, 0.752994, ],
+  [  -9.482450, -7.586755, -5.775105, -4.188809, -2.518537, -1.580775, -0.143632, 0.291352, 0.056181, ],
 ]
