@@ -98,6 +98,7 @@ var thread = null
 var AI_putIX = 0	# -1 for pass, >0 for put IX
 #var putIX = 0
 var n_legal_move = 0	# 着手可能箇所数
+var waiting = 0			# 
 var putPos = 0			# 直前着手位置
 var pressedPos = Vector2(0, 0)
 
@@ -272,7 +273,7 @@ func update_TileMap():
 	$HumanBG/Num.text = "%d" % nColors[hix]
 	$AIBG/Num.text = "%d" % nColors[aix]
 func update_cursor():
-	print("next_color = ", next_color)
+	#print("next_color = ", next_color)
 	n_legal_move = 0
 	for y in range(N_CELL_VERT):
 		for x in range(N_CELL_HORZ):
@@ -343,7 +344,7 @@ func thinkAI_nega_alpha_black(black, white) -> Array:	# [打つ位置, 評価値
 		var b = -spc & spc;		#	最右ビットを取り出す
 		var rev = bb_get_revbits(black, white, b)
 		if rev != 0:
-			var g_depth = 4
+			var g_depth = 5
 			var ev = -nega_alpha(white^rev, black|rev|b, -beta, -alpha, g_depth, false)
 			if ev > alpha:
 				alpha = ev
@@ -541,7 +542,9 @@ func bb_get_pat_indexes(black, white):		# 盤面の直線パターンインデ�
 	return lst
 #
 func _process(delta):
-	if !game_over && !AI_thinking && next_color == AI_color:
+	if waiting > 0:
+		waiting -= 1
+	elif !game_over && !AI_thinking && next_color == AI_color:
 		AI_thinking = true
 		#putIX = thinkAI_random()
 		#putWhiteIX(putIX)
@@ -589,6 +592,7 @@ func _input(event):
 			update_TileMap()
 			update_cursor()
 			update_nextTurn()
+			waiting = 6
 	pass
 #
 func bb_eval(black : int, white : int) -> float:
