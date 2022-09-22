@@ -1,5 +1,7 @@
 extends Node2D
 
+var g = Global
+
 enum {
 	EMPTY = 0, BLACK, WHITE, WALL,
 }
@@ -352,8 +354,8 @@ func thinkAI_nega_alpha_black(black, white) -> Array:	# [打つ位置, 評価値
 		var b = -spc & spc;		#	最右ビットを取り出す
 		var rev = bb_get_revbits(black, white, b)
 		if rev != 0:
-			var g_depth = 4
-			var ev = -nega_alpha(white^rev, black|rev|b, -beta, -alpha, g_depth, false)
+			#var g_depth = 4
+			var ev = -nega_alpha(white^rev, black|rev|b, -beta, -alpha, g.depth, false)
 			if ev > alpha:
 				alpha = ev
 				bestpos = b
