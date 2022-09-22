@@ -308,9 +308,11 @@ func update_nextTurn():
 		next_color = EMPTY
 		$HumanBG/Underline.set_visible(false)
 		$AIBG/Underline.set_visible(false)
+		$MessLabel.text = "Game Over"
 	else:
 		$HumanBG/Underline.set_visible(next_color != AI_color)
 		$AIBG/Underline.set_visible(next_color == AI_color)
+		$MessLabel.text = "AI 思考中・・・" if next_color == AI_color else "人間の手番です。"
 #
 func thinkAI_random():
 	if game_over:

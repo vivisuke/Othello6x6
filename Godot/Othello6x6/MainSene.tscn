@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://images/BG.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Board.gd" type="Script" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://images/person_outline.png" type="Texture" id=10]
 [ext_resource path="res://images/outline_psychology.png" type="Texture" id=11]
 [ext_resource path="res://fonts/arialbd.ttf" type="DynamicFontData" id=12]
+[ext_resource path="res://fonts/FlopDesignFONT.otf" type="DynamicFontData" id=13]
 
 [sub_resource type="DynamicFont" id=2]
 size = 30
@@ -80,6 +81,10 @@ font_data = ExtResource( 7 )
 [sub_resource type="DynamicFont" id=5]
 size = 32
 font_data = ExtResource( 12 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 20
+font_data = ExtResource( 13 )
 
 [node name="MainSene" type="Node2D"]
 script = ExtResource( 6 )
@@ -212,3 +217,11 @@ margin_top = 50.0
 margin_right = 200.0
 margin_bottom = 60.0
 color = Color( 1, 1, 0, 1 )
+
+[node name="MessLabel" type="Label" parent="."]
+margin_left = 20.0
+margin_top = 674.0
+margin_right = 488.0
+margin_bottom = 733.0
+custom_fonts/font = SubResource( 6 )
+text = "メッセージ"
