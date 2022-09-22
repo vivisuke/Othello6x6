@@ -345,7 +345,9 @@ func nega_alpha(black, white, alpha, beta, depth, passed) -> float:
 			put = true
 		spc ^= b
 	if put: return alpha
-	if passed: return bb_eval(black, white)		# 双方パスの場合
+	if passed:		# 双方パスの場合
+		#return bb_eval(black, white)		# 双方パスの場合
+		return popcount(black) - popcount(white)
 	else: return -nega_alpha(white, black, -beta, -alpha, depth, true)
 func thinkAI_nega_alpha_black(black, white) -> Array:	# [打つ位置, 評価値] を返す
 	var alpha = -9999
@@ -607,13 +609,23 @@ func _input(event):
 			waiting = 6
 	pass
 #
+func popcount(bits: int):
+	bits = (bits & 0x555555555555) + ((bits >> 1) & 0x555555555555);    #  2bitごとに計算
+	bits = (bits & 0x333333333333) + ((bits >> 2) & 0x333333333333);    #  4bitごとに計算
+	bits = (bits & 0x0f0f0f0f0f0f) + ((bits >> 4) & 0x0f0f0f0f0f0f);    #  8bitごとに計算
+	bits = (bits & 0x00ff00ff00ff) + ((bits >> 8) & 0x00ff00ff00ff);    #  16bitごとに計算
+	bits = (bits & 0xffff0000ffff) + ((bits >> 16) & 0xffff0000ffff);    #  32bitごとに計算
+	bits = (bits & 0x0000ffffffff) + ((bits >> 32) & 0x0000ffffffff);    #  64bitごとに計算
+	return bits;
 func bb_eval(black : int, white : int) -> float:
+	if (black|white) == BB_MASK:
+		return popcount(black) - popcount(white)
 	var ev = 0.0
 	var lst = bb_get_pat_indexes(black, white)
 	for i in range(lst.size()):
-		ev += g_pat2_val[g_pat_type[i]][lst[i]]
-	var npb = min(8, count_n_legal_move_black(black, white))
-	var npw = min(8, count_n_legal_move_black(white, black))
+		ev += g_pat2_val[g_pat_type[i]][lst[i]]					# 直線パターン
+	var npb = min(8, count_n_legal_move_black(black, white))	# 黒着手可能箇所数
+	var npw = min(8, count_n_legal_move_black(white, black))	# 白着手可能箇所数
 	ev += g_npbw_val[npw][npb]
 	return ev
 #
