@@ -1,4 +1,4 @@
-﻿extends Node2D
+extends Node2D
 
 var g = Global
 
@@ -1242,3 +1242,8 @@ const g_npbw_val = [
   [  -10.606501, -8.697511, -5.784572, -3.995143, -2.403796, -0.735672, 0.330543, 0.741030, 0.752994, ],
   [  -9.482450, -7.586755, -5.775105, -4.188809, -2.518537, -1.580775, -0.143632, 0.291352, 0.056181, ],
 ]
+
+
+func _on_BackButton_pressed():
+	get_tree().change_scene("res://TopScene.tscn")
+	pass # Replace with function body.

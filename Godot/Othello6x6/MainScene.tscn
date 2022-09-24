@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://fonts/FlopDesignFONT.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/Hokjesgeest-PDGB.ttf" type="DynamicFontData" id=2]
@@ -13,6 +13,8 @@
 [ext_resource path="res://images/person_outline.png" type="Texture" id=11]
 [ext_resource path="res://images/outline_psychology.png" type="Texture" id=12]
 [ext_resource path="res://scripts/MainScene.gd" type="Script" id=13]
+[ext_resource path="res://images/leftward_white.png" type="Texture" id=14]
+[ext_resource path="res://images/leftward_black.png" type="Texture" id=15]
 
 [sub_resource type="DynamicFont" id=2]
 size = 30
@@ -107,6 +109,12 @@ custom_fonts/font = SubResource( 2 )
 text = "vithello"
 align = 1
 valign = 1
+
+[node name="BackButton" type="TextureButton" parent="TitleBar"]
+margin_right = 40.0
+margin_bottom = 40.0
+texture_normal = ExtResource( 14 )
+texture_pressed = ExtResource( 15 )
 
 [node name="Board" type="ColorRect" parent="."]
 margin_top = 150.0
@@ -225,3 +233,5 @@ margin_right = 488.0
 margin_bottom = 733.0
 custom_fonts/font = SubResource( 6 )
 text = "メッセージ"
+
+[connection signal="pressed" from="TitleBar/BackButton" to="." method="_on_BackButton_pressed"]
