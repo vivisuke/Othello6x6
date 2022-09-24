@@ -147,6 +147,8 @@ func update_humanAIColor():
 	$AIBG/White.set_visible(AI_color == WHITE)
 #
 func xyToBit(x, y):		# 0 <= x, y < 6
+	if x < 0 || x >= N_CELL_HORZ || y < 0 || y >= N_CELL_VERT:
+		return 0
 	return 1<<int(N_CELL_HORZ-1-x + 8*(N_CELL_VERT-1-y))
 func bitToX(pos):
 	if( pos != 0 ):
@@ -608,20 +610,22 @@ func _input(event):
 				#update_cursor()
 			else:
 				if pos != pressedPos: return
+				var bit = xyToBit(pos.x, pos.y)
+				if bit == 0: return;
 				if next_color == BLACK:
 					#if !canPutBlack(pos.x, pos.y): return
 					#putBlack(pos.x, pos.y)
-					if !bb_can_put_black(bb_black, bb_white, xyToBit(pos.x, pos.y)): return
-					bb_put_black(xyToBit(pos.x, pos.y))
+					if !bb_can_put_black(bb_black, bb_white, bit): return
+					bb_put_black(bit)
 					next_color = WHITE
 				else:	#if next_color == WHITE:
 					#if !canPutWhite(pos.x, pos.y): return
 					#putWhite(pos.x, pos.y)
-					if !bb_can_put_black(bb_white, bb_black, xyToBit(pos.x, pos.y)): return
-					bb_put_white(xyToBit(pos.x, pos.y))
+					if !bb_can_put_black(bb_white, bb_black, bit): return
+					bb_put_white(bit)
 					next_color = BLACK
 				#putIX = xyToArrayIX(pos.x, pos.y)
-				putPos = xyToBit(pos.x, pos.y)
+				putPos = bit
 				update_TileMap()
 			update_cursor()
 			update_nextTurn()
