@@ -16,4 +16,3 @@ func _draw():
 
 func _ready():
 	pass # Replace with function body.
-
