@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://fonts/Hokjesgeest-PDGB.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://scripts/TitleBar.gd" type="Script" id=2]
@@ -25,6 +25,28 @@ font_data = ExtResource( 6 )
 
 [sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.25098, 0.25098, 1, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color( 0, 0, 0, 0.501961 )
+shadow_offset = Vector2( 4, 4 )
+
+[sub_resource type="StyleBoxFlat" id=6]
+shadow_size = 6
+shadow_offset = Vector2( 4, 4 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.25098, 0.25098, 1, 1 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color( 0, 0, 0, 0.501961 )
+shadow_size = 6
+shadow_offset = Vector2( 4, 4 )
 
 [node name="TopScene" type="Node2D"]
 script = ExtResource( 5 )
@@ -76,11 +98,12 @@ texture = ExtResource( 7 )
 
 [node name="Human" type="Button" parent="Black"]
 margin_left = 102.0
-margin_right = 258.0
+margin_right = 321.0
 margin_bottom = 102.0
 rect_scale = Vector2( 0.75, 0.75 )
 custom_fonts/font = SubResource( 3 )
 custom_styles/pressed = SubResource( 4 )
+custom_styles/normal = SubResource( 6 )
 toggle_mode = true
 text = "Human"
 icon = ExtResource( 8 )
@@ -91,6 +114,8 @@ margin_right = 513.0
 margin_bottom = 102.0
 rect_scale = Vector2( 0.75, 0.75 )
 custom_fonts/font = SubResource( 3 )
+custom_styles/pressed = SubResource( 7 )
+custom_styles/normal = SubResource( 5 )
 toggle_mode = true
 text = "AI"
 icon = ExtResource( 10 )
@@ -104,10 +129,12 @@ texture = ExtResource( 9 )
 
 [node name="Human" type="Button" parent="White"]
 margin_left = 102.0
-margin_right = 258.0
+margin_right = 321.0
 margin_bottom = 102.0
 rect_scale = Vector2( 0.75, 0.75 )
 custom_fonts/font = SubResource( 3 )
+custom_styles/pressed = SubResource( 4 )
+custom_styles/normal = SubResource( 6 )
 toggle_mode = true
 text = "Human"
 icon = ExtResource( 8 )
@@ -118,6 +145,8 @@ margin_right = 513.0
 margin_bottom = 102.0
 rect_scale = Vector2( 0.75, 0.75 )
 custom_fonts/font = SubResource( 3 )
+custom_styles/pressed = SubResource( 7 )
+custom_styles/normal = SubResource( 5 )
 toggle_mode = true
 text = "AI"
 icon = ExtResource( 10 )
@@ -130,3 +159,7 @@ margin_bottom = 435.0
 text = "hoge"
 
 [connection signal="pressed" from="GameStart" to="." method="_on_GameStart_pressed"]
+[connection signal="toggled" from="Black/Human" to="." method="_on_Black_Human_toggled"]
+[connection signal="toggled" from="Black/AI" to="." method="_on_Black_AI_toggled"]
+[connection signal="toggled" from="White/Human" to="." method="_on_White_Human_toggled"]
+[connection signal="toggled" from="White/AI" to="." method="_on_White_AI_toggled"]
