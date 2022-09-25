@@ -109,6 +109,7 @@ var bb_white
 
 
 func _ready():
+	print(g.test)
 	#print(g_pat2_val)
 	#print("C3_BIT = ", C3_BIT, ", xyToBit(2, 2) = ", xyToBit(2, 2))
 	#print("bitToX(C3_BIT) = ", bitToX(C3_BIT))
