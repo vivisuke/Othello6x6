@@ -136,27 +136,33 @@ cell_size = Vector2( 75, 75 )
 format = 1
 tile_data = PoolIntArray( 65538, 1, 0, 131073, 1, 0, 196611, 0, 0, 196612, 1, 0, 262147, 1, 0 )
 
-[node name="HumanBG" type="ColorRect" parent="."]
+[node name="BlackBG" type="ColorRect" parent="."]
 margin_left = 20.0
 margin_top = 75.0
 margin_right = 220.0
 margin_bottom = 125.0
 color = Color( 0.627451, 0.627451, 0.627451, 1 )
 
-[node name="TextureRect" type="TextureRect" parent="HumanBG"]
+[node name="Human" type="TextureRect" parent="BlackBG"]
 margin_right = 40.0
 margin_bottom = 40.0
 rect_scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 11 )
 
-[node name="Black" type="TextureRect" parent="HumanBG"]
+[node name="AI" type="TextureRect" parent="BlackBG"]
+margin_right = 96.0
+margin_bottom = 96.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 12 )
+
+[node name="Black" type="TextureRect" parent="BlackBG"]
 margin_left = 75.0
 margin_right = 150.0
 margin_bottom = 75.0
 rect_scale = Vector2( 0.67, 0.67 )
 texture = ExtResource( 9 )
 
-[node name="White" type="TextureRect" parent="HumanBG"]
+[node name="White" type="TextureRect" parent="BlackBG"]
 visible = false
 margin_left = 75.0
 margin_right = 150.0
@@ -164,7 +170,7 @@ margin_bottom = 75.0
 rect_scale = Vector2( 0.67, 0.67 )
 texture = ExtResource( 7 )
 
-[node name="Num" type="Label" parent="HumanBG"]
+[node name="Num" type="Label" parent="BlackBG"]
 margin_left = 139.0
 margin_right = 192.0
 margin_bottom = 60.0
@@ -174,26 +180,34 @@ text = "36"
 align = 2
 valign = 1
 
-[node name="Underline" type="ColorRect" parent="HumanBG"]
+[node name="Underline" type="ColorRect" parent="BlackBG"]
 margin_top = 50.0
 margin_right = 200.0
 margin_bottom = 60.0
 color = Color( 1, 1, 0, 1 )
 
-[node name="AIBG" type="ColorRect" parent="."]
+[node name="Sprite" type="Sprite" parent="BlackBG"]
+
+[node name="WhiteBG" type="ColorRect" parent="."]
 margin_left = 270.0
 margin_top = 75.0
 margin_right = 470.0
 margin_bottom = 125.0
 color = Color( 0.627451, 0.627451, 0.627451, 1 )
 
-[node name="TextureRect" type="TextureRect" parent="AIBG"]
+[node name="Human" type="TextureRect" parent="WhiteBG"]
+margin_right = 96.0
+margin_bottom = 96.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 11 )
+
+[node name="AI" type="TextureRect" parent="WhiteBG"]
 margin_right = 40.0
 margin_bottom = 40.0
 rect_scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 12 )
 
-[node name="Black" type="TextureRect" parent="AIBG"]
+[node name="Black" type="TextureRect" parent="WhiteBG"]
 visible = false
 margin_left = 75.0
 margin_right = 150.0
@@ -201,15 +215,14 @@ margin_bottom = 75.0
 rect_scale = Vector2( 0.67, 0.67 )
 texture = ExtResource( 9 )
 
-[node name="White" type="TextureRect" parent="AIBG"]
-visible = false
+[node name="White" type="TextureRect" parent="WhiteBG"]
 margin_left = 75.0
 margin_right = 150.0
 margin_bottom = 75.0
 rect_scale = Vector2( 0.67, 0.67 )
 texture = ExtResource( 7 )
 
-[node name="Num" type="Label" parent="AIBG"]
+[node name="Num" type="Label" parent="WhiteBG"]
 margin_left = 139.0
 margin_right = 192.0
 margin_bottom = 60.0
@@ -219,7 +232,7 @@ text = "36"
 align = 2
 valign = 1
 
-[node name="Underline" type="ColorRect" parent="AIBG"]
+[node name="Underline" type="ColorRect" parent="WhiteBG"]
 visible = false
 margin_top = 50.0
 margin_right = 200.0

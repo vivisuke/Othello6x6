@@ -81,8 +81,8 @@ var BOARD_HEIGHT
 
 var AI_color = WHITE
 var man_color = BLACK
-var black_side = AI
-var white_side = HUMAN
+#var black_player = AI
+#var white_player = HUMAN
 var next_color = BLACK
 var next_pass = false		# 手番がパス
 var game_over = false		# 終局状態
@@ -109,7 +109,6 @@ var bb_white
 
 
 func _ready():
-	print(g.test)
 	#print(g_pat2_val)
 	#print("C3_BIT = ", C3_BIT, ", xyToBit(2, 2) = ", xyToBit(2, 2))
 	#print("bitToX(C3_BIT) = ", bitToX(C3_BIT))
@@ -128,7 +127,8 @@ func _ready():
 	bd_canPutBlack.resize(ARY_SIZE)
 	bd_canPutWhite.resize(ARY_SIZE)
 	#
-	update_humanAIColor()	# 人間・AI 石色表示
+	#update_humanAIColor()	# 人間・AI 石色表示
+	update_black_white_player()		# 黒番・白番プレイヤー表示
 	init_bb()
 	init_bd_array()
 	#putBlack(4, 3)
@@ -141,11 +141,16 @@ func _ready():
 	#
 	print(bb_get_pat_indexes(bb_black, bb_white))
 	print("ev = ", bb_eval(bb_black, bb_white))
-func update_humanAIColor():
-	$HumanBG/Black.set_visible(AI_color == WHITE)
-	$HumanBG/White.set_visible(AI_color != WHITE)
-	$AIBG/Black.set_visible(AI_color != WHITE)
-	$AIBG/White.set_visible(AI_color == WHITE)
+func update_black_white_player():
+	$BlackBG/Human.set_visible(g.black_player == HUMAN)
+	$BlackBG/AI.set_visible(g.black_player == AI)
+	$WhiteBG/Human.set_visible(g.white_player == HUMAN)
+	$WhiteBG/AI.set_visible(g.white_player == AI)
+#func update_humanAIColor():
+#	$HumanBG/Black.set_visible(AI_color == WHITE)
+#	$HumanBG/White.set_visible(AI_color != WHITE)
+#	$AIBG/Black.set_visible(AI_color != WHITE)
+#	$AIBG/White.set_visible(AI_color == WHITE)
 #
 func xyToBit(x, y):		# 0 <= x, y < 6
 	if x < 0 || x >= N_CELL_HORZ || y < 0 || y >= N_CELL_VERT:
@@ -284,8 +289,8 @@ func update_TileMap():
 			nColors[col] += 1
 	var hix = 1 if AI_color == WHITE else 2
 	var aix = 1 if AI_color == BLACK else 2
-	$HumanBG/Num.text = "%d" % nColors[hix]
-	$AIBG/Num.text = "%d" % nColors[aix]
+	$BlackBG/Num.text = "%d" % nColors[hix]
+	$WhiteBG/Num.text = "%d" % nColors[aix]
 func update_cursor():
 	#print("next_color = ", next_color)
 	n_legal_move = 0
@@ -314,8 +319,8 @@ func update_nextTurn():
 		else:
 			game_over = true
 			next_color = EMPTY
-			$HumanBG/Underline.set_visible(false)
-			$AIBG/Underline.set_visible(false)
+			$BlackBG/Underline.set_visible(false)
+			$WhiteBG/Underline.set_visible(false)
 			#$MessLabel.text = "Game Over"
 			if nColors[BLACK] > nColors[WHITE]:
 				$MessLabel.text = "Black won %d" % (nColors[BLACK] - nColors[WHITE])
@@ -324,8 +329,8 @@ func update_nextTurn():
 			else:
 				$MessLabel.text = "draw"
 	else:
-		$HumanBG/Underline.set_visible(next_color != AI_color)
-		$AIBG/Underline.set_visible(next_color == AI_color)
+		$BlackBG/Underline.set_visible(next_color != AI_color)
+		$WhiteBG/Underline.set_visible(next_color == AI_color)
 		# $MessLabel.text = "AI 思考中・・・" if next_color == AI_color else "人間の手番です。"
 		$MessLabel.text = "黒の手番です。" if next_color == BLACK else "白の手番です。"
 #
@@ -575,7 +580,8 @@ func bb_get_pat_indexes(black, white):		# 盤面の直線パターンインデ�
 func _process(delta):
 	if waiting > 0:
 		waiting -= 1
-	elif !game_over && !AI_thinking && next_color == AI_color:
+	elif( !game_over && !AI_thinking &&
+	(next_color == BLACK && g.black_player == g.AI) || (next_color == WHITE && g.white_player == g.AI) ):
 		AI_thinking = true
 		#putIX = thinkAI_random()
 		#putWhiteIX(putIX)

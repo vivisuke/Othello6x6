@@ -77,10 +77,11 @@ margin_bottom = 14.0
 [node name="MessLabel" type="Label" parent="."]
 margin_left = 16.0
 margin_top = 80.0
-margin_right = 192.0
+margin_right = 91.0
 margin_bottom = 104.0
 custom_fonts/font = SubResource( 2 )
-text = "Game Mode:"
+text = "Rule:"
+align = 2
 
 [node name="GameStart" type="Button" parent="."]
 margin_left = 192.0
@@ -150,13 +151,6 @@ custom_styles/normal = SubResource( 5 )
 toggle_mode = true
 text = "AI"
 icon = ExtResource( 10 )
-
-[node name="MenuButton" type="MenuButton" parent="."]
-margin_left = 165.0
-margin_top = 415.0
-margin_right = 208.0
-margin_bottom = 435.0
-text = "hoge"
 
 [connection signal="pressed" from="GameStart" to="." method="_on_GameStart_pressed"]
 [connection signal="toggled" from="Black/Human" to="." method="_on_Black_Human_toggled"]
