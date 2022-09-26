@@ -592,8 +592,11 @@ func _process(delta):
 		if putPos != 0:		# パスでない場合
 			var x = bitToX(putPos)
 			var y = bitToY(putPos)
-			bb_put_white(xyToBit(x, y))
-		next_color = BLACK
+			if next_color == BLACK:
+				bb_put_black(xyToBit(x, y))
+			else:
+				bb_put_white(xyToBit(x, y))
+		next_color = (BLACK + WHITE) - next_color
 		update_TileMap()
 		update_cursor()
 		update_nextTurn()
