@@ -18,6 +18,13 @@
 
 class ML {
 public:
+	enum {
+		PAT_LINE = 0x01,
+		PAT_CORNER8 = 0x02,
+		N_LEGAL_MOVES = 0x04,
+		DFLT_MODE = PAT_LINE | PAT_CORNER8 | N_LEGAL_MOVES,
+	};
+public:
 	ML() { init(); }
 public:
 	void	clear_round_err2();
@@ -28,6 +35,9 @@ public:
 	void	print_npbw_vals() const;
 	int		get_round() const { return m_round; }
 	double	get_err2() const { return m_err2; }
+	//
+	double	eval(Bitboard black, Bitboard white, int mode = DFLT_MODE) const;			//	評価関数計算
+	void	learn(Bitboard black, Bitboard white, int cv, int mode = DFLT_MODE);		//	評価値が cv に近づくよう１回学習
 	//
 	double	ev_pat_vals(Bitboard black, Bitboard white) const;			//	現 m_pat_val[] を用いて評価関数計算
 	void	learn_pat_vals(Bitboard black, Bitboard white, int cv);		//	評価値が cv に近づくよう１回学習

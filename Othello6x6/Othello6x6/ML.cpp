@@ -72,6 +72,56 @@ void ML::print_npbw_vals() const {
     }
     cout << "]\n";
 }
+//
+double ML::eval(Bitboard black, Bitboard white, int mode) const {
+    double ev = 0.0;	//	評価値
+    if( (mode & PAT_LINE) != 0 ) {
+	    get_pat_indexes(black, white, m_pat_ixes);
+	   	for(int k = 0; k != m_pat_ixes.size(); ++k) {
+	   		ev += m_pat2_val[g_pat_type[k]][m_pat_ixes[k]];
+	   	}
+    }
+    if( (mode & PAT_CORNER8) != 0 ) {
+	   	get_corner8_indexes_hv(black, white, m_corner8_hv_ixes);
+	   	for(int k = 0; k != m_corner8_hv_ixes.size(); ++k) {
+	   		ev += m_corner8_val[m_corner8_hv_ixes[k]];
+	   	}
+    }
+    if( (mode & N_LEGAL_MOVES) != 0 ) {
+	   	m_npb = num_place_can_put_black(black, white);
+	   	m_npw = num_place_can_put_black(white, black);
+		ev += m_npbw_val[m_npb + m_npw*(MAX_NP + 1)];
+    }
+   	return ev;
+}
+//	評価値が cv に近づくよう評価関数パラメータを１回学習
+void ML::learn(Bitboard black, Bitboard white, int cv, int mode) {
+	int np =	//	np: 評価パラメータ数
+			((mode & PAT_LINE) != 0 ? 26 : 0) +
+			((mode & PAT_CORNER8) != 0 ? 1 : 0) +
+			((mode & N_LEGAL_MOVES) != 0 ? 1 : 0);
+	++m_round;
+   	auto d = cv - eval(black, white, mode);
+   	m_err2 += d * d;
+   	d /= np * ML_PARAM;   	//	パターン評価値更新値
+    if( (mode & PAT_LINE) != 0 ) {
+	   	for(int k = 0; k != m_pat_ixes.size(); ++k) {
+	   		m_pat2_val[g_pat_type[k]][m_pat_ixes[k]] += d;
+	   	}
+    }
+    if( (mode & PAT_CORNER8) != 0 ) {
+	   	for(int k = 0; k != m_pat_ixes.size(); ++k) {
+	   		m_pat2_val[g_pat_type[k]][m_pat_ixes[k]] += d;
+	   	}
+	   	get_corner8_indexes_vh(black, white, m_corner8_vh_ixes);
+	   	for(int k = 0; k != m_corner8_hv_ixes.size(); ++k) {
+	   		m_corner8_val[m_corner8_vh_ixes[k]] = m_corner8_val[m_corner8_hv_ixes[k]] += d;
+	   	}
+    }
+    if( (mode & N_LEGAL_MOVES) != 0 ) {
+	   	m_npbw_val[m_npb + m_npw*(MAX_NP+1)] += d;
+    }
+}
 //	現 m_pat_val[] を用いて評価関数計算
 double ML::ev_pat_vals(Bitboard black, Bitboard white) const {
 	//vector<int> lst;		//	パターンインデックス格納用配列
