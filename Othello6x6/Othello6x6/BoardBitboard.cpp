@@ -236,6 +236,90 @@ Bitboard negaAlpha(Bitboard black, Bitboard white, int &alpha, bool passed) {
 	}
 	return mxpos;
 }
+int negaAlphaLessWin(Bitboard black, Bitboard white, int alpha, int beta, bool passed = false) {
+	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
+	if( spc == 0 ) {	//	空欄無しの場合
+		//print(black, white);
+		return -(popcount(black) - popcount(white));
+	}
+	bool put = false;		//	着手箇所あり
+	//	８近傍が白の場所のみ取り出す
+	spc &= (white<<DIR_UL) | (white<<DIR_U) | (white<<DIR_UR) | (white<<DIR_L) | 
+			(white>>DIR_UL) | (white>>DIR_U) | (white>>DIR_UR) | (white>>DIR_L);
+	while( spc != 0 ) {
+		Bitboard b = -(_int64)spc & spc;		//	最右ビットを取り出す
+		auto rev = get_revbits(black, white, b);
+		if( rev != 0 ) {
+			put = true;
+			auto ev = -negaAlphaLessWin(white ^ rev, black | rev | b, -beta, -alpha);
+			if( ev >= beta ) return ev;		//	ベータカット
+			alpha = std::max(alpha, ev);
+		}
+		spc ^= b;		//	最右ビット消去
+	}
+	if( !put ) {		//	パスの場合
+		if( !passed ) {		//	１手前がパスでない
+			return -negaAlphaLessWin(white, black, -beta, -alpha, true);
+		} else {			//	１手前がパス → 双方パスで終局
+			//print(black, white);
+			//	done: 空欄は勝者のものとしてカウント
+			int bc = popcount(black);
+			int wc = popcount(white);
+			alpha = -(bc - wc);
+			spc = ~(black | white) & BB_MASK;		//	空欄箇所
+			if( spc != 0 ) {	//	空欄ありの場合
+				if( bc > wc ) alpha += popcount(spc);
+				else if( bc < wc ) alpha -= popcount(spc);
+			}
+			//return alpha;
+			//return popcount(black) - popcount(white);
+		}
+	}
+	return alpha;
+}
+//	（黒番）終盤完全読み
+//	双方着手不可能な場合は、alpha: -INT_MAX, return: 0 を返す
+Bitboard negaAlphaLessWin(Bitboard black, Bitboard white, int &alpha, bool passed) {
+	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
+	if( spc == 0 ) {	//	空欄無しの場合
+		alpha = -(popcount(black) - popcount(white));
+		return 0;
+	}
+	Bitboard mxpos = 0;	//	評価値最大着手箇所
+	alpha = -INT_MAX;
+	const int beta = INT_MAX;
+	//	８近傍が白の場所のみ取り出す
+	spc &= (white<<DIR_UL) | (white<<DIR_U) | (white<<DIR_UR) | (white<<DIR_L) | 
+			(white>>DIR_UL) | (white>>DIR_U) | (white>>DIR_UR) | (white>>DIR_L);
+	while( spc != 0 ) {
+		Bitboard b = -(_int64)spc & spc;		//	最右ビットを取り出す
+		auto rev = get_revbits(black, white, b);
+		if( rev != 0 ) {
+			auto ev = -negaAlphaLessWin(white ^ rev, black | rev | b, -beta, -alpha);
+			if( ev > alpha ) {
+				alpha = ev;
+				mxpos = b;
+			}
+		}
+		spc ^= b;		//	最右ビット消去
+	}
+	if( mxpos == 0 ) {		//	黒着手不可の場合
+		if( passed ) {		//	双方パスの場合
+			int bc = popcount(black);
+			int wc = popcount(white);
+			alpha = -(bc - wc);
+			spc = ~(black | white) & BB_MASK;		//	空欄箇所
+			if( spc != 0 ) {	//	空欄ありの場合
+				if( bc > wc ) alpha += popcount(spc);
+				else if( bc < wc ) alpha -= popcount(spc);
+			}
+		} else {
+			mxpos = negaAlphaLessWin(white, black, alpha, true);
+			alpha = -alpha;
+		}
+	}
+	return mxpos;
+}
 int bitToX(Bitboard b) {		//	x: [0, N_HORZ), y: [0, N_VERT)
 	if( b != 0 ) {
 		while( (b & 255) == 0 )

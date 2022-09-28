@@ -60,6 +60,7 @@ Bitboard get_revbits(Bitboard black, Bitboard white, Bitboard bit);	//	bit 位�
 Bitboard get_revbits_dir(Bitboard black, Bitboard white, Bitboard bit, int dir);		//	
 int popcount(Bitboard);
 Bitboard negaAlpha(Bitboard black, Bitboard white, int &ev, bool=false);		//	終盤完全読み
+Bitboard negaAlphaLessWin(Bitboard black, Bitboard white, int &ev, bool=false);		//	終盤完全読み for 負けオセロ
 void put_black(Bitboard &black, Bitboard &white, Bitboard bit);
 int get_pat_index_shr(Bitboard black, Bitboard white, Bitboard pos, int dir, int len);
 int get_pat_index_shl(Bitboard black, Bitboard white, Bitboard pos, int dir, int len);

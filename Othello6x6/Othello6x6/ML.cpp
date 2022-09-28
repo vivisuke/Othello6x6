@@ -42,6 +42,19 @@ void ML::print_pat_vals() const {
     	cout << t << "\t" << i << " " << txt << "\n";
     }
 }
+void ML::print_pat2_vals(int ptype) const {
+    string txt;
+    for(int i = 0; i != N_PAT; ++i) {
+    	auto t = to_string(m_pat2_val[ptype][i]);
+    	if( t[0] != '-' ) t = '+' + t;
+    	indexToPat(i, txt);
+    	cout << txt << " " << t << "\t";
+    	//cout << t << " " << i << " " << txt << "\t";
+    	//cout << t << ", ";
+    	if( (i+1)%5 == 0 ) cout << "\n";
+    }
+    cout << "\n\n";
+}
 void ML::print_pat2_vals() const {
     cout << "[\n";
     string txt;

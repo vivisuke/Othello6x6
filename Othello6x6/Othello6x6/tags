@@ -22,6 +22,7 @@ C3_BIT	BoardBitboard.h	/^#define		C3_BIT	/;"	d
 C4_BIT	BoardBitboard.h	/^#define		C4_BIT	/;"	d
 D3_BIT	BoardBitboard.h	/^#define		D3_BIT	/;"	d
 D4_BIT	BoardBitboard.h	/^#define		D4_BIT	/;"	d
+DFLT_MODE	ML.h	/^		DFLT_MODE = PAT_LINE | PAT_CORNER8 | N_LEGAL_MOVES,$/;"	e	enum:ML::__anon7c8892540103
 DIR_D	BoardBitboard.h	/^#define		DIR_D	/;"	d
 DIR_DL	BoardBitboard.h	/^#define		DIR_DL	/;"	d
 DIR_DR	BoardBitboard.h	/^#define		DIR_DR	/;"	d
@@ -47,11 +48,14 @@ N_IX_BL_UR	BoardIndex.h	/^#define		N_IX_BL_UR	/;"	d
 N_IX_HORZ	BoardIndex.h	/^#define		N_IX_HORZ	/;"	d
 N_IX_UL_BR	BoardIndex.h	/^#define		N_IX_UL_BR	/;"	d
 N_IX_VERT	BoardIndex.h	/^#define		N_IX_VERT	/;"	d
+N_LEGAL_MOVES	ML.h	/^		N_LEGAL_MOVES = 0x04,$/;"	e	enum:ML::__anon7c8892540103
 N_PAT	Othello6x6.h	/^	N_PAT = 3*3*3*3*3*3,$/;"	e	enum:__anona77a34960103
 N_PAT8	Othello6x6.h	/^	N_PAT8 = 3*3*3*3*3*3*3*3,$/;"	e	enum:__anona77a34960103
 N_PAT9	Othello6x6.h	/^	N_PAT9 = 3*3*3*3*3*3*3*3*3,$/;"	e	enum:__anona77a34960103
 N_PTYPE	Othello6x6.h	/^	N_PTYPE,$/;"	e	enum:__anona77a34960103
 N_VERT	Othello6x6.h	/^	N_VERT = 6,$/;"	e	enum:__anona77a34960103
+PAT_CORNER8	ML.h	/^		PAT_CORNER8 = 0x02,$/;"	e	enum:ML::__anon7c8892540103
+PAT_LINE	ML.h	/^		PAT_LINE = 0x01,$/;"	e	enum:ML::__anon7c8892540103
 PTYPE_DIAG3	Othello6x6.h	/^	PTYPE_DIAG3,		\/\/	$/;"	e	enum:__anona77a34960103
 PTYPE_DIAG4	Othello6x6.h	/^	PTYPE_DIAG4,		\/\/	$/;"	e	enum:__anona77a34960103
 PTYPE_DIAG5	Othello6x6.h	/^	PTYPE_DIAG5,		\/\/	$/;"	e	enum:__anona77a34960103
@@ -63,6 +67,7 @@ SIndexTableItem	BoardIndex.cpp	/^	SIndexTableItem(ushort dst_ix = 0, uchar n1 = 
 SIndexTableItem	BoardIndex.cpp	/^struct SIndexTableItem {$/;"	s	file:
 WALL	Othello6x6.h	/^	WALL,			\/\/	番人$/;"	e	enum:__anona77a34960103
 WHITE	Othello6x6.h	/^	WHITE,$/;"	e	enum:__anona77a34960103
+__anon7c8892540103	ML.h	/^	enum {$/;"	g	class:ML
 __anona77a34960103	Othello6x6.h	/^enum {$/;"	g
 bb_to_string	BoardBitboard.cpp	/^string bb_to_string(Bitboard bb) {$/;"	f	typeref:typename:string
 bitToX	BoardBitboard.cpp	/^int bitToX(Bitboard b) {		\/\/	x: [0, N_HORZ), y: [0, N_VERT)$/;"	f	typeref:typename:int
@@ -84,9 +89,11 @@ dig_str	BoardArray.cpp	/^static const char *dig_str[] = {"１", "２", "３", "�
 dig_str	BoardBitboard.cpp	/^static const char *dig_str[] = {"１", "２", "３", "４", "５", "６"};$/;"	v	typeref:typename:const char * []	file:
 dig_str	BoardIndex.cpp	/^static const char *dig_str[] = {"１", "２", "３", "４", "５", "６"};$/;"	v	typeref:typename:const char * []	file:
 double2string	Othello6x6.cpp	/^string double2string(double v) {$/;"	f	typeref:typename:string
+ev_pat2_corner8_npbw_vals	ML.cpp	/^double ML::ev_pat2_corner8_npbw_vals(Bitboard black, Bitboard white) const {$/;"	f	class:ML	typeref:typename:double
 ev_pat2_corner8_vals	ML.cpp	/^double ML::ev_pat2_corner8_vals(Bitboard black, Bitboard white) const {$/;"	f	class:ML	typeref:typename:double
 ev_pat2_vals	ML.cpp	/^double ML::ev_pat2_vals(Bitboard black, Bitboard white) const {$/;"	f	class:ML	typeref:typename:double
 ev_pat_vals	ML.cpp	/^double ML::ev_pat_vals(Bitboard black, Bitboard white) const {$/;"	f	class:ML	typeref:typename:double
+eval	ML.cpp	/^double ML::eval(Bitboard black, Bitboard white, int mode) const {$/;"	f	class:ML	typeref:typename:double
 eval_pat_corner8_ncanput_ncnto	Othello6x6.cpp	/^double eval_pat_corner8_ncanput_ncnto(Bitboard black, Bitboard white,$/;"	f	typeref:typename:double
 exp_game_tree	Othello6x6.cpp	/^void exp_game_tree(Bitboard black, Bitboard white, int depth, bool passed) {$/;"	f	typeref:typename:void
 exp_game_tree	Othello6x6.cpp	/^void exp_game_tree(BoardArray& bd, int depth, bool black_turn) {$/;"	f	typeref:typename:void
@@ -104,9 +111,9 @@ g_pat_val	Othello6x6.cpp	/^double g_pat_val[N_PAT];				\/\/	（全位置共通�
 g_rev_index	Othello6x6.cpp	/^int g_rev_index[N_PAT];			\/\/	左右反転したパターンインデックス$/;"	v	typeref:typename:int[]
 g_rnd	Othello6x6.cpp	/^std::random_device g_rnd;     \/\/ 非決定的な乱数生成器を生成$/;"	v	typeref:typename:std::random_device
 get_color	BoardBitboard.cpp	/^uchar get_color(Bitboard black, Bitboard white, Bitboard bit) {$/;"	f	typeref:typename:uchar
-get_corner8_indexes	BoardBitboard.cpp	/^void get_corner8_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {$/;"	f	typeref:typename:void
 get_corner8_indexes_hv	BoardBitboard.cpp	/^void get_corner8_indexes_hv(Bitboard black, Bitboard white, std::vector<int>& lst)$/;"	f	typeref:typename:void
 get_corner8_indexes_vh	BoardBitboard.cpp	/^void get_corner8_indexes_vh(Bitboard black, Bitboard white, std::vector<int>& lst) {$/;"	f	typeref:typename:void
+get_corner9_indexes	BoardBitboard.cpp	/^void get_corner9_indexes(Bitboard black, Bitboard white, std::vector<int>& lst) {$/;"	f	typeref:typename:void
 get_err2	ML.h	/^	double	get_err2() const { return m_err2; }$/;"	f	class:ML	typeref:typename:double
 get_num_cannot_turnover	BoardBitboard.cpp	/^void get_num_cannot_turnover(Bitboard black, Bitboard white, int &nb, int &nw) {$/;"	f	typeref:typename:void
 get_pat_index	BoardBitboard.cpp	/^int get_pat_index(Bitboard black, Bitboard white, Bitboard pos, int dir) {$/;"	f	typeref:typename:int
@@ -126,23 +133,28 @@ init	BoardIndex.cpp	/^void BoardIndex::init() {$/;"	f	class:BoardIndex	typeref:t
 init	EvalFunc.cpp	/^void EvalFunc::init() {$/;"	f	class:EvalFunc	typeref:typename:void
 init	ML.cpp	/^void ML::init() {$/;"	f	class:ML	typeref:typename:void
 init	Othello6x6.cpp	/^void init(Bitboard &black, Bitboard &white) {$/;"	f	typeref:typename:void
+learn	ML.cpp	/^void ML::learn(Bitboard black, Bitboard white, int cv, int mode) {$/;"	f	class:ML	typeref:typename:void
+learn_pat2_corner8_npbw_vals	ML.cpp	/^void ML::learn_pat2_corner8_npbw_vals(Bitboard black, Bitboard white, int cv) {$/;"	f	class:ML	typeref:typename:void
 learn_pat2_corner8_vals	ML.cpp	/^void ML::learn_pat2_corner8_vals(Bitboard black, Bitboard white, int cv) {$/;"	f	class:ML	typeref:typename:void
 learn_pat2_vals	ML.cpp	/^void ML::learn_pat2_vals(Bitboard black, Bitboard white, int cv) {$/;"	f	class:ML	typeref:typename:void
 learn_pat_vals	ML.cpp	/^void ML::learn_pat_vals(Bitboard black, Bitboard white, int cv) {$/;"	f	class:ML	typeref:typename:void
 m_bd	BoardArray.h	/^	uchar	m_bd[ARY_SIZE];$/;"	m	class:BoardArray	typeref:typename:uchar[]
 m_black	BoardBitboard.h	/^	Bitboard	m_black;$/;"	m	class:BoardBitboard	typeref:typename:Bitboard
+m_corner8_hv_ixes	ML.h	/^	mutable std::vector<int>	m_corner8_hv_ixes;		\/\/	m_corner8_val インデックスリスト$/;"	m	class:ML	typeref:typename:std::vector<int>
 m_corner8_val	ML.h	/^	double m_corner8_val[N_PAT8];			\/\/	角８個パターン$/;"	m	class:ML	typeref:typename:double[]
-m_corner_ixes	ML.h	/^	mutable std::vector<int>	m_corner_ixes;		\/\/	m_corner8_val インデックスリスト$/;"	m	class:ML	typeref:typename:std::vector<int>
+m_corner8_vh_ixes	ML.h	/^	mutable std::vector<int>	m_corner8_vh_ixes;		\/\/	m_corner8_val インデックスリスト$/;"	m	class:ML	typeref:typename:std::vector<int>
 m_dst_ix	BoardIndex.cpp	/^	ushort		m_dst_ix;		\/\/	遷移先インデックス$/;"	m	struct:SIndexTableItem	typeref:typename:ushort	file:
-m_err2	ML.h	/^	double	m_err2;							\/\/	自乗誤差累計$/;"	m	class:ML	typeref:typename:double
+m_err2	ML.h	/^	double	m_err2;				\/\/	自乗誤差累計$/;"	m	class:ML	typeref:typename:double
 m_ix_bl_ur	BoardIndex.h	/^	ushort	m_ix_bl_ur[N_IX_BL_UR];$/;"	m	class:BoardIndex	typeref:typename:ushort[]
 m_ix_horz	BoardIndex.h	/^	ushort	m_ix_horz[N_IX_HORZ];$/;"	m	class:BoardIndex	typeref:typename:ushort[]
 m_ix_ul_br	BoardIndex.h	/^	ushort	m_ix_ul_br[N_IX_UL_BR];$/;"	m	class:BoardIndex	typeref:typename:ushort[]
 m_ix_vert	BoardIndex.h	/^	ushort	m_ix_vert[N_IX_VERT];$/;"	m	class:BoardIndex	typeref:typename:ushort[]
 m_n1	BoardIndex.cpp	/^	uchar		m_n1;			\/\/	x or y マイナス方向に返る石数$/;"	m	struct:SIndexTableItem	typeref:typename:uchar	file:
 m_n2	BoardIndex.cpp	/^	uchar		m_n2;			\/\/	x or y プラス方向に返る石数$/;"	m	struct:SIndexTableItem	typeref:typename:uchar	file:
+m_npb	ML.h	/^	mutable int		m_npb;		\/\/	黒着手可能箇所数$/;"	m	class:ML	typeref:typename:int
 m_npbw_val	EvalFunc.h	/^	double m_npbw_val[NPBW_TABLE_SZ];		\/\/	着手可能箇所数評価値テーブル、ix = npb +/;"	m	class:EvalFunc	typeref:typename:double[]
 m_npbw_val	ML.h	/^	double m_npbw_val[NPBW_TABLE_SZ];		\/\/	着手可能箇所数評価値テーブル、ix = npb +/;"	m	class:ML	typeref:typename:double[]
+m_npw	ML.h	/^	mutable int		m_npw;		\/\/	白着手可能箇所数$/;"	m	class:ML	typeref:typename:int
 m_pat2_val	EvalFunc.h	/^	double m_pat2_val[N_PTYPE][N_PAT];		\/\/	タイプ別パターン評価値$/;"	m	class:EvalFunc	typeref:typename:double[][]
 m_pat2_val	ML.h	/^	double m_pat2_val[N_PTYPE][N_PAT];		\/\/	タイプ別パターン評価値$/;"	m	class:ML	typeref:typename:double[][]
 m_pat8_val	EvalFunc.h	/^	double m_pat8_val[N_PAT8];				\/\/	角８個パターン$/;"	m	class:EvalFunc	typeref:typename:double[]
@@ -151,7 +163,7 @@ m_pat_val	EvalFunc.h	/^	double m_pat_val[N_PAT];				\/\/	パターン評価値�
 m_pat_val	ML.h	/^	double m_pat_val[N_PAT];				\/\/	パターン評価値（全タイプ共通）$/;"	m	class:ML	typeref:typename:double[]
 m_rev_index	EvalFunc.h	/^	int m_rev_index[N_PAT];			\/\/	左右反転したパターンインデックス$/;"	m	class:EvalFunc	typeref:typename:int[]
 m_rev_index	ML.h	/^	int m_rev_index[N_PAT];					\/\/	左右反転したパターンインデックス$/;"	m	class:ML	typeref:typename:int[]
-m_round	ML.h	/^	int		m_round;						\/\/	学習回数$/;"	m	class:ML	typeref:typename:int
+m_round	ML.h	/^	int		m_round;			\/\/	学習回数$/;"	m	class:ML	typeref:typename:int
 m_stack	BoardArray.h	/^	std::vector<uchar>		m_stack;	\/\/	put(), un_put() 用スタック$/;"	m	class:BoardArray	typeref:typename:std::vector<uchar>
 m_white	BoardBitboard.h	/^	Bitboard	m_white;$/;"	m	class:BoardBitboard	typeref:typename:Bitboard
 main	Othello6x6.cpp	/^int main()$/;"	f	typeref:typename:int
@@ -166,6 +178,9 @@ print	BoardBitboard.cpp	/^void BoardBitboard::print() const {$/;"	f	class:BoardB
 print	BoardBitboard.cpp	/^void print(Bitboard black, Bitboard white) {$/;"	f	typeref:typename:void
 print	BoardIndex.cpp	/^void BoardIndex::print() {$/;"	f	class:BoardIndex	typeref:typename:void
 print_npbw_table	Othello6x6.cpp	/^void print_npbw_table() {$/;"	f	typeref:typename:void
+print_npbw_vals	ML.cpp	/^void ML::print_npbw_vals() const {$/;"	f	class:ML	typeref:typename:void
+print_pat2_vals	ML.cpp	/^void ML::print_pat2_vals() const {$/;"	f	class:ML	typeref:typename:void
+print_pat2_vals	ML.cpp	/^void ML::print_pat2_vals(int ptype) const {$/;"	f	class:ML	typeref:typename:void
 print_pat_val	Othello6x6.cpp	/^void print_pat_val(int type, bool center) {		\/\/	center: 3, 4 番目は空でないこと$/;"	f	typeref:typename:void
 print_pat_vals	ML.cpp	/^void ML::print_pat_vals() const {$/;"	f	class:ML	typeref:typename:void
 put_BLACK	BoardArray.cpp	/^int BoardArray::put_BLACK(int ix) {$/;"	f	class:BoardArray	typeref:typename:int
