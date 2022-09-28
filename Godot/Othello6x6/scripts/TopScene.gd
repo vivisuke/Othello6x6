@@ -9,6 +9,8 @@ func _ready():
 	update_black_white_player()
 
 func update_black_white_player():
+	$Rule/Normal.pressed = g.rule == g.NORMAL
+	$Rule/LessWin.pressed = g.rule == g.LESS_WIN
 	$Black/Human.pressed = g.black_player == g.HUMAN
 	$Black/AI.pressed = g.black_player == g.AI
 	$White/Human.pressed = g.white_player == g.HUMAN
@@ -32,10 +34,18 @@ func _on_Black_AI_toggled(button_pressed):
 func _on_White_Human_toggled(button_pressed):
 	g.white_player = g.HUMAN if button_pressed else g.AI
 	update_black_white_player()
-	pass # Replace with function body.
 
 
 func _on_White_AI_toggled(button_pressed):
 	g.white_player = g.AI if button_pressed else g.HUMAN
 	update_black_white_player()
-	pass # Replace with function body.
+
+
+func _on_Normal_toggled(button_pressed):
+	g.rule = g.NORMAL if button_pressed else g.LESS_WIN
+	update_black_white_player()
+
+
+func _on_LessWin_toggled(button_pressed):
+	g.rule = g.LESS_WIN if button_pressed else g.NORMAL
+	update_black_white_player()
