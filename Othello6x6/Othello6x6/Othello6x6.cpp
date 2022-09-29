@@ -1249,8 +1249,8 @@ int main()
    		cout << "R = " << r << "\n";
    		cout << "\n";
    		ml.print_pat2_vals(PTYPE_LINE1);
-   		//ml.print_pat2_vals();
-   		//ml.print_npbw_vals();
+   		ml.print_pat2_vals();
+   		ml.print_npbw_vals();
 #if	0
    		for(int i = 0; i != 100; ++i) {
 	   		init(black, white);
