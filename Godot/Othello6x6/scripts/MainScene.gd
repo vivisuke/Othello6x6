@@ -295,6 +295,7 @@ func update_TileMap():
 func update_cursor():
 	#print("next_color = ", next_color)
 	n_legal_move = 0
+	next_pass = false
 	for y in range(N_CELL_VERT):
 		for x in range(N_CELL_HORZ):
 			var id = TRANSPARENT
@@ -316,10 +317,9 @@ func result_diff(nwin, nloss):
 	return diff
 func update_nextTurn():
 	if n_legal_move == 0:
-		#next_color = (BLACK + WHITE) - next_color
-		#update_cursor()
-		if( next_color == WHITE && count_n_legal_move_black(bb_black, bb_white) != 0 ||
-		next_color == BLACK && count_n_legal_move_black(bb_white, bb_black) != 0 ):
+		# 次の手番が着手不可能な場合
+		if( next_color == WHITE && count_n_legal_move_black(bb_black, bb_white) != 0 ||		# 黒着手可能
+		next_color == BLACK && count_n_legal_move_black(bb_white, bb_black) != 0 ):			# 白着手可能
 			next_pass = true
 			$MessLabel.text = "パスです。画面をタップしてください。"
 		else:

@@ -1125,7 +1125,7 @@ int main()
    		cout << "\n";
 #endif
    	}
-   	if( false ) {
+   	if( true ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
 		const int  ITR = 10;
@@ -1195,10 +1195,10 @@ int main()
    		cout << "\n";
 #endif
    	}
-   	if( true ) {
+   	if( false ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
-		const int  ITR = 100;
+		const int  ITR = 10;
 		const int N = 10000;
 		const int TOTAL = ITR * N;
    		for(int i = 0; i != TOTAL; ++i) {
