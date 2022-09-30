@@ -311,7 +311,7 @@ func update_cursor():
 				n_legal_move += 1
 			$Board/CursorTileMap.set_cell(x, y, id)
 func result_diff(nwin, nloss):
-	var diff = nwin - nloss
+	var diff = abs(nwin - nloss)
 	if nwin + nloss < CELL_SIZE:
 		diff += CELL_SIZE - (nwin + nloss)
 	return diff
@@ -328,12 +328,17 @@ func update_nextTurn():
 			$BlackBG/Underline.set_visible(false)
 			$WhiteBG/Underline.set_visible(false)
 			#$MessLabel.text = "Game Over"
-			if nColors[BLACK] > nColors[WHITE]:
-				$MessLabel.text = "Black won %d" % result_diff(nColors[BLACK], nColors[WHITE])
-			elif nColors[BLACK] < nColors[WHITE]:
-				$MessLabel.text = "White won %d" % result_diff(nColors[WHITE], nColors[BLACK])
-			else:
+			if nColors[BLACK] == nColors[WHITE]:
 				$MessLabel.text = "draw"
+			elif( (g.rule == g.NORMAL && nColors[BLACK] > nColors[WHITE]) ||
+			(g.rule != g.NORMAL && nColors[BLACK] < nColors[WHITE]) ):
+				$MessLabel.text = "Black won %d" % result_diff(nColors[BLACK], nColors[WHITE])
+			else:
+				$MessLabel.text = "White won %d" % result_diff(nColors[WHITE], nColors[BLACK])
+			#elif nColors[BLACK] < nColors[WHITE]:
+			#	$MessLabel.text = "White won %d" % result_diff(nColors[WHITE], nColors[BLACK])
+			#else:
+			#	$MessLabel.text = "draw"
 	else:
 		$BlackBG/Underline.set_visible(next_color != AI_color)
 		$WhiteBG/Underline.set_visible(next_color == AI_color)
