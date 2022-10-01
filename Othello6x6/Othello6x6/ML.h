@@ -33,6 +33,7 @@ public:
 	void	print_pat_vals() const;			//	パターン評価値（全タイプ共通）表示
 	void	print_pat2_vals() const;			//	位置別パターン評価値表示
 	void	print_pat2_vals(int type) const;		//	指定位置パターン評価値表示
+	void	print_corner8_vals() const;
 	void	print_npbw_vals() const;
 	int		get_round() const { return m_round; }
 	double	get_err2() const { return m_err2; }

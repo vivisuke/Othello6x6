@@ -71,6 +71,19 @@ void ML::print_pat2_vals() const {
     }
     cout << "]\n";
 }
+void ML::print_corner8_vals() const {
+    string txt;
+    for(int i = 0; i != N_PAT8; ++i) {
+    	auto t = to_string(m_corner8_val[i]);
+    	//if( t[0] != '-' ) t = '+' + t;
+    	//indexToPat(i, txt);
+    	//cout << txt << " " << t << "\t";
+    	//cout << t << " " << i << " " << txt << "\t";
+    	cout << t << ", ";
+    	if( (i+1)%9 == 0 ) cout << "\n";
+    }
+    cout << "\n\n";
+}
 void ML::print_npbw_vals() const {
     cout << "[\n";
     string txt;

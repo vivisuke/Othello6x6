@@ -1128,7 +1128,7 @@ int main()
    	if( true ) {
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
-		const int  ITR = 10;
+		const int  ITR = 100;
 		const int N = 10000;
 		const int TOTAL = ITR * N;
    		for(int i = 0; i != TOTAL; ++i) {
@@ -1178,9 +1178,10 @@ int main()
    		double r = ((sumxy/N_EVAL) - avgx*avgy) / (sgmx * sgmy);
    		cout << "R = " << r << "\n";
    		cout << "\n";
-   		ml.print_pat2_vals(PTYPE_LINE1);
-   		//ml.print_pat2_vals();
-   		//ml.print_npbw_vals();
+   		//ml.print_pat2_vals(PTYPE_LINE1);
+   		ml.print_pat2_vals();
+   		ml.print_corner8_vals();
+   		ml.print_npbw_vals();
 #if	0
    		for(int i = 0; i != 100; ++i) {
 	   		init(black, white);
@@ -1195,7 +1196,7 @@ int main()
    		cout << "\n";
 #endif
    	}
-   	if( false ) {
+   	if( false ) {	//	for 負けオセロ
    		ML ml;		//	機械学習オブジェクト
    		Bitboard black, white;
 		const int  ITR = 10;
