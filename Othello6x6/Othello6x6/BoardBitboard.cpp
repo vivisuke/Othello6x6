@@ -152,7 +152,7 @@ int popcount(Bitboard bits) {
 	//auto i = static_cast<std::uint64_t>(bb);
 	//return std::popcount(i);
 }
-int negaAlpha(Bitboard black, Bitboard white, int alpha, int beta, bool passed = false) {
+int negaAlphaSub(Bitboard black, Bitboard white, int alpha, int beta, bool passed = false) {
 	Bitboard spc = ~(black | white) & BB_MASK;		//	空欄箇所
 	if( spc == 0 ) {	//	空欄無しの場合
 		//print(black, white);
@@ -167,7 +167,7 @@ int negaAlpha(Bitboard black, Bitboard white, int alpha, int beta, bool passed =
 		auto rev = get_revbits(black, white, b);
 		if( rev != 0 ) {
 			put = true;
-			auto ev = -negaAlpha(white ^ rev, black | rev | b, -beta, -alpha);
+			auto ev = -negaAlphaSub(white ^ rev, black | rev | b, -beta, -alpha);
 			if( ev >= beta ) return ev;		//	ベータカット
 			alpha = std::max(alpha, ev);
 		}
@@ -175,7 +175,7 @@ int negaAlpha(Bitboard black, Bitboard white, int alpha, int beta, bool passed =
 	}
 	if( !put ) {		//	パスの場合
 		if( !passed ) {		//	１手前がパスでない
-			return -negaAlpha(white, black, -beta, -alpha, true);
+			return -negaAlphaSub(white, black, -beta, -alpha, true);
 		} else {			//	１手前がパス → 双方パスで終局
 			//print(black, white);
 			//	done: 空欄は勝者のものとしてカウント
@@ -211,7 +211,7 @@ Bitboard negaAlpha(Bitboard black, Bitboard white, int &alpha, bool passed) {
 		Bitboard b = -(_int64)spc & spc;		//	最右ビットを取り出す
 		auto rev = get_revbits(black, white, b);
 		if( rev != 0 ) {
-			auto ev = -negaAlpha(white ^ rev, black | rev | b, -beta, -alpha);
+			auto ev = -negaAlphaSub(white ^ rev, black | rev | b, -beta, -alpha);
 			if( ev > alpha ) {
 				alpha = ev;
 				mxpos = b;

@@ -43,9 +43,15 @@ func _on_White_AI_toggled(button_pressed):
 
 func _on_Normal_toggled(button_pressed):
 	g.rule = g.NORMAL if button_pressed else g.LESS_WIN
+	if button_pressed:
+		$Rule/Normal.disabled = true
+		$Rule/LessWin.disabled = false
 	update_black_white_player()
 
 
 func _on_LessWin_toggled(button_pressed):
 	g.rule = g.LESS_WIN if button_pressed else g.NORMAL
+	if button_pressed:
+		$Rule/Normal.disabled = false
+		$Rule/LessWin.disabled = true
 	update_black_white_player()
