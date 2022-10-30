@@ -20,7 +20,7 @@ using namespace std;
 
 ushort patToIndex(const std::vector<uchar> &lst) {
 	ushort index = 0;
-	for(int i = lst.size(); --i >= 0;) {
+	for(int i = (int)lst.size(); --i >= 0;) {
 		index = index * 3 + lst[i];
 	}
 	return index;
@@ -183,7 +183,7 @@ void BoardIndex::init() {
 }
 
 static const char *dig_str[] = {"１", "２", "３", "４", "５", "６"};
-void BoardIndex::print() {
+void BoardIndex::print() const {
 	vector<uchar> lst;
 	cout << "＼ａｂｃｄｅｆ\n";
 	for(int y = 0; y != N_VERT; ++y) {

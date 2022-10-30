@@ -62,12 +62,16 @@ public:
 	BoardIndex() { init(); }
 public:
 	void	init();
-	void	print();
+	void	print() const;
 //private:
 public:
+	//	盤面状態
 	ushort	m_ix_horz[N_IX_HORZ];
 	ushort	m_ix_vert[N_IX_VERT];
 	ushort	m_ix_bl_ur[N_IX_BL_UR];
 	ushort	m_ix_ul_br[N_IX_UL_BR];
+	//	状態遷移先インデックステーブル
+	short	m_put_black_ix[N_HORZ];		//	黒を打った場合の遷移先インデックス
+	short	m_put_white_ix[N_HORZ];		//	白を打った場合の遷移先インデックス
 };
 
