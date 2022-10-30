@@ -314,6 +314,9 @@ func result_diff(nwin, nloss):
 	if nwin + nloss < CELL_SIZE:
 		diff += CELL_SIZE - (nwin + nloss)
 	return diff
+func update_UndoButton():
+	$UndoButton.disabled = (next_color == BLACK && g.black_player == AI ||
+							next_color == WHITE && g.white_player == AI)
 func update_nextTurn():
 	if n_legal_move == 0:
 		# 次の手番が着手不可能な場合
@@ -344,6 +347,7 @@ func update_nextTurn():
 		$WhiteBG/Underline.set_visible(next_color == AI_color)
 		# $MessLabel.text = "AI 思考中・・・" if next_color == AI_color else "人間の手番です。"
 		$MessLabel.text = "黒の手番です。" if next_color == BLACK else "白の手番です。"
+	update_UndoButton()
 #
 func thinkAI_random():
 	if game_over:
