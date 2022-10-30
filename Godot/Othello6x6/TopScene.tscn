@@ -151,6 +151,15 @@ toggle_mode = true
 text = "AI"
 icon = ExtResource( 10 )
 
+[node name="Colon" type="Label" parent="Black"]
+margin_left = 24.0
+margin_top = 27.0
+margin_right = 80.0
+margin_bottom = 51.0
+custom_fonts/font = SubResource( 2 )
+text = ":"
+align = 2
+
 [node name="White" type="TextureRect" parent="."]
 margin_left = 24.0
 margin_top = 302.0
