@@ -139,6 +139,7 @@ func _ready():
 	update_cursor()
 	update_nextTurn()
 	waiting = 6
+	#$RestartButton.disabled = true
 	#
 	print(bb_get_pat_indexes(bb_black, bb_white))
 	print("ev = ", bb_eval(bb_black, bb_white))
@@ -280,6 +281,7 @@ func init_bd_array():		#	盤面初期化
 	next_color = BLACK
 	putPos = 0
 	game_over = false
+	$RestartButton.disabled = true
 func update_TileMap():
 	nColors = [0, 0, 0]		# 空白、黒石、白石数
 	for y in range(N_CELL_VERT):
@@ -324,6 +326,7 @@ func update_nextTurn():
 			$MessLabel.text = "パスです。画面をタップしてください。"
 		else:
 			game_over = true
+			$RestartButton.disabled = false
 			next_color = EMPTY
 			$BlackBG/Underline.set_visible(false)
 			$WhiteBG/Underline.set_visible(false)
