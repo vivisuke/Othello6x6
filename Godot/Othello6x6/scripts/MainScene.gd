@@ -130,11 +130,8 @@ func _ready():
 	#
 	#update_humanAIColor()	# 人間・AI 石色表示
 	update_black_white_player()		# 黒番・白番プレイヤー表示
-	init_bb()
-	init_bd_array()
-	#putBlack(4, 3)
-	#putIX = xyToArrayIX(4, 3)
-	#next_color = WHITE
+	init_bb()		# 盤面データ初期化
+	init_bd_array()		#	盤面TileMap初期化
 	update_TileMap()
 	update_cursor()
 	update_nextTurn()
@@ -177,7 +174,7 @@ func bitToY(pos):
 	#assert(0);
 	return -1;
 	
-func init_bb():
+func init_bb():		# 盤面データ初期化
 	bb_black = C4_BIT | D3_BIT
 	bb_white = C3_BIT | D4_BIT
 func bb_get_pos_color(black:int, white:int, pos):
@@ -265,7 +262,7 @@ func aixToX(ix : int):
 	return ix % ARY_WIDTH - 1
 func aixToY(ix : int):
 	return ix / ARY_WIDTH - 1
-func init_bd_array():		#	盤面初期化
+func init_bd_array():		#	盤面TileMap初期化
 	bd_array.resize(ARY_SIZE)
 	for i in range(ARY_SIZE):
 		bd_array[i] = WALL
@@ -3363,4 +3360,15 @@ const g_npbw_val_LW = [
 
 func _on_BackButton_pressed():
 	get_tree().change_scene("res://TopScene.tscn")
+	pass # Replace with function body.
+
+
+func _on_RestartButton_pressed():
+	if !game_over: return
+	init_bb()		# 盤面データ初期化
+	init_bd_array()		#	盤面TileMap初期化
+	update_TileMap()
+	update_cursor()
+	update_nextTurn()
+	waiting = 6
 	pass # Replace with function body.

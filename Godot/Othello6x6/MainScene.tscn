@@ -272,3 +272,4 @@ texture_pressed = ExtResource( 20 )
 texture_disabled = ExtResource( 21 )
 
 [connection signal="pressed" from="TitleBar/BackButton" to="." method="_on_BackButton_pressed"]
+[connection signal="pressed" from="RestartButton" to="." method="_on_RestartButton_pressed"]
