@@ -107,6 +107,7 @@ var pressedPos = Vector2(0, 0)
 
 var bb_black
 var bb_white
+var hist = []			# 着手履歴、要素：[BLACK or WHITE, 打った位置]
 
 
 func _ready():
@@ -136,6 +137,7 @@ func _ready():
 	update_cursor()
 	update_nextTurn()
 	waiting = 6
+	$TitleBar/Rule.text = "Normal" if g.rule == g.NORMAL else "LessWin"
 	#$RestartButton.disabled = true
 	#
 	print(bb_get_pat_indexes(bb_black, bb_white))
