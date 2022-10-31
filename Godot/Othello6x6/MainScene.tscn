@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://fonts/FlopDesignFONT.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/Hokjesgeest-PDGB.ttf" type="DynamicFontData" id=2]
@@ -21,6 +21,7 @@
 [ext_resource path="res://images/restart_white.png" type="Texture" id=19]
 [ext_resource path="res://images/restart_black.png" type="Texture" id=20]
 [ext_resource path="res://images/restart_gray.png" type="Texture" id=21]
+[ext_resource path="res://fonts/arial.ttf" type="DynamicFontData" id=22]
 
 [sub_resource type="DynamicFont" id=2]
 size = 30
@@ -96,6 +97,9 @@ font_data = ExtResource( 3 )
 [sub_resource type="DynamicFont" id=6]
 size = 20
 font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=8]
+font_data = ExtResource( 22 )
 
 [node name="MainSene" type="Node2D"]
 script = ExtResource( 13 )
@@ -274,6 +278,14 @@ texture_normal = ExtResource( 17 )
 texture_pressed = ExtResource( 18 )
 texture_disabled = ExtResource( 16 )
 
+[node name="Label" type="Label" parent="UndoButton"]
+margin_top = 48.0
+margin_right = 48.0
+margin_bottom = 62.0
+custom_fonts/font = SubResource( 8 )
+text = "Undo"
+align = 1
+
 [node name="RestartButton" type="TextureButton" parent="."]
 margin_left = 427.0
 margin_top = 733.0
@@ -282,6 +294,15 @@ margin_bottom = 781.0
 texture_normal = ExtResource( 19 )
 texture_pressed = ExtResource( 20 )
 texture_disabled = ExtResource( 21 )
+
+[node name="Label" type="Label" parent="RestartButton"]
+margin_left = -18.0
+margin_top = 48.0
+margin_right = 68.0
+margin_bottom = 67.0
+custom_fonts/font = SubResource( 8 )
+text = "ReGame"
+align = 1
 
 [connection signal="pressed" from="TitleBar/BackButton" to="." method="_on_BackButton_pressed"]
 [connection signal="pressed" from="RestartButton" to="." method="_on_RestartButton_pressed"]
