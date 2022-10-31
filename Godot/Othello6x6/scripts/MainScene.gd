@@ -107,7 +107,7 @@ var pressedPos = Vector2(0, 0)
 
 var bb_black
 var bb_white
-var hist = []			# 着手履歴、要素：[BLACK or WHITE, 打った位置]
+var cp_hist = []			# 着手履歴、要素：[BLACK or WHITE, 打った位置]
 
 
 func _ready():
@@ -131,6 +131,7 @@ func _ready():
 	#
 	#update_humanAIColor()	# 人間・AI 石色表示
 	update_black_white_player()		# 黒番・白番プレイヤー表示
+	cp_hist = []	# 着手履歴初期化
 	init_bb()		# 盤面データ初期化
 	init_bd_array()		#	盤面TileMap初期化
 	update_TileMap()
@@ -634,8 +635,10 @@ func _process(delta):
 			var y = bitToY(putPos)
 			if next_color == BLACK:
 				bb_put_black(xyToBit(x, y))
+				cp_hist.push_back([BLACK, xyToBit(x, y)])
 			else:
 				bb_put_white(xyToBit(x, y))
+				cp_hist.push_back([WHITE, xyToBit(x, y)])
 		next_color = (BLACK + WHITE) - next_color
 		update_TileMap()
 		update_cursor()
@@ -667,12 +670,14 @@ func _input(event):
 					#putBlack(pos.x, pos.y)
 					if !bb_can_put_black(bb_black, bb_white, bit): return
 					bb_put_black(bit)
+					cp_hist.push_back([BLACK, bit])
 					next_color = WHITE
 				else:	#if next_color == WHITE:
 					#if !canPutWhite(pos.x, pos.y): return
 					#putWhite(pos.x, pos.y)
 					if !bb_can_put_black(bb_white, bb_black, bit): return
 					bb_put_white(bit)
+					cp_hist.push_back([WHITE, bit])
 					next_color = BLACK
 				#putIX = xyToArrayIX(pos.x, pos.y)
 				putPos = bit
@@ -3371,6 +3376,7 @@ func _on_BackButton_pressed():
 
 func _on_RestartButton_pressed():
 	if !game_over: return
+	cp_hist = []	# 着手履歴初期化
 	init_bb()		# 盤面データ初期化
 	init_bd_array()		#	盤面TileMap初期化
 	update_TileMap()
