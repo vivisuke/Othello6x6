@@ -3384,3 +3384,29 @@ func _on_RestartButton_pressed():
 	update_nextTurn()
 	waiting = 6
 	pass # Replace with function body.
+
+
+func _on_UndoButton_pressed():
+	if cp_hist.size() == 0: return
+	if (next_color == BLACK && g.black_player == g.AI) || (next_color == WHITE && g.white_player == g.AI):
+		return;
+	init_bb()		# 盤面データ初期化
+	init_bd_array()		#	盤面TileMap初期化
+	update_TileMap()
+	update_cursor()
+	update_nextTurn()
+	#cp_hist.pop_back()
+	while cp_hist.size() != 0 && cp_hist[-1][0] != next_color:
+		cp_hist.pop_back()
+	if cp_hist.size() != 0:
+		cp_hist.pop_back()
+	for i in range(cp_hist.size()):
+		var item = cp_hist[i]
+		if item[0] == BLACK:
+			bb_put_black(item[1])
+		else:
+			bb_put_white(item[1])
+		update_TileMap()
+		update_cursor()
+		update_nextTurn()
+	pass # Replace with function body.

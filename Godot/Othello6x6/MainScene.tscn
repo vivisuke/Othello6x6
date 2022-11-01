@@ -305,4 +305,5 @@ text = "ReGame"
 align = 1
 
 [connection signal="pressed" from="TitleBar/BackButton" to="." method="_on_BackButton_pressed"]
+[connection signal="pressed" from="UndoButton" to="." method="_on_UndoButton_pressed"]
 [connection signal="pressed" from="RestartButton" to="." method="_on_RestartButton_pressed"]
