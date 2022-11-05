@@ -282,6 +282,7 @@ func init_bd_array():		#	盤面TileMap初期化
 	putPos = 0
 	game_over = false
 	$RestartButton.disabled = true
+	$RestartButton/Label.add_color_override("font_color", Color.darkgray)
 func update_TileMap():
 	nColors = [0, 0, 0]		# 空白、黒石、白石数
 	for y in range(N_CELL_VERT):
@@ -318,8 +319,13 @@ func result_diff(nwin, nloss):
 		diff += CELL_SIZE - (nwin + nloss)
 	return diff
 func update_UndoButton():
-	$UndoButton.disabled = (next_color == BLACK && g.black_player == AI ||
-							next_color == WHITE && g.white_player == AI)
+	if (next_color == BLACK && g.black_player == AI ||
+		next_color == WHITE && g.white_player == AI):
+			$UndoButton.disabled = true
+			$UndoButton/Label.add_color_override("font_color", Color.darkgray)
+	else:
+			$UndoButton.disabled = false
+			$UndoButton/Label.add_color_override("font_color", Color.white)
 func update_nextTurn():
 	if n_legal_move == 0:
 		# 次の手番が着手不可能な場合
@@ -330,6 +336,7 @@ func update_nextTurn():
 		else:
 			game_over = true
 			$RestartButton.disabled = false
+			$RestartButton/Label.add_color_override("font_color", Color.white)
 			next_color = EMPTY
 			$BlackBG/Underline.set_visible(false)
 			$WhiteBG/Underline.set_visible(false)
