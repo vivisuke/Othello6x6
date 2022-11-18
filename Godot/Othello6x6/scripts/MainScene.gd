@@ -105,8 +105,8 @@ var waiting = 0			#
 var putPos = 0			# 直前着手位置
 var pressedPos = Vector2(0, 0)
 
-var bb_black
-var bb_white
+var bb_black			# 黒石用ビットボード
+var bb_white			# 白色用ビットボード
 var cp_hist = []			# 着手履歴、要素：[BLACK or WHITE, 打った位置]
 
 

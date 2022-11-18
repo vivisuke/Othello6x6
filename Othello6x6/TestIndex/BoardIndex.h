@@ -9,8 +9,8 @@ typedef unsigned short ushort;
 #define		BLACK			1
 #define		WHITE			2
 
-#define		N_VERT			6
-#define		N_HORZ			6
+#define		N_VERT			4
+#define		N_HORZ			4
 #define		N_IX_HORZ		N_VERT				//	水平方向
 #define		N_IX_VERT		N_HORZ				//	垂直方向
 #define		N_IX_UL_BR		7					//	＼方向

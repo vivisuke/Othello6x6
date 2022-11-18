@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://fonts/Hokjesgeest-PDGB.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://scripts/TitleBar.gd" type="Script" id=2]
@@ -31,9 +31,6 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 shadow_color = Color( 0, 0, 0, 0.501961 )
 shadow_offset = Vector2( 4, 4 )
-
-[sub_resource type="StyleBoxFlat" id=10]
-bg_color = Color( 0.25098, 0.25098, 1, 1 )
 
 [sub_resource type="StyleBoxFlat" id=6]
 shadow_size = 6
@@ -102,7 +99,6 @@ rect_scale = Vector2( 0.75, 0.75 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 3 )
 custom_styles/pressed = SubResource( 4 )
-custom_styles/disabled = SubResource( 10 )
 custom_styles/normal = SubResource( 6 )
 toggle_mode = true
 text = "Normal"

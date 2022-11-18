@@ -185,7 +185,11 @@ void BoardIndex::init() {
 static const char *dig_str[] = {"１", "２", "３", "４", "５", "６"};
 void BoardIndex::print() const {
 	vector<uchar> lst;
+#if N_HORZ == 4
+	cout << "＼ａｂｃｄ\n";
+#else
 	cout << "＼ａｂｃｄｅｆ\n";
+#endif
 	for(int y = 0; y != N_VERT; ++y) {
 		cout << dig_str[y];
 		indexToPat(m_ix_horz[y], lst);
