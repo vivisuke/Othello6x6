@@ -170,6 +170,18 @@ void BoardIndex::init() {
 	for(int i = 0; i != N_IX_BL_UR; ++i) m_ix_bl_ur[i] = 0;		//	全セル空欄
 	for(int i = 0; i != N_IX_UL_BR; ++i) m_ix_ul_br[i] = 0;		//	全セル空欄
 	//
+#if N_HORZ == 4
+	m_ix_horz[1] = patToIndex({0, WHITE, BLACK, 0});
+	m_ix_horz[2] = patToIndex({0, BLACK, WHITE, 0});
+	m_ix_vert[1] = patToIndex({0, WHITE, BLACK, 0});
+	m_ix_vert[2] = patToIndex({0, BLACK, WHITE, 0});
+	m_ix_bl_ur[0] = patToIndex({0, BLACK, 0});
+	m_ix_bl_ur[1] = patToIndex({0, WHITE, WHITE, 0});
+	m_ix_bl_ur[2] = patToIndex({0, BLACK, 0});
+	m_ix_ul_br[0] = patToIndex({0, WHITE, 0});
+	m_ix_ul_br[1] = patToIndex({0, BLACK, BLACK, 0});
+	m_ix_ul_br[2] = patToIndex({0, WHITE, 0});
+#else
 	m_ix_horz[2] = patToIndex({0, 0, WHITE, BLACK, 0, 0});
 	m_ix_horz[3] = patToIndex({0, 0, BLACK, WHITE, 0, 0});
 	m_ix_vert[2] = patToIndex({0, 0, WHITE, BLACK, 0, 0});
@@ -180,6 +192,7 @@ void BoardIndex::init() {
 	m_ix_ul_br[2] = patToIndex({0, 0, WHITE, 0, 0});
 	m_ix_ul_br[3] = patToIndex({0, 0, BLACK, BLACK, 0, 0});
 	m_ix_ul_br[4] = patToIndex({0, 0, WHITE, 0, 0});
+#endif
 }
 
 static const char *dig_str[] = {"１", "２", "３", "４", "５", "６"};
