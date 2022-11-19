@@ -96,7 +96,7 @@ bool can_put_white(const std::vector<uchar> &pat, int i) {		//	パターンの i
 	}
 	return false;
 }
-//	パターンの i 番目位置（i:[0, 5]）に黒を打つ（patの内容を更新）
+//	パターンの i 番目位置（i:[0, N_HORZ)）に黒を打つ（patの内容を更新）
 //	return: 返した石数を返す
 int put_black_patW(std::vector<uchar> &pat, int i) {
 	int n = 0;		//	返した石数
@@ -115,6 +115,32 @@ int put_black_patW(std::vector<uchar> &pat, int i) {
 		if( pat[k] == WHITE ) {
 			while( pat[++k] == WHITE ) {}
 			if( pat[k] == BLACK ) {
+				n += k - (i + 1) - 1;
+			}
+		}
+	}
+	if( n == 0 ) {
+		pat[i+1] = BLACK;
+	}
+	return n;
+}
+int put_white_patW(std::vector<uchar> &pat, int i) {
+	int n = 0;		//	返した石数
+	if( pat[i+1] == EMPTY ) {
+		int k = i;
+		if( pat[k] == BLACK ) {
+			while( pat[--k] == BLACK ) {}
+			if( pat[k] == WHITE ) {
+				do {
+					pat[++k] = BLACK;
+				} while( k != i + 1);
+				n = i - k;
+			}
+		}
+		k = i + 2;
+		if( pat[k] == BLACK ) {
+			while( pat[++k] == BLACK ) {}
+			if( pat[k] == WHITE ) {
 				n += k - (i + 1) - 1;
 			}
 		}
@@ -155,6 +181,35 @@ int get_rev_bits_black(const std::vector<uchar> &pat, int i) {
 	}
 	return rev;
 }
+int get_rev_bits_white(const std::vector<uchar> &pat, int i) {
+	int rev = 0;		//	返える石パターン
+	if( pat[i+1] == EMPTY ) {
+		int b = 1 << i;
+		int k = i;
+		if( pat[k] == BLACK ) {
+			int t = (b >>= 1);
+			while( pat[--k] == BLACK ) {
+				t |= (b >>= 1);
+			}
+			if( pat[k] == WHITE ) {
+				rev |= t;
+			}
+		}
+		b = 1 << i;
+		k = i + 2;
+		if( pat[k] == WHITE ) {
+			int t = (b <<= 1);
+			while( pat[++k] == WHITE ) {
+				t |= (b <<= 1);
+			}
+			if( pat[k] == BLACK ) {
+				rev |= t;
+			}
+		}
+	}
+	return rev;
+}
+//--------------------------------------------------------------------------------
 uchar g_pat[] = {0, 0, 0, 0, 0, 0};
 //uchar g_pat[] = {WALL, 0, 0, 0, 0, 0, 0, WALL};
 int g_exp3[] = {1, 3, 3*3, 3*3*3, 3*3*3*3, 3*3*3*3*3};
