@@ -189,7 +189,8 @@ ushort put_white(ushort index, int i, uchar& n1, uchar& n2) {
 void buildIndexTable() {
 	vector<uchar> patW;			//	前後に壁ありパターン
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
-		cout << ix << ": ";
+		indexToPatW((short)ix, patW);
+		cout << ix << ": " << patWtoString(patW) << " ";
 		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に黒を打つ
 			indexToPatW((short)ix, patW);
 			put_black_patW(patW, k);
@@ -198,6 +199,17 @@ void buildIndexTable() {
 		}
 		cout << "\n";
 	}
+}
+string patWtoString(std::vector<uchar> &patW) {
+	string txt;
+	for(int i = 1; i != patW.size() - 1; ++i) {
+		switch( patW[i] ) {
+		case EMPTY: txt += "・";	break;
+		case BLACK: txt += "●";	break;
+		case WHITE: txt += "○";	break;
+		}
+	}
+	return txt;
 }
 //--------------------------------------------------------------------------------
 void BoardIndex::init() {

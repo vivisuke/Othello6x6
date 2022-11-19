@@ -64,6 +64,7 @@ void indexToPat(ushort index, std::string &lst, int len = N_HORZ);
 void indexToPat(ushort index, std::vector<uchar> &lst, int len = N_HORZ);
 void indexToPat(ushort index, uchar *ptr, int len = 6);
 void buildIndexTable();
+std::string patWtoString(std::vector<uchar> &);
 
 class BoardIndex
 {
