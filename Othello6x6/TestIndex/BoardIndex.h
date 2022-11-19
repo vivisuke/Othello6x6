@@ -8,14 +8,21 @@ typedef unsigned short ushort;
 #define		EMPTY			0
 #define		BLACK			1
 #define		WHITE			2
+#define		WALL			3
 
 #define		N_VERT			4
 #define		N_HORZ			4
 #define		N_IX_HORZ		N_VERT				//	水平方向
 #define		N_IX_VERT		N_HORZ				//	垂直方向
-#define		N_IX_UL_BR		7					//	＼方向
-#define		N_IX_BL_UR		7					//	／方向
-#define		IX_TABLE_SIZE	(3*3*3*3*3*3)		//	3^6
+#if N_HORZ == 4
+	#define		N_IX_UL_BR		3					//	＼方向 インデックス数
+	#define		N_IX_BL_UR		3					//	／方向
+	#define		IX_TABLE_SIZE	(3*3*3*3)		//	3^4
+#else
+	#define		N_IX_UL_BR		7					//	＼方向
+	#define		N_IX_BL_UR		7					//	／方向
+	#define		IX_TABLE_SIZE	(3*3*3*3*3*3)		//	3^6
+#endif
 
 /*
 
@@ -50,9 +57,11 @@ m_ix_bl_ur：
 
 */
 
+ushort patWToIndex(const std::vector<uchar> &lst);		//	前後に壁がある版
+void indexToPatW(ushort index, std::vector<uchar> &lst, int len = N_HORZ);		//	前後に壁を配置する版
 ushort patToIndex(const std::vector<uchar> &lst);
-void indexToPat(ushort index, std::string &lst, int len = 6);
-void indexToPat(ushort index, std::vector<uchar> &lst, int len = 6);
+void indexToPat(ushort index, std::string &lst, int len = N_HORZ);
+void indexToPat(ushort index, std::vector<uchar> &lst, int len = N_HORZ);
 void indexToPat(ushort index, uchar *ptr, int len = 6);
 void buildIndexTable();
 
@@ -62,6 +71,7 @@ public:
 	BoardIndex() { init(); }
 public:
 	void	init();
+	//void	buildIndexTable();
 	void	print() const;
 //private:
 public:
@@ -70,8 +80,5 @@ public:
 	ushort	m_ix_vert[N_IX_VERT];
 	ushort	m_ix_bl_ur[N_IX_BL_UR];
 	ushort	m_ix_ul_br[N_IX_UL_BR];
-	//	状態遷移先インデックステーブル
-	short	m_put_black_ix[N_HORZ];		//	黒を打った場合の遷移先インデックス
-	short	m_put_white_ix[N_HORZ];		//	白を打った場合の遷移先インデックス
 };
 

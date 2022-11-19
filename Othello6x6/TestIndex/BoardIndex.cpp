@@ -18,6 +18,25 @@ using namespace std;
 
 */
 
+//	状態遷移先インデックステーブル
+short	g_put_black_ix[IX_TABLE_SIZE][N_HORZ];		//	黒を打った場合の遷移先インデックス
+short	g_put_white_ix[IX_TABLE_SIZE][N_HORZ];		//	白を打った場合の遷移先インデックス
+
+ushort patWToIndex(const std::vector<uchar> &lst) {
+	ushort index = 0;
+	for(int i = (int)lst.size() - 1; --i != 0;) {
+		index = index * 3 + lst[i];
+	}
+	return index;
+}
+void indexToPatW(ushort index, std::vector<uchar> &lst, int len) {
+	lst.resize(len+2);
+	lst.front() = lst.back() = WALL;
+	for(int i = 0; i != len; ++i) {
+		lst[i+1] = index % 3;
+		index /= 3;
+	}
+}
 ushort patToIndex(const std::vector<uchar> &lst) {
 	ushort index = 0;
 	for(int i = (int)lst.size(); --i >= 0;) {
@@ -79,25 +98,29 @@ bool can_put_white(const std::vector<uchar> &pat, int i) {		//	パターンの i
 }
 //	パターンの i 番目位置（i:[0, 5]）に黒を打つ（patの内容を更新）
 //	return: 返した石数を返す
-int put_black(std::vector<uchar> &pat, int i) {
-	if( pat[i+1] != EMPTY ) return 0;
+int put_black_patW(std::vector<uchar> &pat, int i) {
 	int n = 0;		//	返した石数
-	int k = i;
-	if( pat[k] == WHITE ) {
-		while( pat[--k] == WHITE ) {}
-		if( pat[k] == BLACK ) {
-			do {
-				pat[++k] = BLACK;
-			} while( k != i + 1);
-			n = i - k;
+	if( pat[i+1] == EMPTY ) {
+		int k = i;
+		if( pat[k] == WHITE ) {
+			while( pat[--k] == WHITE ) {}
+			if( pat[k] == BLACK ) {
+				do {
+					pat[++k] = BLACK;
+				} while( k != i + 1);
+				n = i - k;
+			}
+		}
+		k = i + 2;
+		if( pat[k] == WHITE ) {
+			while( pat[++k] == WHITE ) {}
+			if( pat[k] == BLACK ) {
+				n += k - (i + 1) - 1;
+			}
 		}
 	}
-	k = i + 2;
-	if( pat[k] == WHITE ) {
-		while( pat[++k] == WHITE ) {}
-		if( pat[k] == BLACK ) {
-			n += k - (i + 1) - 1;
-		}
+	if( n == 0 ) {
+		pat[i+1] = BLACK;
 	}
 	return n;
 }
@@ -163,6 +186,19 @@ ushort put_white(ushort index, int i, uchar& n1, uchar& n2) {
 	if( diff == 0 ) return 0;
 	return index + diff + g_exp3[i]*WHITE;
 }
+void buildIndexTable() {
+	vector<uchar> patW;			//	前後に壁ありパターン
+	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
+		cout << ix << ": ";
+		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に黒を打つ
+			indexToPatW((short)ix, patW);
+			put_black_patW(patW, k);
+			auto ix2 = patWToIndex(patW);
+			cout << ix2 << " ";
+		}
+		cout << "\n";
+	}
+}
 //--------------------------------------------------------------------------------
 void BoardIndex::init() {
 	for(int i = 0; i != N_IX_HORZ; ++i) m_ix_horz[i] = 0;		//	全セル空欄
@@ -217,3 +253,4 @@ void BoardIndex::print() const {
 	}
 	cout << "\n";
 }
+//
