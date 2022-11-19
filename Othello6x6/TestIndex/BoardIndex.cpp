@@ -277,13 +277,29 @@ void buildIndexTable() {
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
 		indexToPatW((short)ix, patW);
 		cout << ix << ": " << patWtoString(patW) << " ";
-		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に黒を打つ
-			//indexToPatW((short)ix, patW);
-			//put_black_patW(patW, k);
+		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に黒石を打つ
 			auto rev = get_rev_bits_black(patW, k);
 			auto patW2 = patW;
 			if( rev != 0 )
 				put_black_patW(patW2, k);
+			else
+				patW2[k+1] = BLACK;
+			auto ix2 = patWToIndex(patW2);
+			cout << "0x" << std::hex << rev << std::dec << " " << ix2 << " ";
+		}
+		cout << "\n";
+	}
+	cout << "\n";
+	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
+		indexToPatW((short)ix, patW);
+		cout << ix << ": " << patWtoString(patW) << " ";
+		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に白石を打つ
+			auto rev = get_rev_bits_white(patW, k);
+			auto patW2 = patW;
+			if( rev != 0 )
+				put_white_patW(patW2, k);
+			else
+				patW2[k+1] = WHITE;
 			auto ix2 = patWToIndex(patW2);
 			cout << "0x" << std::hex << rev << std::dec << " " << ix2 << " ";
 		}
