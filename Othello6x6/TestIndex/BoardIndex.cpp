@@ -124,6 +124,37 @@ int put_black_patW(std::vector<uchar> &pat, int i) {
 	}
 	return n;
 }
+//	パターンの i 番目位置（ i:[0, N_HORZ) ）に黒を打った場合に返る石bitsを返す
+//	返る石パターン： b 番目 → 2^b
+//	return: 返る石bitsを返す
+int get_rev_bits_black(const std::vector<uchar> &pat, int i) {
+	int rev = 0;		//	返える石パターン
+	if( pat[i+1] == EMPTY ) {
+		int b = 1 << i;
+		int k = i;
+		if( pat[k] == WHITE ) {
+			int t = (b >>= 1);
+			while( pat[--k] == WHITE ) {
+				t |= (b >>= 1);
+			}
+			if( pat[k] == BLACK ) {
+				rev |= t;
+			}
+		}
+		b = 1 << i;
+		k = i + 2;
+		if( pat[k] == WHITE ) {
+			int t = (b <<= 1);
+			while( pat[++k] == WHITE ) {
+				t |= (b <<= 1);
+			}
+			if( pat[k] == BLACK ) {
+				rev |= t;
+			}
+		}
+	}
+	return rev;
+}
 uchar g_pat[] = {0, 0, 0, 0, 0, 0};
 //uchar g_pat[] = {WALL, 0, 0, 0, 0, 0, 0, WALL};
 int g_exp3[] = {1, 3, 3*3, 3*3*3, 3*3*3*3, 3*3*3*3*3};
@@ -192,10 +223,14 @@ void buildIndexTable() {
 		indexToPatW((short)ix, patW);
 		cout << ix << ": " << patWtoString(patW) << " ";
 		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に黒を打つ
-			indexToPatW((short)ix, patW);
-			put_black_patW(patW, k);
-			auto ix2 = patWToIndex(patW);
-			cout << ix2 << " ";
+			//indexToPatW((short)ix, patW);
+			//put_black_patW(patW, k);
+			auto rev = get_rev_bits_black(patW, k);
+			auto patW2 = patW;
+			if( rev != 0 )
+				put_black_patW(patW2, k);
+			auto ix2 = patWToIndex(patW2);
+			cout << "0x" << std::hex << rev << std::dec << " " << ix2 << " ";
 		}
 		cout << "\n";
 	}
