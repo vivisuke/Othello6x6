@@ -197,7 +197,7 @@ short get_rev_bits_black(const std::vector<uchar> &pat, int i) {
 	return rev;
 }
 short get_rev_bits_white(const std::vector<uchar> &pat, int i) {
-	int rev = 0;		//	返える石パターン
+	int rev = 0;		//	返る石パターン
 	if( pat[i+1] == EMPTY ) {
 		int b = 1 << i;
 		int k = i;
@@ -212,12 +212,12 @@ short get_rev_bits_white(const std::vector<uchar> &pat, int i) {
 		}
 		b = 1 << i;
 		k = i + 2;
-		if( pat[k] == WHITE ) {
+		if( pat[k] == BLACK ) {
 			int t = (b <<= 1);
-			while( pat[++k] == WHITE ) {
+			while( pat[++k] == BLACK ) {
 				t |= (b <<= 1);
 			}
-			if( pat[k] == BLACK ) {
+			if( pat[k] == WHITE ) {
 				rev |= t;
 			}
 		}
@@ -288,7 +288,7 @@ ushort put_white(ushort index, int i, uchar& n1, uchar& n2) {
 	return index + diff + g_exp3[i]*WHITE;
 }
 void buildIndexTable() {
-	bool verbose = true;
+	bool verbose = false;
 	vector<uchar> patW;			//	前後に壁ありパターン
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
 		//if( ix == 15 )
@@ -310,8 +310,10 @@ void buildIndexTable() {
 		if(verbose) cout << "\n";
 	}
 	if(verbose) cout << "\n";
-	verbose = false;
+	verbose = true;
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
+		//if( ix == 15 )
+		//	cout << "x == 15\n";
 		indexToPatW((short)ix, patW);
 		if(verbose) cout << ix << ": " << patWtoString(patW) << " ";
 		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に白石を打つ
