@@ -436,11 +436,20 @@ void BoardIndex::put_black(int x, int y) {
 	const auto &v = g_trans_table[m_ix_vert[x]][y];
 	auto vr = v.m_rev_black;			//	反転ビットs
 	m_ix_vert[x] = v.m_dstix_black;		//	遷移先インデックス
-	//
-	int mask = 1;
-	for(int rx = 0; rx != N_HORZ; ++rx, mask<<=1) {
-		if( (hr & mask) != 0 )
-			m_ix_vert[rx] = g_trans_table[m_ix_vert[rx]][y].m_dstix_black;
+	//	反転された石によるインデックス更新
+	if( hr != 0 ) {
+		int mask = 1;
+		for(int k = 0; k != N_HORZ; ++k, mask<<=1) {
+			if( (hr & mask) != 0 )
+				m_ix_vert[k] = g_trans_table[m_ix_vert[k]][y].m_dstix_black;
+		}
+	}
+	if( vr != 0 ) {
+		int mask = 1;
+		for(int k = 0; k != N_VERT; ++k, mask<<=1) {
+			if( (vr & mask) != 0 )
+				m_ix_horz[k] = g_trans_table[m_ix_horz[k]][x].m_dstix_black;
+		}
 	}
 }
 //
