@@ -7,6 +7,7 @@ int main()
 {
 	BoardIndex bd;
 	bd.print();
+	bd.print_vert();
 	//
 	buildIndexTable();
 	//
@@ -16,5 +17,13 @@ int main()
 		}
 		cout << "\n";
 	}
+	cout << "\n";
+	//
+	int x = 0, y = 1;		//	a2
+	cout << "put_black(" << x << ", " << y << "):\n";
+	bd.put_black(x, y);
+	bd.print();
+	bd.print_vert();
+	//
     std::cout << "\nOK.\n";
 }

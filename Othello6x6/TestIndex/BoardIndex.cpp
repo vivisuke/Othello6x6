@@ -124,11 +124,14 @@ int put_black_patW(std::vector<uchar> &pat, int i) {
 		if( pat[k] == WHITE ) {
 			while( pat[++k] == WHITE ) {}
 			if( pat[k] == BLACK ) {
+				do {
+					pat[--k] = BLACK;
+				} while( k != i + 1);
 				n += k - (i + 1) - 1;
 			}
 		}
 	}
-	if( n == 0 ) {
+	if( n != 0 ) {
 		pat[i+1] = BLACK;
 	}
 	return n;
@@ -141,7 +144,7 @@ int put_white_patW(std::vector<uchar> &pat, int i) {
 			while( pat[--k] == BLACK ) {}
 			if( pat[k] == WHITE ) {
 				do {
-					pat[++k] = BLACK;
+					pat[++k] = WHITE;
 				} while( k != i + 1);
 				n = i - k;
 			}
@@ -150,12 +153,15 @@ int put_white_patW(std::vector<uchar> &pat, int i) {
 		if( pat[k] == BLACK ) {
 			while( pat[++k] == BLACK ) {}
 			if( pat[k] == WHITE ) {
+				do {
+					pat[--k] = WHITE;
+				} while( k != i + 1);
 				n += k - (i + 1) - 1;
 			}
 		}
 	}
-	if( n == 0 ) {
-		pat[i+1] = BLACK;
+	if( n != 0 ) {
+		pat[i+1] = WHITE;
 	}
 	return n;
 }
@@ -282,10 +288,13 @@ ushort put_white(ushort index, int i, uchar& n1, uchar& n2) {
 	return index + diff + g_exp3[i]*WHITE;
 }
 void buildIndexTable() {
+	bool verbose = true;
 	vector<uchar> patW;			//	前後に壁ありパターン
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
+		//if( ix == 15 )
+		//	cout << "x == 15\n";
 		indexToPatW((short)ix, patW);
-		//cout << ix << ": " << patWtoString(patW) << " ";
+		if(verbose) cout << ix << ": " << patWtoString(patW) << " ";
 		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に黒石を打つ
 			auto rev = get_rev_bits_black(patW, k);
 			auto patW2 = patW;
@@ -294,16 +303,17 @@ void buildIndexTable() {
 			else
 				patW2[k+1] = BLACK;
 			auto ix2 = patWToIndex(patW2);
-			//cout << "0x" << std::hex << rev << std::dec << " " << ix2 << " ";
+			if(verbose) cout << "0x" << std::hex << rev << std::dec << " " << ix2 << " ";
 			g_trans_table[ix][k].m_rev_black = rev;
 			g_trans_table[ix][k].m_dstix_black = ix2;
 		}
-		//cout << "\n";
+		if(verbose) cout << "\n";
 	}
-	//cout << "\n";
+	if(verbose) cout << "\n";
+	verbose = false;
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
 		indexToPatW((short)ix, patW);
-		//cout << ix << ": " << patWtoString(patW) << " ";
+		if(verbose) cout << ix << ": " << patWtoString(patW) << " ";
 		for(int k = 0; k != N_HORZ; ++k) {			//	各位置に白石を打つ
 			auto rev = get_rev_bits_white(patW, k);
 			auto patW2 = patW;
@@ -312,12 +322,13 @@ void buildIndexTable() {
 			else
 				patW2[k+1] = WHITE;
 			auto ix2 = patWToIndex(patW2);
-			//cout << "0x" << std::hex << rev << std::dec << " " << ix2 << " ";
+			if(verbose) cout << "0x" << std::hex << rev << std::dec << " " << ix2 << " ";
 			g_trans_table[ix][k].m_rev_white = rev;
 			g_trans_table[ix][k].m_dstix_white = ix2;
 		}
-		//cout << "\n";
+		if(verbose) cout << "\n";
 	}
+	if(verbose) cout << "\n";
 }
 string patWtoString(std::vector<uchar> &patW) {
 	string txt;
@@ -384,9 +395,44 @@ void BoardIndex::print() const {
 	}
 	cout << "\n";
 }
+void BoardIndex::print_vert() const {
+	vector<uchar> lst;
+	vector<uchar> s(N_HORZ*N_VERT, EMPTY);
+	for(int x = 0; x != N_HORZ; ++x) {
+		indexToPat(m_ix_vert[x], lst);
+		for(int y = 0; y != N_VERT; ++y) {
+			s[y*N_HORZ + x] = lst[y];
+		}
+	}
+#if N_HORZ == 4
+	cout << "＼ａｂｃｄ\n";
+#else
+	cout << "＼ａｂｃｄｅｆ\n";
+#endif
+	for(int y = 0; y != N_VERT; ++y) {
+		cout << dig_str[y];
+		for(int x = 0; x != N_HORZ; ++x) {
+			switch( s[y*N_HORZ + x] ) {
+			case EMPTY: cout << "・";	break;
+			case BLACK: cout << "Ｘ";	break;
+			case WHITE: cout << "○";	break;
+			}
+		}
+		cout << "\n";
+	}
+	cout << "\n";
+}
 bool BoardIndex::can_put_black(int x, int y) const {
 	return	g_trans_table[m_ix_horz[y]][x].m_rev_black != 0 ||
 			g_trans_table[m_ix_vert[x]][y].m_rev_black != 0;
 	//	undone: 斜めに返る場合対応
+}
+void BoardIndex::put_black(int x, int y) {
+	const auto &h = g_trans_table[m_ix_horz[y]][x];
+	auto hr = h.m_rev_black;			//	反転ビットs
+	m_ix_horz[y] = h.m_dstix_black;		//	遷移先インデックス
+	const auto &v = g_trans_table[m_ix_vert[x]][y];
+	auto vr = v.m_rev_black;			//	反転ビットs
+	m_ix_vert[x] = v.m_dstix_black;		//	遷移先インデックス
 }
 //
