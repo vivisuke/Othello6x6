@@ -78,6 +78,7 @@ public:
 	bool	can_put_black(int x, int y) const;
 public:
 	void	put_black(int x, int y);
+	void	put_white(int x, int y);
 //private:
 public:
 	//	盤面状態

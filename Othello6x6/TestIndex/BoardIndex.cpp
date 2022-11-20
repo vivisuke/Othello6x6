@@ -288,7 +288,7 @@ ushort put_white(ushort index, int i, uchar& n1, uchar& n2) {
 	return index + diff + g_exp3[i]*WHITE;
 }
 void buildIndexTable() {
-	bool verbose = true;
+	bool verbose = false;
 	vector<uchar> patW;			//	前後に壁ありパターン
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
 		//if( ix == 15 )
@@ -449,6 +449,29 @@ void BoardIndex::put_black(int x, int y) {
 		for(int k = 0; k != N_VERT; ++k, mask<<=1) {
 			if( (vr & mask) != 0 )
 				m_ix_horz[k] = g_trans_table[m_ix_horz[k]][x].m_dstix_black;
+		}
+	}
+}
+void BoardIndex::put_white(int x, int y) {
+	const auto &h = g_trans_table[m_ix_horz[y]][x];
+	auto hr = h.m_rev_white;			//	反転ビットs
+	m_ix_horz[y] = h.m_dstix_white;		//	遷移先インデックス
+	const auto &v = g_trans_table[m_ix_vert[x]][y];
+	auto vr = v.m_rev_white;			//	反転ビットs
+	m_ix_vert[x] = v.m_dstix_white;		//	遷移先インデックス
+	//	反転された石によるインデックス更新
+	if( hr != 0 ) {
+		int mask = 1;
+		for(int k = 0; k != N_HORZ; ++k, mask<<=1) {
+			if( (hr & mask) != 0 )
+				m_ix_vert[k] = g_trans_table[m_ix_vert[k]][y].m_dstix_white;
+		}
+	}
+	if( vr != 0 ) {
+		int mask = 1;
+		for(int k = 0; k != N_VERT; ++k, mask<<=1) {
+			if( (vr & mask) != 0 )
+				m_ix_horz[k] = g_trans_table[m_ix_horz[k]][x].m_dstix_white;
 		}
 	}
 }

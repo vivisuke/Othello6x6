@@ -25,5 +25,11 @@ int main()
 	bd.print();
 	bd.print_vert();
 	//
+	x = 2; y = 0;		//	c1
+	cout << "put_white(" << x << ", " << y << "):\n";
+	bd.put_white(x, y);
+	bd.print();
+	bd.print_vert();
+	//
     std::cout << "\nOK.\n";
 }
