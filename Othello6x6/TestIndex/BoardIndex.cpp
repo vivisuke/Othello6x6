@@ -288,7 +288,7 @@ ushort put_white(ushort index, int i, uchar& n1, uchar& n2) {
 	return index + diff + g_exp3[i]*WHITE;
 }
 void buildIndexTable() {
-	bool verbose = false;
+	bool verbose = true;
 	vector<uchar> patW;			//	前後に壁ありパターン
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
 		//if( ix == 15 )
@@ -310,7 +310,7 @@ void buildIndexTable() {
 		if(verbose) cout << "\n";
 	}
 	if(verbose) cout << "\n";
-	verbose = true;
+	verbose = false;
 	for(int ix = 0; ix != IX_TABLE_SIZE; ++ix) {		//	全インデックスについて
 		//if( ix == 15 )
 		//	cout << "x == 15\n";
@@ -436,5 +436,11 @@ void BoardIndex::put_black(int x, int y) {
 	const auto &v = g_trans_table[m_ix_vert[x]][y];
 	auto vr = v.m_rev_black;			//	反転ビットs
 	m_ix_vert[x] = v.m_dstix_black;		//	遷移先インデックス
+	//
+	int mask = 1;
+	for(int rx = 0; rx != N_HORZ; ++rx, mask<<=1) {
+		if( (hr & mask) != 0 )
+			m_ix_vert[rx] = g_trans_table[m_ix_vert[rx]][y].m_dstix_black;
+	}
 }
 //
