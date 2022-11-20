@@ -74,6 +74,7 @@ public:
 	void	init();
 	//void	buildIndexTable();
 	void	print() const;
+	bool	can_put_black(int x, int y) const;
 //private:
 public:
 	//	盤面状態
