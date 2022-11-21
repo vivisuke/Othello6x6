@@ -170,4 +170,9 @@
 0167 ◎ C 11/21 11/21 0.001│ToDo│put_black()：反転された石によるインデックス更新
 0168 ◎ C 11/21 11/21 0.001│ToDo│put_white_patW()：動作不良
 0169 ◎ C 11/21 11/21 0.001│ToDo│put_white()：縦横インデックス更新
-0170 ● C 11/21            │ToDo│
+0170 ● C 11/21            │ToDo│print_diagonal()：斜めインデックス表示
+0171 ● C 11/21            │ToDo│can_put_black(), can_put_white()：斜め方向対応
+0172 ● C 11/21            │ToDo│put_black(), put_white()：斜め方向対応
+0173 ● C 11/21            │ToDo│un_put_black(), un_put_white() 実装
+0174 ◎ C 11/21 11/21 0.001│ToDo│can_put_white() 実装
+0175 ● C 11/21            │ToDo│

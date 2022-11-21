@@ -74,8 +74,10 @@ public:
 	void	init();
 	//void	buildIndexTable();
 	void	print() const;
-	void	print_vert() const;		//	縦インデックス表示
+	void	print_vert() const;			//	縦インデックス表示
+	void	print_diagonal() const;		//	斜めインデックス表示
 	bool	can_put_black(int x, int y) const;
+	bool	can_put_white(int x, int y) const;
 public:
 	void	put_black(int x, int y);
 	void	put_white(int x, int y);
@@ -84,7 +86,7 @@ public:
 	//	盤面状態
 	ushort	m_ix_horz[N_IX_HORZ];
 	ushort	m_ix_vert[N_IX_VERT];
-	ushort	m_ix_bl_ur[N_IX_BL_UR];
-	ushort	m_ix_ul_br[N_IX_UL_BR];
+	ushort	m_ix_bl_ur[N_IX_BL_UR];		//	／方向
+	ushort	m_ix_ul_br[N_IX_UL_BR];		//	＼方向
 };
 

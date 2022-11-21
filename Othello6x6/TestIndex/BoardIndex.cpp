@@ -424,9 +424,42 @@ void BoardIndex::print_vert() const {
 	}
 	cout << "\n";
 }
+void BoardIndex::print_diagonal() const {		//	斜めインデックス表示
+	vector<uchar> lst;
+	vector<uchar> s(N_HORZ*N_VERT, EMPTY);
+	for(int x = 0; x != N_IX_BL_UR; ++x) {
+		indexToPat(m_ix_bl_ur[x], lst);
+		for(int y = 0; y != N_VERT; ++y) {
+			s[y*N_HORZ + x] = lst[y];
+		}
+	}
+#if N_HORZ == 4
+	cout << "＼ａｂｃｄ\n";
+#else
+	cout << "＼ａｂｃｄｅｆ\n";
+#endif
+	for(int y = 0; y != N_VERT; ++y) {
+		cout << dig_str[y];
+		for(int x = 0; x != N_HORZ; ++x) {
+			switch( s[y*N_HORZ + x] ) {
+			case EMPTY: cout << "・";	break;
+			case BLACK: cout << "Ｘ";	break;
+			case WHITE: cout << "○";	break;
+			default:	cout << "？";	break;
+			}
+		}
+		cout << "\n";
+	}
+	cout << "\n";
+}
 bool BoardIndex::can_put_black(int x, int y) const {
 	return	g_trans_table[m_ix_horz[y]][x].m_rev_black != 0 ||
 			g_trans_table[m_ix_vert[x]][y].m_rev_black != 0;
+	//	undone: 斜めに返る場合対応
+}
+bool BoardIndex::can_put_white(int x, int y) const {
+	return	g_trans_table[m_ix_horz[y]][x].m_rev_white != 0 ||
+			g_trans_table[m_ix_vert[x]][y].m_rev_white != 0;
 	//	undone: 斜めに返る場合対応
 }
 void BoardIndex::put_black(int x, int y) {
