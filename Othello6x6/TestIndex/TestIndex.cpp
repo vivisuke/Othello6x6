@@ -8,6 +8,8 @@ int main()
 	BoardIndex bd;
 	bd.print();
 	bd.print_vert();
+	bd.print_diagonal();
+	bd.print_diagonal2();
 	//
 	buildIndexTable();
 	//
@@ -24,6 +26,7 @@ int main()
 	bd.put_black(x, y);
 	bd.print();
 	bd.print_vert();
+	bd.print_diagonal();
 	//
 	for(int y = 0; y != N_VERT; ++y) {
 		for(int x = 0; x != N_HORZ; ++x ) {

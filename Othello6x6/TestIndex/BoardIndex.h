@@ -76,6 +76,7 @@ public:
 	void	print() const;
 	void	print_vert() const;			//	縦インデックス表示
 	void	print_diagonal() const;		//	斜めインデックス表示
+	void	print_diagonal2() const;		//	斜めインデックス表示
 	bool	can_put_black(int x, int y) const;
 	bool	can_put_white(int x, int y) const;
 public:

@@ -426,12 +426,54 @@ void BoardIndex::print_vert() const {
 }
 void BoardIndex::print_diagonal() const {		//	斜めインデックス表示
 	vector<uchar> lst;
-	vector<uchar> s(N_HORZ*N_VERT, EMPTY);
-	for(int x = 0; x != N_IX_BL_UR; ++x) {
-		indexToPat(m_ix_bl_ur[x], lst);
-		for(int y = 0; y != N_VERT; ++y) {
-			s[y*N_HORZ + x] = lst[y];
+	vector<uchar> s(N_HORZ*N_VERT, WALL);
+	int len = 3, d = 1;
+	int x = 0, y = 2;
+	for(int i = 0; i != N_IX_BL_UR; ++i, len+=d) {
+		indexToPat(m_ix_bl_ur[i], lst, len);		//	／方向
+		for(int k = 0; k != len; ++k) {
+			s[(y-k)*N_HORZ + (x+k)] = lst[k];
 		}
+		if( len == N_HORZ ) d = -1;
+		if( d > 0 )
+			y += 1;
+		else
+			x += 1;
+	}
+#if N_HORZ == 4
+	cout << "＼ａｂｃｄ\n";
+#else
+	cout << "＼ａｂｃｄｅｆ\n";
+#endif
+	for(int y = 0; y != N_VERT; ++y) {
+		cout << dig_str[y];
+		for(int x = 0; x != N_HORZ; ++x) {
+			switch( s[y*N_HORZ + x] ) {
+			case EMPTY: cout << "・";	break;
+			case BLACK: cout << "Ｘ";	break;
+			case WHITE: cout << "○";	break;
+			default:	cout << "？";	break;
+			}
+		}
+		cout << "\n";
+	}
+	cout << "\n";
+}
+void BoardIndex::print_diagonal2() const {		//	斜めインデックス表示
+	vector<uchar> lst;
+	vector<uchar> s(N_HORZ*N_VERT, WALL);
+	int len = 3, d = 1;
+	int x = 0, y = 1;
+	for(int i = 0; i != N_IX_BL_UR; ++i, len+=d) {
+		indexToPat(m_ix_ul_br[i], lst, len);		//	＼方向
+		for(int k = 0; k != len; ++k) {
+			s[(y+k)*N_HORZ + (x+k)] = lst[k];
+		}
+		if( len == N_HORZ ) d = -1;
+		if( d > 0 )
+			y -= 1;
+		else
+			x += 1;
 	}
 #if N_HORZ == 4
 	cout << "＼ａｂｃｄ\n";
