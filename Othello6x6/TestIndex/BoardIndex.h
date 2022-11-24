@@ -10,8 +10,13 @@ typedef unsigned short ushort;
 #define		WHITE			2
 #define		WALL			3
 
+#if 0
 #define		N_VERT			4
 #define		N_HORZ			4
+#else
+#define		N_VERT			6
+#define		N_HORZ			6
+#endif
 #define		N_IX_HORZ		N_VERT				//	水平方向
 #define		N_IX_VERT		N_HORZ				//	垂直方向
 #if N_HORZ == 4

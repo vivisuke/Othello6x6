@@ -27,6 +27,7 @@ int main()
 	bd.print();
 	bd.print_vert();
 	bd.print_diagonal();
+	bd.print_diagonal2();
 	//
 	for(int y = 0; y != N_VERT; ++y) {
 		for(int x = 0; x != N_HORZ; ++x ) {
@@ -36,6 +37,7 @@ int main()
 	}
 	cout << "\n";
 	//
+#if 0
 	x = 2; y = 0;		//	c1
 	cout << "put_white(" << x << ", " << y << "):\n";
 	bd.put_white(x, y);
@@ -50,5 +52,6 @@ int main()
 	}
 	cout << "\n";
 	//
+#endif
     std::cout << "\nOK.\n";
 }

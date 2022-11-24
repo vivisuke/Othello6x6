@@ -355,23 +355,23 @@ void BoardIndex::init() {
 	m_ix_horz[2] = patToIndex({0, BLACK, WHITE, 0});
 	m_ix_vert[1] = patToIndex({0, WHITE, BLACK, 0});
 	m_ix_vert[2] = patToIndex({0, BLACK, WHITE, 0});
-	m_ix_bl_ur[0] = patToIndex({0, BLACK, 0});
-	m_ix_bl_ur[1] = patToIndex({0, WHITE, WHITE, 0});
-	m_ix_bl_ur[2] = patToIndex({0, BLACK, 0});
-	m_ix_ul_br[0] = patToIndex({0, WHITE, 0});
-	m_ix_ul_br[1] = patToIndex({0, BLACK, BLACK, 0});
-	m_ix_ul_br[2] = patToIndex({0, WHITE, 0});
+	m_ix_bl_ur[0] = patToIndex({0, WHITE, 0});
+	m_ix_bl_ur[1] = patToIndex({0, BLACK, BLACK, 0});
+	m_ix_bl_ur[2] = patToIndex({0, WHITE, 0});
+	m_ix_ul_br[0] = patToIndex({0, BLACK, 0});
+	m_ix_ul_br[1] = patToIndex({0, WHITE, WHITE, 0});
+	m_ix_ul_br[2] = patToIndex({0, BLACK, 0});
 #else
 	m_ix_horz[2] = patToIndex({0, 0, WHITE, BLACK, 0, 0});
 	m_ix_horz[3] = patToIndex({0, 0, BLACK, WHITE, 0, 0});
 	m_ix_vert[2] = patToIndex({0, 0, WHITE, BLACK, 0, 0});
 	m_ix_vert[3] = patToIndex({0, 0, BLACK, WHITE, 0, 0});
-	m_ix_bl_ur[2] = patToIndex({0, 0, BLACK, 0, 0});
-	m_ix_bl_ur[3] = patToIndex({0, 0, WHITE, WHITE, 0, 0});
-	m_ix_bl_ur[4] = patToIndex({0, 0, BLACK, 0, 0});
-	m_ix_ul_br[2] = patToIndex({0, 0, WHITE, 0, 0});
-	m_ix_ul_br[3] = patToIndex({0, 0, BLACK, BLACK, 0, 0});
-	m_ix_ul_br[4] = patToIndex({0, 0, WHITE, 0, 0});
+	m_ix_bl_ur[2] = patToIndex({0, 0, WHITE, 0, 0});
+	m_ix_bl_ur[3] = patToIndex({0, 0, BLACK, BLACK, 0, 0});
+	m_ix_bl_ur[4] = patToIndex({0, 0, WHITE, 0, 0});
+	m_ix_ul_br[2] = patToIndex({0, 0, BLACK, 0, 0});
+	m_ix_ul_br[3] = patToIndex({0, 0, WHITE, WHITE, 0, 0});
+	m_ix_ul_br[4] = patToIndex({0, 0, BLACK, 0, 0});
 #endif
 }
 
@@ -452,7 +452,7 @@ void BoardIndex::print_diagonal() const {		//	斜めインデックス表示
 			case EMPTY: cout << "・";	break;
 			case BLACK: cout << "Ｘ";	break;
 			case WHITE: cout << "○";	break;
-			default:	cout << "？";	break;
+			default:	cout << "　";	break;
 			}
 		}
 		cout << "\n";
@@ -487,7 +487,7 @@ void BoardIndex::print_diagonal2() const {		//	斜めインデックス表示
 			case EMPTY: cout << "・";	break;
 			case BLACK: cout << "Ｘ";	break;
 			case WHITE: cout << "○";	break;
-			default:	cout << "？";	break;
+			default:	cout << "　";	break;
 			}
 		}
 		cout << "\n";
@@ -513,11 +513,13 @@ void BoardIndex::put_black(int x, int y) {
 	m_ix_vert[x] = v.m_dstix_black;		//	遷移先インデックス
 	//	反転された石によるインデックス更新
 	if( hr != 0 ) {
+		//	縦方向インデックス更新
 		int mask = 1;
 		for(int k = 0; k != N_HORZ; ++k, mask<<=1) {
 			if( (hr & mask) != 0 )
 				m_ix_vert[k] = g_trans_table[m_ix_vert[k]][y].m_dstix_black;
 		}
+		//	斜め方向インデックス更新
 	}
 	if( vr != 0 ) {
 		int mask = 1;
