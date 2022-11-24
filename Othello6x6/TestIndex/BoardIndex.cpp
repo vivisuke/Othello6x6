@@ -463,7 +463,7 @@ void BoardIndex::print_diagonal2() const {		//	斜めインデックス表示
 	vector<uchar> lst;
 	vector<uchar> s(N_HORZ*N_VERT, WALL);
 	int len = 3, d = 1;
-	int x = 0, y = 1;
+	int x = 0, y = N_VERT-3;
 	for(int i = 0; i != N_IX_BL_UR; ++i, len+=d) {
 		indexToPat(m_ix_ul_br[i], lst, len);		//	＼方向
 		for(int k = 0; k != len; ++k) {

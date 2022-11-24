@@ -176,7 +176,7 @@
 0173 ● C 11/21            │ToDo│un_put_black(), un_put_white() 実装
 0174 ◎ C 11/21 11/21 0.001│ToDo│can_put_white() 実装
 0175 ◎ C 11/25 11/25 0.001│問題│print_diagonal(), print_diagonal2()：黒白が逆に表示される？
-0176 ● C 11/25            │ToDo│
+0176 ◎ C 11/25 11/25 0.001│問題│6x6 サイズにすると print_diagonal2() でクラッシュする
 0177 ● C 11/25            │ToDo│
 0178 ● C 11/25            │ToDo│
 0179 ● C 11/25            │ToDo│
